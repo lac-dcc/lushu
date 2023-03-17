@@ -10,6 +10,7 @@ fun testNodeAlphasUpper() = Node(stringsToChars(allAlphasUpper).toSet(), testNod
 fun testNodeAlphasLower() = Node(stringsToChars(allAlphasLower).toSet(), testNodeInterval1To32())
 fun testNodeNums() = Node(stringsToChars(allNums).toSet(), testNodeInterval1To16())
 fun testNodePuncts() = Node(stringsToChars(allPuncts).toSet(), testNodeInterval1To16())
+fun testNodeAlphas() = Node(stringsToChars(allAlphas).toSet(), testNodeInterval1To32())
 
 fun testBaseNodes(): List<Node> = listOf(
     testNodeAlphasUpper(),

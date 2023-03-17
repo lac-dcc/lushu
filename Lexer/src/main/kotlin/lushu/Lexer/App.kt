@@ -13,5 +13,6 @@ fun main(args: Array<String>) {
     val config = Config.fromCLIArgs(args.toList())
     // TODO: read words from stdin
     val words = listOf<String>("word1", "word2")
+    // TODO: print result
     Lexer(config).run(words)
 }

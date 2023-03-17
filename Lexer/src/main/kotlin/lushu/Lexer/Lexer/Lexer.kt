@@ -1,10 +1,10 @@
 package lushu.Lexer.Lexer
 
 import lushu.Lexer.Config.Config
-import lushu.Lexer.Token.Token
-import lushu.Lexer.Regex.Lattice
 import lushu.Lexer.Regex.Compressor
+import lushu.Lexer.Regex.Lattice
 import lushu.Lexer.Regex.NodeFactory
+import lushu.Lexer.Token.Token
 
 class Lexer(config: Config) {
     private val lattice = Lattice(config.baseNodes, config.disjointNodes)

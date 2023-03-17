@@ -1,32 +1,30 @@
 package lushu.Lexer.Config
 
-import java.nio.file.Paths
-
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 import lushu.Lexer.Regex.Node
-import lushu.Lexer.Regex.Interval
+
+// Test dependencies
+import lushu.Lexer.Regex.testNodeAlphas
+import lushu.Lexer.TestUtils.Utils
 
 class ConfigTest {
-    fun getCurDir(): String {
-        return Paths.get("").toAbsolutePath().toString()
-    }
-
     @Test
-    fun testFromBaseNodesEmpty() {
-        val configFPath = getCurDir() + "/fixtures/configEmpty.yaml"
+    fun testFromConfigFileEmpty() {
+        val configFPath = Utils.configFullPath("configEmpty.yaml")
         val config = Config.fromConfigFile(configFPath)
         assertTrue(config.isEmpty())
     }
 
-    // @Test
-    // fun testFromBaseNodesNotEmpty() {
-    //     val configFPath = getCurDir() + "/fixtures/configNotEmpty.yaml"
-    //     val config = Config.fromConfigFile(configFPath)
-    //     assertFalse(config.isEmpty())
-    //     val expected = listOf<Node>(Node())
-    //     assertEquals(expected, config)
-    // }
+    @Test
+    fun testFromConfigFileNotEmpty() {
+        val configFPath = Utils.configFullPath("configNotEmpty.yaml")
+        val config = Config.fromConfigFile(configFPath)
+        assertFalse(config.isEmpty())
+        val expected = Config(listOf<Node>(testNodeAlphas()), listOf<Pair<Node, Node>>())
+        assertEquals(expected, config)
+    }
 }

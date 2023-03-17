@@ -1,6 +1,0 @@
-base:
-  EnglishChar:
-    intervalMin: 1
-    intervalMax: 32
-    
-    
