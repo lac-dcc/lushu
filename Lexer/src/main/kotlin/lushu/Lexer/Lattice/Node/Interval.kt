@@ -1,6 +1,10 @@
-package lushu.Lexer.Regex
+package lushu.Lexer.Lattice.Node
 
 class Interval(val first: Int, val second: Int) {
+    companion object {
+        val kleene = Interval(0, 0)
+    }
+
     fun isWithinBound(bound: Interval): Boolean {
         if (this.first < bound.first ||
             this.second > bound.second

@@ -1,9 +1,12 @@
-package lushu.Lexer.Regex
+package lushu.Lexer.Compressor
 
+import lushu.Lexer.Lattice.LexerLattice
+import lushu.Lexer.Lattice.Node.IntervalNode
+import lushu.Lexer.Lattice.Node.Node
 import org.slf4j.LoggerFactory
 
-class Formatter(private val lattice: Lattice) {
-    private val logger = LoggerFactory.getLogger(this.javaClass.name)
+class Formatter(private val lattice: LexerLattice) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun formatNodes(nodes: List<Node>): List<Node> {
         logger.debug("Formatting nodes: $nodes")
@@ -23,18 +26,20 @@ class Formatter(private val lattice: Lattice) {
             val fmtNode = formattedNodes[fmtIdx]
             origIdx++
             val glb = lattice.meet(fmtNode, origNode)
-            if (glb.isTop) {
+            if (lattice.isTop(glb)) {
                 formattedNodes += origNode
                 fmtIdx++
                 continue
             }
 
             // We want a node [a]{1,1}[b]{1,1}[c]{1,1} to become [abc]{3,3}
-            formattedNodes[fmtIdx] = glb.apply {
-                if (!isKleene() && !lattice.isBaseNode(glb)) {
+            formattedNodes[fmtIdx] = if (glb is IntervalNode) {
+                (glb as IntervalNode).apply {
                     capInterval()
                     incrementInterval()
                 }
+            } else {
+                glb
             }
         }
 
