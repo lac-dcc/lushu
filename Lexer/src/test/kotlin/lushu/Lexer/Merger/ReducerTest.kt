@@ -1,32 +1,38 @@
-package lushu.Lexer.Lattice
+package lushu.Lexer.Merger
 
-class FormatterTest {
-    // private val nf = NodeFactory()
-    // private val lattice = Lattice(
-    //     testBaseNodes(),
-    // )
-    // private val formatter = Formatter(lattice)
+import lushu.Lexer.Config.Config
+import lushu.Lexer.Lattice.LexerLattice
+import lushu.Lexer.Lattice.Node.Node
+import lushu.Lexer.TestUtils.Utils
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+
+class ReducerTest {
+    private val cfg = Config.fromConfigFile(Utils.basicConfigFullPath())
+    private val nf = cfg.nodeFactory
+    private val lattice = LexerLattice(nf)
+    private val reducer = Reducer(lattice)
+
+    @Test
+    fun reduceEmpty() {
+        val tokens = listOf<Node>()
+        val actual = reducer.reduce(tokens)
+        val expected = tokens
+        assertEquals(expected, actual)
+    }
 
     // @Test
-    // fun formatNodesEmpty() {
-    //     val tokens = listOf<Node>()
-    //     val actual = formatter.formatNodes(tokens)
-    //     val expected = tokens
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun formatNodesOneNode() {
+    // fun reduceOneNode() {
     //     val tokens = nf.buildBasicNodes("a")
-    //     val actual = formatter.formatNodes(tokens)
+    //     val actual = reducer.reduce(tokens)
     //     val expected = tokens
     //     assertEquals(expected, actual)
     // }
 
     // @Test
-    // fun formatNodesTwoNodesIntoOne() {
+    // fun reduceTwoNodesIntoOne() {
     //     val tokens = nf.buildBasicNodes("ab")
-    //     val actual = formatter.formatNodes(tokens)
+    //     val actual = reducer.reduce(tokens)
     //     val expected = listOf<Node>(
     //         Node(
     //             setOf<Char>('a', 'b'),
@@ -37,9 +43,9 @@ class FormatterTest {
     // }
 
     // @Test
-    // fun formatNodesThreeNodesIntoOneNums() {
+    // fun reduceThreeNodesIntoOneNums() {
     //     val tokens = nf.buildBasicNodes("123")
-    //     val actual = formatter.formatNodes(tokens)
+    //     val actual = reducer.reduce(tokens)
     //     val expected = listOf<Node>(
     //         Node(
     //             setOf<Char>('1', '2', '3'),
@@ -50,9 +56,9 @@ class FormatterTest {
     // }
 
     // @Test
-    // fun formatNodesTop() {
+    // fun reduceTop() {
     //     val tokens = nf.buildBasicNodes("a:b")
-    //     val actual = formatter.formatNodes(tokens)
+    //     val actual = reducer.reduce(tokens)
     //     val expected = listOf<Node>(
     //         Node(setOf<Char>('a'), Interval(1, 1)),
     //         Node(setOf<Char>(':'), Interval(1, 1)),
@@ -62,9 +68,9 @@ class FormatterTest {
     // }
 
     // @Test
-    // fun formatNodesIP() {
+    // fun reduceIP() {
     //     val tokens = nf.buildBasicNodes("12.23.34.45")
-    //     val actual = formatter.formatNodes(tokens)
+    //     val actual = reducer.reduce(tokens)
     //     val expected = listOf<Node>(
     //         Node(setOf<Char>('1', '2'), Interval(2, 2)),
     //         Node(setOf<Char>('.'), Interval(1, 1)),

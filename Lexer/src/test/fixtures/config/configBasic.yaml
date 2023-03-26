@@ -1,4 +1,4 @@
-base:
+latticeBase:
   alpha:
     intervalMin: 1
     intervalMax: 32
@@ -10,7 +10,5 @@ base:
   punct:
     intervalMin: 1
     intervalMax: 1
-    charset: "\"!#\$%&'()*+,-./:;<>=?@\\[\\]^_`{}|~\\\\"
-
-disjoint:
-  punct: [alpha, num]
+    charset: "\"!#\\$%&'()*+,-./:;<>=?@\\[\\]^_`{}|~\\\\"
+    blacklist: [alpha, num]
