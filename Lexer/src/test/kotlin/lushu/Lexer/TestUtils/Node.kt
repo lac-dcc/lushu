@@ -9,28 +9,39 @@ class TestNodeBuilder {
     companion object {
         fun alphaBaseNode(): PwsetNode {
             return PwsetNode(
-                0,
+                1,
                 setOf<Int>(),
-                Charset(allAlphas),
-                testNodeInterval1To32()
+                Charset(Fixtures.allAlphas),
+                Fixtures.testNodeInterval1To32()
             )
         }
 
         fun numBaseNode(): PwsetNode {
             return PwsetNode(
-                1,
+                2,
                 setOf<Int>(),
-                Charset(allNums),
-                testNodeInterval1To32()
+                Charset(Fixtures.allNums),
+                Fixtures.testNodeInterval1To32()
             )
         }
 
         fun punctBaseNode(): PwsetNode {
             return PwsetNode(
-                2,
+                3,
                 setOf<Int>(0, 1),
-                Charset(allPuncts),
-                testNodeInterval1To32()
+                Charset(Fixtures.allPuncts),
+                Fixtures.testNodeInterval1To32()
+            )
+        }
+
+        fun alnumPwsetNode(): PwsetNode {
+            // Assume that node was the first one to be created by a powerset
+            // node join.
+            return PwsetNode(
+                4,
+                setOf<Int>(),
+                Charset(Fixtures.allAlnums),
+                Interval(0, 0)
             )
         }
 
@@ -44,6 +55,22 @@ class TestNodeBuilder {
                 Charset(chars),
                 Interval(intervalMin, intervalMax)
             )
+        }
+
+        fun punctIntervalNode(
+            chars: Set<Char>,
+            intervalMin: Int,
+            intervalMax: Int
+        ): IntervalNode {
+            return IntervalNode(
+                punctBaseNode(),
+                Charset(chars),
+                Interval(intervalMin, intervalMax)
+            )
+        }
+
+        fun emptyIntervalNode(): IntervalNode {
+            return alphaIntervalNode(setOf<Char>(), 1, 1)
         }
     }
 }

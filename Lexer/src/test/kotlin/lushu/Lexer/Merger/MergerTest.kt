@@ -2,10 +2,9 @@ package lushu.Lexer.Merger
 
 import lushu.Lexer.Config.Config
 import lushu.Lexer.Lattice.LexerLattice
-import lushu.Lexer.Lattice.Node.Node
-import lushu.Lexer.TestUtils.TestNodeBuilder
+import lushu.Lexer.Lattice.NodePrinter
+import lushu.Lexer.TestUtils.Fixtures
 import lushu.Lexer.TestUtils.Utils
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 // TODO: add tests to test Inference Machine properties (iterative, set-driven,
@@ -17,130 +16,53 @@ class MergerTest {
     private val merger = Merger(lattice)
 
     @Test
-    fun mergeEmpty() {
-        val ns1 = nf.buildIntervalNodes("")
-        val ns2 = nf.buildIntervalNodes("")
-        val actual = merger.merge(ns1, ns2)
-        val expected = listOf<Node>()
-        assertEquals(expected, actual)
-    }
-
-    @Test
-    fun mergeOneAlpha() {
-        val ns1 = nf.buildIntervalNodes("")
-        val ns2 = nf.buildIntervalNodes("a")
-        val actual = merger.merge(ns1, ns2)
-        val expected = listOf<Node>(
-            TestNodeBuilder.alphaIntervalNode(setOf<Char>('a'), 1, 1)
+    fun mergeBasicCases() {
+        data class TestCase(
+            val desc: String,
+            val s1: String,
+            val s2: String,
+            val expected: String
         )
-        assertEquals(expected, actual)
+        val testCases = listOf<TestCase>(
+            TestCase("empty", "", "", ""),
+            TestCase("single alpha", "", "a", "[a]{1,1}"),
+            TestCase("single num", "", "1", "[1]{1,1}"),
+            TestCase("many alpha", "", "abcd", "[abcd]{4,4}"),
+            TestCase("many num", "", "1234", "[1234]{4,4}"),
+            TestCase("alpha equal", "a", "a", "[a]{1,1}"),
+            TestCase("alpha diff", "a", "b", "[ab]{1,1}"),
+            TestCase("alpha num", "a", "1", Fixtures.alnumStar),
+            TestCase("alpha mul repeated", "aaaa", "aaaa", "[a]{4,4}"),
+            TestCase("alpha mul diff equal", "abcd", "abcd", "[abcd]{4,4}"),
+            TestCase("alnum mul equal", "abc12", "abc12", Fixtures.alnumStar),
+            TestCase("alpha reverse", "cba", "abc", "[abc]{3,3}"),
+            TestCase("alpha mul diff diff", "abc", "efg", "[abcefg]{3,3}"),
+            TestCase("alpha diff diffsize", "abc", "abcdef", "[abcdef]{3,6}"),
+            TestCase("alpha diff diffsize reverse", "abcdef", "abc", "[abcdef]{3,6}"),
+            TestCase("alnum mul samesize", "abc12", "efg34", Fixtures.alnumStar),
+            TestCase("timestamp", "00:00:00", "12:34:56", "[012]{2,2}[:]{1,1}[034]{2,2}[:]{1,1}[056]{2,2}")
+        )
+        testCases.forEach {
+            println("Starting test ${it.desc}")
+            val ns1 = nf.buildIntervalNodes(it.s1)
+            val ns2 = nf.buildIntervalNodes(it.s2)
+            val actual = merger.merge(ns1, ns2)
+            val actualStr = NodePrinter.print(actual)
+            if (it.expected != actualStr) {
+                throw Exception(
+                    "For test ${it.desc}, expected ${it.expected}, " +
+                        "but got $actualStr"
+                )
+            }
+        }
     }
 
     // @Test
-    // fun mergeOneNum() {
-    //     val ns1 = nf.buildIntervalNodes("")
-    //     val ns2 = nf.buildIntervalNodes("1")
+    // fun mergeTimestamp() {
+    //     val ns1 = nf.buildIntervalNodes("00:00:00")
+    //     val ns2 = nf.buildIntervalNodes("12:34:56")
     //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[1]{1,1}"
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeManyChar() {
-    //     val ns1 = nf.buildIntervalNodes("")
-    //     val ns2 = nf.buildIntervalNodes("abcd")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[abcd]{4,4}"
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeManyNum() {
-    //     val ns1 = nf.buildIntervalNodes("")
-    //     val ns2 = nf.buildIntervalNodes("1234")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[1234]{4,4}"
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeFromExistingSingletonEqual() {
-    //     val ns1 = nf.buildIntervalNodes("a")
-    //     val ns2 = nf.buildIntervalNodes("a")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[a]{1,1}"
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeFromExistingSingletonDiff() {
-    //     val ns1 = nf.buildIntervalNodes("a")
-    //     val ns2 = nf.buildIntervalNodes("b")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[ab]{1,1}"
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeFromExistingSingletonAlphaNum() {
-    //     val ns1 = nf.buildIntervalNodes("a")
-    //     val ns2 = nf.buildIntervalNodes("1")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = alnumLowerStar
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeFromExistingMultipleRepeated() {
-    //     val ns1 = nf.buildIntervalNodes("aaaa")
-    //     val ns2 = nf.buildIntervalNodes("aaaa")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[a]{4,4}"
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeFromExistingMultipleEqual() {
-    //     val ns1 = nf.buildIntervalNodes("abcd")
-    //     val ns2 = nf.buildIntervalNodes("abcd")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[abcd]{4,4}"
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeFromExistingMultipleEqualAlphaAndNum() {
-    //     val ns1 = nf.buildIntervalNodes("abc12")
-    //     val ns2 = nf.buildIntervalNodes("abc12")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = alnumLowerStar
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeFromExistingMultipleTwoDiffOneEqual() {
-    //     val ns1 = nf.buildIntervalNodes("cba")
-    //     val ns2 = nf.buildIntervalNodes("abc")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[abc]{3,3}"
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeFromExistingMultipleAllDiff() {
-    //     val ns1 = nf.buildIntervalNodes("abc")
-    //     val ns2 = nf.buildIntervalNodes("efg")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[abcefg]{3,3}"
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeFromExistingMultipleDifferentSizes() {
-    //     val ns1 = nf.buildIntervalNodes("abc")
-    //     val ns2 = nf.buildIntervalNodes("abcdef")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[abcdef]{3,6}"
+    //     val expected = "[012]{2,2}[:]{1,1}[034]{2,2}[:]{1,1}[056]{2,2}"
     //     assertEquals(expected, actual)
     // }
 
@@ -156,33 +78,6 @@ class MergerTest {
     //     val actual2 = merger.merge(actual1, ns3)
     //     val expected2 = "[abcdefghi]{3,9}"
     //     assertEquals(expected2, actual2)
-    // }
-
-    // @Test
-    // fun mergeFromExistingPreviousIsLonger() {
-    //     val ns1 = nf.buildIntervalNodes("abcdef")
-    //     val ns2 = nf.buildIntervalNodes("abc")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[abcdef]{3,6}"
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeFromExistingMultipleAlphaNumDiff() {
-    //     val ns1 = nf.buildIntervalNodes("abc12")
-    //     val ns2 = nf.buildIntervalNodes("efg34")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = alnumLowerStar
-    //     assertEquals(expected, actual)
-    // }
-
-    // @Test
-    // fun mergeTimestamp() {
-    //     val ns1 = nf.buildIntervalNodes("00:00:00")
-    //     val ns2 = nf.buildIntervalNodes("12:34:56")
-    //     val actual = merger.merge(ns1, ns2)
-    //     val expected = "[012]{2,2}[:]{1,1}[034]{2,2}[:]{1,1}[056]{2,2}"
-    //     assertEquals(expected, actual)
     // }
 
     // @Test
