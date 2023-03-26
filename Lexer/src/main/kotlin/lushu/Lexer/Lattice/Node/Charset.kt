@@ -29,4 +29,13 @@ class Charset(
             return Charset(cs)
         }
     }
+
+    override fun toString(): String {
+        return "Charset($charset)"
+    }
+
+    override fun equals(other: Any?) = when (other) {
+        is Charset -> this.charset == other.charset
+        else -> false
+    }
 }

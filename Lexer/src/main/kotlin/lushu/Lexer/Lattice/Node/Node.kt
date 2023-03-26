@@ -35,15 +35,6 @@ class IntervalNode(
     charset: Charset,
     interval: Interval
 ) : Node(charset, interval) {
-    fun capInterval(): Interval {
-        val max = if (interval.first > interval.second) interval.first else interval.second
-        return Interval(max, max)
-    }
-
-    fun incrementInterval(): Interval {
-        return Interval(interval.first + 1, interval.second + 1)
-    }
-
     // isWithinBounds returns true if the node's interval is contained in its
     // respective base node interval.
     fun isWithinBounds(): Boolean {

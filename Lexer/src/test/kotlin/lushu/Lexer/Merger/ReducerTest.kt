@@ -3,6 +3,7 @@ package lushu.Lexer.Merger
 import lushu.Lexer.Config.Config
 import lushu.Lexer.Lattice.LexerLattice
 import lushu.Lexer.Lattice.Node.Node
+import lushu.Lexer.TestUtils.TestNodeBuilder
 import lushu.Lexer.TestUtils.Utils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -21,43 +22,38 @@ class ReducerTest {
         assertEquals(expected, actual)
     }
 
-    // @Test
-    // fun reduceOneNode() {
-    //     val tokens = nf.buildBasicNodes("a")
-    //     val actual = reducer.reduce(tokens)
-    //     val expected = tokens
-    //     assertEquals(expected, actual)
-    // }
+    @Test
+    fun reduceOneNode() {
+        val tokens = nf.buildIntervalNodes("a")
+        val actual = reducer.reduce(tokens)
+        val expected = tokens
+        assertEquals(expected, actual)
+    }
 
-    // @Test
-    // fun reduceTwoNodesIntoOne() {
-    //     val tokens = nf.buildBasicNodes("ab")
-    //     val actual = reducer.reduce(tokens)
-    //     val expected = listOf<Node>(
-    //         Node(
-    //             setOf<Char>('a', 'b'),
-    //             Interval(2, 2)
-    //         )
-    //     )
-    //     assertEquals(expected, actual)
-    // }
+    @Test
+    fun reduceTwoNodesIntoOne() {
+        val tokens = nf.buildIntervalNodes("ab")
+        println(tokens)
+        val actual = reducer.reduce(tokens)
+        val expected = listOf<Node>(
+            TestNodeBuilder.alphaIntervalNode(setOf<Char>('a', 'b'), 2, 2)
+        )
+        assertEquals(expected, actual)
+    }
 
-    // @Test
-    // fun reduceThreeNodesIntoOneNums() {
-    //     val tokens = nf.buildBasicNodes("123")
-    //     val actual = reducer.reduce(tokens)
-    //     val expected = listOf<Node>(
-    //         Node(
-    //             setOf<Char>('1', '2', '3'),
-    //             Interval(3, 3)
-    //         )
-    //     )
-    //     assertEquals(expected, actual)
-    // }
+    @Test
+    fun reduceThreeNodesIntoOneNums() {
+        val tokens = nf.buildIntervalNodes("123")
+        val actual = reducer.reduce(tokens)
+        val expected = listOf<Node>(
+            TestNodeBuilder.alphaIntervalNode(setOf<Char>('1', '2', '3'), 3, 3)
+        )
+        assertEquals(expected, actual)
+    }
 
     // @Test
     // fun reduceTop() {
-    //     val tokens = nf.buildBasicNodes("a:b")
+    //     val tokens = nf.buildIntervalNodes("a:b")
     //     val actual = reducer.reduce(tokens)
     //     val expected = listOf<Node>(
     //         Node(setOf<Char>('a'), Interval(1, 1)),
@@ -69,7 +65,7 @@ class ReducerTest {
 
     // @Test
     // fun reduceIP() {
-    //     val tokens = nf.buildBasicNodes("12.23.34.45")
+    //     val tokens = nf.buildIntervalNodes("12.23.34.45")
     //     val actual = reducer.reduce(tokens)
     //     val expected = listOf<Node>(
     //         Node(setOf<Char>('1', '2'), Interval(2, 2)),

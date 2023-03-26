@@ -91,6 +91,15 @@ class NodeFactory(
         )
     }
 
+    // buildIntervalNodes builds a list of interval nodes from a given string.
+    fun buildIntervalNodes(s: String): List<IntervalNode> {
+        var ns = listOf<IntervalNode>()
+        s.forEach { c ->
+            ns += buildIntervalNode(c)
+        }
+        return ns
+    }
+
     // buildPwsetNode builds a node in the powerset lattice.
     //
     // This function is private because it should only be called directing when

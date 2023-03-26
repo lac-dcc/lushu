@@ -34,9 +34,8 @@ class Reducer(private val lattice: LexerLattice) {
 
             // We want a node [a]{1,1}[b]{1,1}[c]{1,1} to become [abc]{3,3}
             reducedNodes[fmtIdx] = if (glb is IntervalNode) {
-                (glb as IntervalNode).apply {
-                    capInterval()
-                    incrementInterval()
+                with(glb) {
+                    IntervalNode(baseNode, charset, interval.cap().increment())
                 }
             } else {
                 glb
