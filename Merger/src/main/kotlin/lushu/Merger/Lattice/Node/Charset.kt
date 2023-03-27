@@ -34,7 +34,7 @@ class Charset(
         return "Charset($charset)"
     }
 
-    override fun equals(other: Any?) = when(other) {
+    override fun equals(other: Any?) = when (other) {
         is Charset -> this.charset == other.charset
         else -> false
     }

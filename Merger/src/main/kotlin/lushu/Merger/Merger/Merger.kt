@@ -4,7 +4,7 @@ import lushu.Merger.Lattice.MergerLattice
 import lushu.Merger.Lattice.Node.Node
 
 class Merger(
-    private val lattice: MergerLattice,
+    private val lattice: MergerLattice
 ) {
     private val reducer = Reducer(lattice)
     private val zipper = Zipper(lattice)

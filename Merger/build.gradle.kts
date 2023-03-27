@@ -2,8 +2,8 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 val projectVersion = "0.1"
-val projectName = "Lushu Parser"
-val applicationMainClassName = "lushu.Parser.AppKt"
+val projectName = "Lushu Merger"
+val applicationMainClassName = "lushu.Merger.AppKt"
 
 repositories {
     jcenter()

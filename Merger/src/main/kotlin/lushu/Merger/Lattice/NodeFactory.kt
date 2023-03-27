@@ -84,7 +84,7 @@ class NodeFactory(
             n1.joinCharset(n2),
             // For now, we always use kleene interval for powerset nodes that
             // are not part of the roof truss.
-            Interval.kleene,
+            Interval.kleene
         )
     }
 

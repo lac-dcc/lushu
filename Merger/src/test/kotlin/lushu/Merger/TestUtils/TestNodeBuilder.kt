@@ -41,7 +41,7 @@ class TestNodeBuilder {
                 4,
                 setOf<Int>(),
                 Charset(Fixtures.allAlnums),
-                Interval(0, 0),
+                Interval(0, 0)
             )
         }
 

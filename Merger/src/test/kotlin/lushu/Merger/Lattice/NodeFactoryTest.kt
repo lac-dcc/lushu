@@ -1,9 +1,9 @@
 package lushu.Merger.Lattice
 
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertTrue
 import lushu.Merger.Config.Config
 import lushu.Merger.TestUtils.Utils
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
 class NodeFactoryTest {
     private val cfg = Config.fromConfigFile(Utils.basicConfigFullPath())

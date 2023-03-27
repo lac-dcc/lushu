@@ -2,11 +2,8 @@ package lushu.Merger.Merger
 
 import lushu.Merger.Config.Config
 import lushu.Merger.Lattice.MergerLattice
-import lushu.Merger.Lattice.Node.Node
 import lushu.Merger.Lattice.NodePrinter
-import lushu.Merger.TestUtils.TestNodeBuilder
 import lushu.Merger.TestUtils.Utils
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class ReducerTest {
@@ -28,8 +25,11 @@ class ReducerTest {
             TestCase("alpha multiple", "ab", "[ab]{2,2}"),
             TestCase("nums", "123", "[123]{3,3}"),
             TestCase("alpha with punct", "a:b", "[a]{1,1}[:]{1,1}[b]{1,1}"),
-            TestCase("ip", "12.23.34.45",
-                     "[12]{2,2}[.]{1,1}[23]{2,2}[.]{1,1}[34]{2,2}[.]{1,1}[45]{2,2}"),
+            TestCase(
+                "ip",
+                "12.23.34.45",
+                "[12]{2,2}[.]{1,1}[23]{2,2}[.]{1,1}[34]{2,2}[.]{1,1}[45]{2,2}"
+            )
         )
         testCases.forEach {
             println("Starting test '${it.desc}'")
