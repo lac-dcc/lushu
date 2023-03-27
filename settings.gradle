@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'Lushu'
-include 'Lexer'
+include 'Merger'
