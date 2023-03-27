@@ -32,7 +32,8 @@ class NodeFactory(
         // lattice is dinamically built.
         val strIDToIntID = mutableMapOf<String, Int>()
         yaml.latticeBase.keys.run {
-            var id = 0
+            // Must skip top node id
+            var id = topID() + 1
             this.forEach {
                 strIDToIntID[it] = id
                 id++
@@ -69,6 +70,14 @@ class NodeFactory(
         if (n1 == n2) {
             // Avoid building another replica node
             return n1
+        }
+        // Check if any existing node has either n1 or n2 blacklisted. If so, we
+        // must add the ID that will be used to its blacklist.
+        pwsetNodes.forEach {
+            val node = it.value
+            if (node.blacklists(n1) || node.blacklists(n2)) {
+                node.addToBlacklist(globalNodeID)
+            }
         }
         return buildPwsetNode(
             n1.joinBlacklist(n2),

@@ -28,6 +28,10 @@ class LexerLattice(
 
         val intervalNode = ilatt.meet(n1, n2)
         if (!intervalNode.isWithinBounds()) {
+            logger.debug(
+                "Interval node $intervalNode is not within bounds. " +
+                    "Elevating to powerset lattice."
+            )
             return elevateAndMeetInPowerset(n1, n2)
         }
         return intervalNode

@@ -9,6 +9,6 @@ latticeBase:
     charset: "0123456789"
   punct:
     intervalMin: 1
-    intervalMax: 1
+    intervalMax: 2
     charset: "\"!#\\$%&'()*+,-./:;<>=?@\\[\\]^_`{}|~\\\\"
     blacklist: [alpha, num]

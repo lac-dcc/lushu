@@ -46,10 +46,16 @@ class IntervalNode(
 // must create base nodes from the start of the program.
 class PwsetNode(
     val id: Int,
-    val blacklist: Set<Int>,
+    private var blacklist: Set<Int>,
     charset: Charset,
     interval: Interval
 ) : Node(charset, interval) {
+    fun addToBlacklist(nodeID: Int) {
+        blacklist += nodeID
+    }
+
+    fun blacklist(): Set<Int> = blacklist
+
     fun blacklists(other: PwsetNode): Boolean {
         return blacklist.contains(other.id)
     }
