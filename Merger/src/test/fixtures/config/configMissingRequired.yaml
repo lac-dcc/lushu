@@ -1,0 +1,5 @@
+latticeBase:
+  alpha:
+    intervalMin: 1
+    intervalMax: 32
+    # Missing required charset
