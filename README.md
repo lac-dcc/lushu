@@ -14,7 +14,7 @@ Run `gradle fatJar` to generate the file `./Merger/build/libs/Merger.jar`. Run
 it following the example:
 
 ```sh
-echo '8.8.8.8 0.0.0.0' | java -jar ./Merger/build/libs/Merger.jar Merger/example/config.yaml
+echo '8.8.8.8 0.0.0.0' | java -jar ./Merger/build/libs/Merger.jar ./example/config.yaml
 ```
 
 You should get the result:
@@ -32,7 +32,7 @@ Here are some more examples of words you can input:
 - Key in KV database: `key1#secondary key2#secondary`
 
 Also, try specifying different YAML configuration files. You may find it easier
-to edit the example file in `./Merger/example/config.yaml`.
+to edit the example file in `./example/config.yaml`.
 
 ## Testing
 

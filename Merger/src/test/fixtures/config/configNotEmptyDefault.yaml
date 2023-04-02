@@ -1,7 +1,0 @@
-base:
-  alpha:
-    intervalMax: 32
-    charset: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-disjoint:
-  # No disjoint nodes
