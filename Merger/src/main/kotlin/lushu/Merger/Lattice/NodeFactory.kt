@@ -21,7 +21,7 @@ class NodeFactory(
     init {
         // First create top node. This ensures that the top node is the one with
         // ID 0.
-        buildPwsetNode(setOf<Int>(), Charset(setOf<Char>()), Interval.kleene)
+        buildPwsetNode(setOf<Int>(), Charset(setOf<Char>()), Interval.kleene, false)
 
         // Build roof truss of the lattice, which corresponds to the base of the
         // powerset lattice.
@@ -51,7 +51,8 @@ class NodeFactory(
             val pnode = buildPwsetNode(
                 blacklist,
                 Charset.fromString(yamlNode.charset),
-                Interval(yamlNode.intervalMin, yamlNode.intervalMax)
+                Interval(yamlNode.intervalMin, yamlNode.intervalMax),
+                false
             )
             yamlNode.charset.forEach { c ->
                 charToBaseNodeID[c] = pnode.id
@@ -84,7 +85,8 @@ class NodeFactory(
             n1.joinCharset(n2),
             // For now, we always use kleene interval for powerset nodes that
             // are not part of the roof truss.
-            Interval.kleene
+            Interval.kleene,
+            n1.joinSensitive(n2)
         )
     }
 
@@ -118,7 +120,8 @@ class NodeFactory(
     private fun buildPwsetNode(
         blacklist: Set<Int>,
         charset: Charset,
-        interval: Interval
+        interval: Interval,
+        sensitive: Boolean
     ): PwsetNode {
         val nodeID = globalNodeID
         globalNodeID++

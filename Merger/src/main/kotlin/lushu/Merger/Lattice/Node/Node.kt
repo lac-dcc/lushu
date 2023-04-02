@@ -1,9 +1,21 @@
 package lushu.Merger.Lattice.Node
 
+// Node represents an atomic component of the regular expressions we support.
+//
+// A Node with charset of {a, b}, and interval of [1, 10] corresponds, in
+// regex notation, to [ab]{1,10}
 sealed class Node(
     val charset: Charset,
-    val interval: Interval
+    val interval: Interval,
+    // sensitive indicates whether or not the lattice node (token) is considered
+    // sensitive information. This is optional data, since it is not part of the
+    // lattice structure. By default we assume it is not sensitive.
+    val sensitive: Boolean = false
 ) {
+    fun joinSensitive(other: Node): Boolean {
+        return sensitive || other.sensitive
+    }
+
     fun joinCharset(other: Node): Charset {
         return charset.union(other.charset)
     }
@@ -33,8 +45,9 @@ sealed class Node(
 class IntervalNode(
     val baseNode: PwsetNode,
     charset: Charset,
-    interval: Interval
-) : Node(charset, interval) {
+    interval: Interval,
+    sensitive: Boolean = false
+) : Node(charset, interval, sensitive) {
     // isWithinBounds returns true if the node's interval is contained in its
     // respective base node interval.
     fun isWithinBounds(): Boolean {
@@ -48,8 +61,9 @@ class PwsetNode(
     val id: Int,
     private var blacklist: Set<Int>,
     charset: Charset,
-    interval: Interval
-) : Node(charset, interval) {
+    interval: Interval,
+    sensitive: Boolean = false
+) : Node(charset, interval, sensitive) {
     fun addToBlacklist(nodeID: Int) {
         blacklist += nodeID
     }

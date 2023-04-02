@@ -7,21 +7,23 @@ class NodePrinter {
     companion object {
         val topRepr = ".+"
 
-        fun print(nodes: List<Node>): String {
-            // Special case for top node
-            if (nodes.size == 1 && NodeFactory.isTop(nodes[0])) {
-                return ".+"
+        fun print(n: Node): String {
+            if (NodeFactory.isTop(n)) {
+                return topRepr
             }
+            val cs = n.charset
+            val itvl = n.interval
+            if (n is PwsetNode) {
+                return "[${cs.collapse()}]+"
+            } else {
+                return "[${cs.collapse()}]{${itvl.first},${itvl.second}}"
+            }
+        }
 
+        fun print(nodes: List<Node>): String {
             var s = ""
             nodes.forEach {
-                val cs = it.charset
-                val itvl = it.interval
-                if (it is PwsetNode) {
-                    s += "[${cs.collapse()}]+"
-                } else {
-                    s += "[${cs.collapse()}]{${itvl.first},${itvl.second}}"
-                }
+                s += print(it)
             }
             return s
         }
