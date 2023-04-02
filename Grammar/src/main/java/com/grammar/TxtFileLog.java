@@ -1,4 +1,4 @@
-package com.list;
+package com.grammar;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -23,23 +23,20 @@ public class TxtFileLog {
   private BufferedWriter outFile;
 
   /**
-  * This is the constructor with parameters using the standard
-  * encryption/decryption key, in this all variables are initialized as passed.
+  * This is the constructor with parameters to TxtFileLog object
+  * that opens an input file and starts an output file.
   * 
-  * @param fileIn This is a String representing the input file.
-  * @param fileOut This is a String representing the output file.
+  * @param fileIn input file name to be opened.
+  * @param fileOut  input file name to be started.
   */
   public TxtFileLog(String fileIn, String fileOut){
       openInFile(fileIn);
       startOutFile(fileOut);
   }
-  public TxtFileLog(){
-      openInFile("./text_files/original.txt");
-      startOutFile("./text_files/encrypted.txt");
-  }
+  
   /**
   * This method is used to initialize the output file, preparing it for future writes.
-  * @param fileOut This is a String representing the output file.
+  * @param fileOut string representing the output file.
   */  
   private void startOutFile(String fileName){
     try {
@@ -51,7 +48,7 @@ public class TxtFileLog {
   
   /**
   * This method is used to open the input file.
-  * @param fileIn This is a String representing the input file.
+  * @param fileIn string representing the input file.
   */ 
   private void openInFile(String fileName){
     try {
@@ -64,7 +61,6 @@ public class TxtFileLog {
   
   /**
   * This method is used to open the output file.
-  * @param fileOut This is a String representing the input file.
   */ 
   private void openOutFile(){
     try {
@@ -87,7 +83,7 @@ public class TxtFileLog {
   
   /**
   * This method write a string in the output file.
-  * @param string This is a String to be written.
+  * @param string string to be written.
   */ 
   public void write(String string){
       try{
