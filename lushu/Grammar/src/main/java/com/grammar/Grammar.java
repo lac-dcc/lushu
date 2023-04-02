@@ -50,7 +50,7 @@ public class Grammar {
     }
 
     /**
-     * Prints the regular expressions for each token present in the grammar.
+     * Prints the regular expressions for each token present in the grammar. 
      */
     public void print() {
         grammar.print();
