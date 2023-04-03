@@ -23,11 +23,10 @@ public class TxtFileLog {
   private BufferedWriter outFile;
 
   /**
-  * This is the constructor with parameters to TxtFileLog object
-  * that opens an input file and starts an output file.
+  * Opens an input file and starts an output file.
   * 
   * @param fileIn input file name to be opened.
-  * @param fileOut  input file name to be started.
+  * @param fileOut input file name to be started.
   */
   public TxtFileLog(String fileIn, String fileOut){
       openInFile(fileIn);
@@ -35,8 +34,8 @@ public class TxtFileLog {
   }
   
   /**
-  * This method is used to initialize the output file, preparing it for future writes.
-  * @param fileOut string representing the output file.
+  * Initializes the output file, preparing it for future writes.
+  * @param fileOut path to the output file.
   */  
   private void startOutFile(String fileName){
     try {
@@ -47,8 +46,8 @@ public class TxtFileLog {
   }
   
   /**
-  * This method is used to open the input file.
-  * @param fileIn string representing the input file.
+  * Opens the input file.
+  * @param fileIn path to the input file.
   */ 
   private void openInFile(String fileName){
     try {
@@ -60,7 +59,7 @@ public class TxtFileLog {
   }
   
   /**
-  * This method is used to open the output file.
+  * Open the output file.
   */ 
   private void openOutFile(){
     try {
@@ -70,8 +69,8 @@ public class TxtFileLog {
   }
   
   /**
-  * This method return the respective line in the read file.
-  * @return String This is the line read from the input file.
+  * Reads a line from the input file.
+  * @return String Line read from the input file.
   */ 
   public String read(){
       try{
@@ -82,7 +81,7 @@ public class TxtFileLog {
   }
   
   /**
-  * This method write a string in the output file.
+  * Writes a string to the output file.
   * @param string string to be written.
   */ 
   public void write(String string){
@@ -95,14 +94,14 @@ public class TxtFileLog {
   }
   
   /**
-  * This method write a line break in the output file.
+  * Writes a line break to the output file.
   */ 
   public void newLine(){
       write("\n");
   }
   
   /**
-  * This method closes the input file.
+  * Closes the input file.
   */ 
   private void closeInFile(){
     try{
@@ -113,7 +112,7 @@ public class TxtFileLog {
   }
   
   /**
-  * This method closes the output file.
+  * Closes the output file.
   */ 
   private void closeOutFile(){
     try{
@@ -123,7 +122,7 @@ public class TxtFileLog {
   }
   
   /**
-  * This method closes the files.
+  * Closes all the files.
   */ 
   public void closeFiles(){
     closeInFile();
