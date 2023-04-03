@@ -6,7 +6,7 @@ import java.util.Arrays;
 /**
  * <h1>Grammar!</h1>
  *
- * The Grammar class represents a context-free grammar in a data structure. It
+ * The Grammar class represents a regular grammar in a data structure. It
  * provides methods to build the grammar from a text string and print its
  * tokens.
  *
