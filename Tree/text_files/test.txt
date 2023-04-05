@@ -1,8 +1,0 @@
-isso é um teste
-isso é um novo teste
-esse é um teste
-esse é um novo teste
-1 2 3
-1 3 5
-<s>sensivel</s>
-o seguinte ip <s>123.123.123.123</s> é sensivel
