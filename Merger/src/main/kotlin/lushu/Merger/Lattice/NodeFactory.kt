@@ -94,19 +94,23 @@ class NodeFactory(
     // 1}. Putting this in NodeFactory is necessary so that we attribute the
     // right roof-top node (base node) for the node, from the start. When a node
     // has multiple characters, it become harder to determine it's base node.
-    fun buildIntervalNode(c: Char): IntervalNode {
+    fun buildIntervalNode(c: Char, sensitive: Boolean = false): IntervalNode {
         return IntervalNode(
             pwsetNodes.getValue(charToBaseNodeID.getValue(c)),
             Charset(setOf(c)),
-            Interval(1, 1)
+            Interval(1, 1),
+            sensitive
         )
     }
 
     // buildIntervalNodes builds a list of interval nodes from a given string.
-    fun buildIntervalNodes(s: String): List<IntervalNode> {
+    fun buildIntervalNodes(
+        s: String,
+        sensitive: Boolean = false
+    ): List<IntervalNode> {
         var ns = listOf<IntervalNode>()
         s.forEach { c ->
-            ns += buildIntervalNode(c)
+            ns += buildIntervalNode(c, sensitive)
         }
         return ns
     }
