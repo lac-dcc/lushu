@@ -129,7 +129,7 @@ class NodeFactory(
     ): PwsetNode {
         val nodeID = globalNodeID
         globalNodeID++
-        val newNode = PwsetNode(nodeID, blacklist, charset, interval)
+        val newNode = PwsetNode(nodeID, blacklist, charset, interval, sensitive)
         pwsetNodes[nodeID] = newNode
         return newNode
     }

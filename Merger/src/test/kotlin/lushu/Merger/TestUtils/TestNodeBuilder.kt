@@ -7,30 +7,33 @@ import lushu.Merger.Lattice.Node.PwsetNode
 
 class TestNodeBuilder {
     companion object {
-        fun alphaBaseNode(): PwsetNode {
+        fun alphaBaseNode(sensitive: Boolean = false): PwsetNode {
             return PwsetNode(
                 1,
                 setOf<Int>(),
                 Charset(Fixtures.allAlphas),
-                Fixtures.testNodeInterval1To32()
+                Fixtures.testNodeInterval1To32(),
+                sensitive
             )
         }
 
-        fun numBaseNode(): PwsetNode {
+        fun numBaseNode(sensitive: Boolean = false): PwsetNode {
             return PwsetNode(
                 2,
                 setOf<Int>(),
                 Charset(Fixtures.allNums),
-                Fixtures.testNodeInterval1To32()
+                Fixtures.testNodeInterval1To32(),
+                sensitive
             )
         }
 
-        fun punctBaseNode(): PwsetNode {
+        fun punctBaseNode(sensitive: Boolean = false): PwsetNode {
             return PwsetNode(
                 3,
                 setOf<Int>(0, 1),
                 Charset(Fixtures.allPuncts),
-                Fixtures.testNodeInterval1To32()
+                Fixtures.testNodeInterval1To32(),
+                sensitive
             )
         }
 
@@ -48,24 +51,28 @@ class TestNodeBuilder {
         fun alphaIntervalNode(
             chars: Set<Char>,
             intervalMin: Int,
-            intervalMax: Int
+            intervalMax: Int,
+            sensitive: Boolean = false
         ): IntervalNode {
             return IntervalNode(
                 alphaBaseNode(),
                 Charset(chars),
-                Interval(intervalMin, intervalMax)
+                Interval(intervalMin, intervalMax),
+                sensitive
             )
         }
 
         fun punctIntervalNode(
             chars: Set<Char>,
             intervalMin: Int,
-            intervalMax: Int
+            intervalMax: Int,
+            sensitive: Boolean = false
         ): IntervalNode {
             return IntervalNode(
                 punctBaseNode(),
                 Charset(chars),
-                Interval(intervalMin, intervalMax)
+                Interval(intervalMin, intervalMax),
+                sensitive
             )
         }
 

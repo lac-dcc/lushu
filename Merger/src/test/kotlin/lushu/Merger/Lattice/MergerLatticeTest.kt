@@ -98,4 +98,80 @@ class MergerLatticeTest {
             }
         }
     }
+
+    @Test
+    fun meetSensitive() {
+        data class TestCase(
+            val desc: String,
+            val n1: Node,
+            val n2: Node,
+            val expected: Boolean
+        )
+        val testCases = listOf<TestCase>(
+            TestCase(
+                "both non-sensitive",
+                TestNodeBuilder.alphaIntervalNode(setOf<Char>('a'), 1, 1, false),
+                TestNodeBuilder.alphaIntervalNode(setOf<Char>('b'), 1, 1, false),
+                false
+            ),
+            TestCase(
+                "both sensitive",
+                TestNodeBuilder.alphaIntervalNode(setOf<Char>('a'), 1, 1, true),
+                TestNodeBuilder.alphaIntervalNode(setOf<Char>('b'), 1, 1, true),
+                true
+            ),
+            TestCase(
+                "first sensitive second non-sensitive",
+                TestNodeBuilder.alphaIntervalNode(setOf<Char>('a'), 1, 1, true),
+                TestNodeBuilder.alphaIntervalNode(setOf<Char>('b'), 1, 1, false),
+                true
+            ),
+            TestCase(
+                "first non-sensitive second sensitive",
+                TestNodeBuilder.alphaIntervalNode(setOf<Char>('a'), 1, 1, false),
+                TestNodeBuilder.alphaIntervalNode(setOf<Char>('b'), 1, 1, true),
+                true
+            ),
+            TestCase(
+                "first interval non-sensitive second pwset sensitive",
+                TestNodeBuilder.alphaIntervalNode(setOf<Char>('a'), 1, 1, false),
+                TestNodeBuilder.alphaBaseNode(true),
+                true
+            ),
+            TestCase(
+                "first pwset sensitive second interval non-sensitive",
+                TestNodeBuilder.alphaBaseNode(true),
+                TestNodeBuilder.alphaIntervalNode(setOf<Char>('a'), 1, 1, false),
+                true
+            ),
+            TestCase(
+                "both pwset non-sensitive",
+                TestNodeBuilder.alphaBaseNode(),
+                TestNodeBuilder.alphaBaseNode(),
+                false
+            ),
+            TestCase(
+                "both pwset sensitive",
+                TestNodeBuilder.alphaBaseNode(true),
+                TestNodeBuilder.alphaBaseNode(true),
+                true
+            ),
+            TestCase(
+                "pwset sensitive and non-sensitive",
+                TestNodeBuilder.alphaBaseNode(true),
+                TestNodeBuilder.alphaBaseNode(false),
+                true
+            )
+        )
+        testCases.forEach {
+            println("Starting test ${it.desc}")
+            val actual = lattice.meet(it.n1, it.n2)
+            if (it.expected != actual.sensitive) {
+                throw Exception(
+                    "For test '${it.desc}', expected ${it.expected}, " +
+                        "but got $actual"
+                )
+            }
+        }
+    }
 }
