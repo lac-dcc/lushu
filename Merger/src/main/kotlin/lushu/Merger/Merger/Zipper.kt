@@ -13,9 +13,6 @@ class Zipper(
         ns1: List<Node>,
         ns2: List<Node>
     ): List<Node> {
-        if (ns1.isEmpty()) {
-            return ns2
-        }
         if (ns1 == ns2) {
             return ns2
         }

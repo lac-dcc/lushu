@@ -26,11 +26,10 @@ class MergerTest {
         )
         val testCases = listOf<TestCase>(
             TestCase("empty", "", "", ""),
-            TestCase("single alpha", "", "a", "[a]{1,1}"),
-            TestCase("single num", "", "1", "[1]{1,1}"),
-            TestCase("many alpha", "", "abcd", "[abcd]{4,4}"),
-            TestCase("many num", "", "1234", "[1234]{4,4}"),
-            TestCase("alpha equal", "a", "a", "[a]{1,1}"),
+            TestCase("single alpha", "a", "a", "[a]{1,1}"),
+            TestCase("single num", "1", "1", "[1]{1,1}"),
+            TestCase("many alpha", "abcd", "abcd", "[abcd]{4,4}"),
+            TestCase("many num", "4321", "1234", "[1234]{4,4}"),
             TestCase("alpha diff", "a", "b", "[ab]{1,1}"),
             TestCase("alpha num", "a", "1", Fixtures.alnumStar),
             TestCase("alpha mul repeated", "aaaa", "aaaa", "[a]{4,4}"),
