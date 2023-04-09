@@ -33,11 +33,15 @@ sealed class Node(
     }
 
     override fun toString(): String {
-        return "Node(charset=$charset interval=$interval)"
+        return "Node(charset=$charset interval=$interval sensitive=$sensitive)"
     }
 
     override fun equals(other: Any?): Boolean = when (other) {
-        is Node -> this.charset == other.charset && this.interval == other.interval
+        is Node -> (
+            this.charset == other.charset &&
+                this.interval == other.interval &&
+                this.sensitive == other.sensitive
+            )
         else -> false
     }
 }
@@ -52,6 +56,11 @@ class IntervalNode(
     // respective base node interval.
     fun isWithinBounds(): Boolean {
         return interval.isWithinBound(baseNode.interval)
+    }
+
+    override fun toString(): String {
+        return "IntervalNode(baseNode=$baseNode charset=$charset interval=$interval " +
+            "sensitive=$sensitive)"
     }
 }
 
@@ -76,5 +85,10 @@ class PwsetNode(
 
     fun joinBlacklist(other: PwsetNode): Set<Int> {
         return blacklist.union(other.blacklist)
+    }
+
+    override fun toString(): String {
+        return "PwsetNode(id=$id blacklist=$blacklist charset=$charset " +
+            "interval=$interval sensitive=$sensitive)"
     }
 }
