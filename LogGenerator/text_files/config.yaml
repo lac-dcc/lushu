@@ -1,0 +1,14 @@
+latticeBase:
+  alpha:
+    intervalMin: 1
+    intervalMax: 10
+    charset: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  num:
+    intervalMin: 1
+    intervalMax: 4
+    charset: "0123456789"
+  punct:
+    intervalMin: 1
+    intervalMax: 2
+    charset: "\"!#\\$%&'()*+,-./:;<>=?@\\[\\]^_`{}|~\\\\"
+    blacklist: [alpha, num]
