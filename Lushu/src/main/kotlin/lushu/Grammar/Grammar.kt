@@ -5,7 +5,7 @@ package lushu.Grammar
 // tokens.
 class Grammar(
     // The root(non-terminal node) of the grammar.
-    private var grammar: NonTerminal = NonTerminal(Terminal(), null),
+    private var grammar: NonTerminal = NonTerminal(Terminal(), null)
 ) {
     // Builds the grammar data structure from a text string.Splits the text
     // string into an List of strings and matches each string with the nodes in
