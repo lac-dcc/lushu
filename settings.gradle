@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'Lushu'
-include 'Merger'
+include 'Lushu'

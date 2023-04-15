@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 val projectVersion = "0.1"
-val projectName = "Lushu Merger"
+val projectName = "Lushu"
 val applicationMainClassName = "lushu.Merger.AppKt"
 
 repositories {
