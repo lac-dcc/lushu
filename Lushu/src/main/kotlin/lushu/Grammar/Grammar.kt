@@ -1,4 +1,4 @@
-package lushu.Grammar.Grammar
+package lushu.Grammar
 
 // The Grammar class represents a regular grammar in a data structure. It
 // provides methods to build the grammar from a text string and print its

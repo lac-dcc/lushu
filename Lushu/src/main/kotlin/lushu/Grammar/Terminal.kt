@@ -1,4 +1,4 @@
-package lushu.Grammar.Grammar
+package lushu.Grammar
 
 // TODO: use Merger token -aholmquist 2023-04-15
 //

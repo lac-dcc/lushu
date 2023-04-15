@@ -1,4 +1,4 @@
-package lushu.Grammar.Grammar
+package lushu.Grammar
 
 interface Node {
     // Matches the string at the head of the input text list with the tokens in

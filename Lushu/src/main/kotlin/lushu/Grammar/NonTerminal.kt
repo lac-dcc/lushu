@@ -1,4 +1,4 @@
-package lushu.Grammar.Grammar
+package lushu.Grammar
 
 // The NonTerminal class represents a non-terminal node in a data structure. It
 // extends the Node class and provides methods to match input and print node

@@ -1,4 +1,4 @@
-package lushu.Grammar.Grammar
+package lushu.Grammar
 
 import java.util.regex.Pattern
 
