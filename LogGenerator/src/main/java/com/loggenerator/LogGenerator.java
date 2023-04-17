@@ -87,24 +87,16 @@ public class LogGenerator {
     }
 
     private static String generateCPF(Random random) {
-        int n1 = random.nextInt(10);
-        int n2 = random.nextInt(10);
-        int n3 = random.nextInt(10);
-        int n4 = random.nextInt(10);
-        int n5 = random.nextInt(10);
-        int n6 = random.nextInt(10);
-        int n7 = random.nextInt(10);
-        int n8 = random.nextInt(10);
-        int n9 = random.nextInt(10);
-        int d1 = 11 - ((n1 * 10 + n2 * 9 + n3 * 8 + n4 * 7 + n5 * 6 + n6 * 5 + n7 * 4 + n8 * 3 + n9 * 2) % 11);
-        if (d1 >= 10) {
-            d1 = 0;
+        String cpf = "";        
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; i < 3; i++) {
+                cpf += String.format("%d", random.nextInt(10))
+            }    
+            cpf += String.format(".");
         }
-        int d2 = 11 - ((n1 * 11 + n2 * 10 + n3 * 9 + n4 * 8 + n5 * 7 + n6 * 6 + n7 * 5 + n8 * 4 + n9 * 3 + d1 * 2) % 11);
-        if (d2 >= 10) {
-            d2 = 0;
-        }
-        return String.format("%d%d%d.%d%d%d.%d%d%d-%d%d", n1, n2, n3, n4, n5, n6, n7, n8, n9, d1, d2);
+        cpf.remove(cpf.length());
+        cpf += String.format("-%d%d", random.nextInt(10), random.nextInt(10));
+        return cpf
     }
 
     public static String generateRandomId() {
@@ -131,7 +123,21 @@ public class LogGenerator {
             String date = generateDate(random);
             String hours = generateHours(random);
 
-            message = message.replace("{CUSTOMER_ID}", id).replace("{TIME}", hours).replace("{DATE}", date).replace("{AMOUNT}", amount).replace("{USER_NAME}", name).replace("{SENDER_NAME}", name).replace("{CUSTOMER_NAME}", name).replace("{CPF}", "<s>" + cpf + "</s>").replace("{CONTENT}", content).replace("{FILE_NAME}", fileName).replace("{ID}", id).replace("{TO_USER}", to_user).replace("{ACTION}", action).replace("{DATETIME}", DATE_FORMAT.format(new Date()));
+            message = message
+                .replace("{CUSTOMER_ID}", id)
+                .replace("{TIME}", hours)
+                .replace("{DATE}", date)
+                .replace("{AMOUNT}", amount)
+                .replace("{USER_NAME}", name)
+                .replace("{SENDER_NAME}", name)
+                .replace("{CUSTOMER_NAME}", name)
+                .replace("{CPF}", "<s>" + cpf + "</s>")
+                .replace("{CONTENT}", content)
+                .replace("{FILE_NAME}", fileName)
+                .replace("{ID}", id)
+                .replace("{TO_USER}", to_user)
+                .replace("{ACTION}", action)
+                .replace("{DATETIME}", DATE_FORMAT.format(new Date()));
 
             System.out.println(message);
         }
@@ -157,7 +163,21 @@ public class LogGenerator {
             String date = generateDate(random);
             String hours = generateHours(random);
 
-            message = message.replace("{CUSTOMER_ID}", id).replace("{TIME}", hours).replace("{DATE}", date).replace("{AMOUNT}", amount).replace("{USER_NAME}", name).replace("{SENDER_NAME}", name).replace("{CUSTOMER_NAME}", name).replace("{CPF}", cpf).replace("{CONTENT}", content).replace("{FILE_NAME}", fileName).replace("{ID}", id).replace("{TO_USER}", to_user).replace("{ACTION}", action).replace("{DATETIME}", DATE_FORMAT.format(new Date()));
+            message = message
+                .replace("{CUSTOMER_ID}", id)
+                .replace("{TIME}", hours)
+                .replace("{DATE}", date)
+                .replace("{AMOUNT}", amount)
+                .replace("{USER_NAME}", name)
+                .replace("{SENDER_NAME}", name)
+                .replace("{CUSTOMER_NAME}", name)
+                .replace("{CPF}", cpf)
+                .replace("{CONTENT}", content)
+                .replace("{FILE_NAME}", fileName)
+                .replace("{ID}", id)
+                .replace("{TO_USER}", to_user)
+                .replace("{ACTION}", action)
+                .replace("{DATETIME}", DATE_FORMAT.format(new Date()));
 
             System.out.println(message);
             TimeUnit.SECONDS.sleep(1);

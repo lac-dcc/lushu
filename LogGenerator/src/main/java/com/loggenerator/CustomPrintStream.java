@@ -15,17 +15,6 @@ public class CustomPrintStream extends PrintStream  {
     
     @Override
     public void print(String s)  {
-
-        /*
-         * Modify this method! Here you should do:
-         * 1) Check if a given grammar can parse string 's' (you can load the grammar file when the agent is initialized and update that as needed using Antlr and the grammar generation algorithm).
-         * 1.1) If it can, generate the AST to figure out where the SQL query is.
-         * 1.2) If it cannot, generate a new grammar that contains string 's' as a new input example.
-         * 2) Parse the SQL query to get it's AST (you can do that with ANTLR, they have a SQL grammar on their github)
-         * 3) Compare the SQL AST you have with the AST the user provided to figure out where sensitive data is.
-         * 4) Redact what is sensite. 
-         */
-
         super.print(Preffix);
         s = g.conformSensitiveGrammar(s);
         super.print(s);

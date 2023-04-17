@@ -23,7 +23,7 @@ public class TxtFileLog {
   private BufferedWriter outFile;
 
   /**
-  * This is the constructor with parameters to TxtFileLog object
+  * constructor with parameters to TxtFileLog object
   * that opens an input file and starts an output file.
   * 
   * @param fileIn input file name to be opened.
@@ -35,7 +35,7 @@ public class TxtFileLog {
   }
   
   /**
-  * This method is used to initialize the output file, preparing it for future writes.
+  * initializes the output file, preparing it for future writes.
   * @param fileOut string representing the output file.
   */  
   private void startOutFile(String fileName){
@@ -47,7 +47,7 @@ public class TxtFileLog {
   }
   
   /**
-  * This method is used to open the input file.
+  * Opens the input file.
   * @param fileIn string representing the input file.
   */ 
   private void openInFile(String fileName){
@@ -60,7 +60,7 @@ public class TxtFileLog {
   }
   
   /**
-  * This method is used to open the output file.
+  * Opens the output file.
   */ 
   private void openOutFile(){
     try {
@@ -70,7 +70,7 @@ public class TxtFileLog {
   }
   
   /**
-  * This method return the respective line in the read file.
+  * Returns the respective line in the read file.
   * @return String This is the line read from the input file.
   */ 
   public String read(){
@@ -82,7 +82,7 @@ public class TxtFileLog {
   }
   
   /**
-  * This method write a string in the output file.
+  * Writes a string in the output file.
   * @param string string to be written.
   */ 
   public void write(String string){
@@ -95,14 +95,14 @@ public class TxtFileLog {
   }
   
   /**
-  * This method write a line break in the output file.
+  * Writes a line break in the output file.
   */ 
   public void newLine(){
       write("\n");
   }
   
   /**
-  * This method closes the input file.
+  * Closes the input file.
   */ 
   private void closeInFile(){
     try{
@@ -113,7 +113,7 @@ public class TxtFileLog {
   }
   
   /**
-  * This method closes the output file.
+  * Closes the output file.
   */ 
   private void closeOutFile(){
     try{
@@ -123,7 +123,7 @@ public class TxtFileLog {
   }
   
   /**
-  * This method closes the files.
+  * Closes all the files.
   */ 
   public void closeFiles(){
     closeInFile();
