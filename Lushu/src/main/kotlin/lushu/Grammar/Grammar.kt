@@ -10,17 +10,11 @@ class Grammar(
     // Builds the grammar data structure from a text string.Splits the text
     // string into an List of strings and matches each string with the nodes in
     // the data structure.
-    fun build(text: String): List<String> {
-        val node: Node = grammar
-
-        var input = listOf<String>()
-
-        input += text.split(" ")
-
+    fun build(text: String) {
+        var input = text.split(" ")
         while (!input.isEmpty()) {
-            input = node.match(input)
+            input = grammar.match(input)
         }
-        return input
     }
 
     // Prints the regular expressions for each token present in the grammar.

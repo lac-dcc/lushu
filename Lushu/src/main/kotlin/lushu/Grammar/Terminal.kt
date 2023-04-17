@@ -39,8 +39,8 @@ class Terminal(
 
     override fun print() {
         tokens.forEach { token ->
-            System.out.print(token.regex + " ")
+            print(token.regex + " ")
         }
-        System.out.println("")
+        println("")
     }
 }
