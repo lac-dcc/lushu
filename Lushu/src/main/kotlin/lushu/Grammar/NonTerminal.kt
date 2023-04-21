@@ -14,21 +14,20 @@ class NonTerminal(
     // (the remaining strings after the matched string). Otherwise, creates a
     // new terminal node and tries to match again. If there is a second node,
     // passes the tail of the input list to it for further matching.
-    override fun parser(input: List<String>): String {
-        val firstString = first.parser(input)
+    override fun parse(input: List<String>): String {
+        val firstString = first.parse(input)
 
-        // 
         val input = input.subList(1, input.size)
-        //
         if (input.isEmpty()) {
-            return "";
+            return ""
         }
 
         val sec = second
-        if (sec == null)
+        if (sec == null) {
             second = NonTerminal(Terminal(), null)
-        
-        return firstString + " " + second.parser(input)
+        }
+
+        return firstString + " " + second.parse(input)
     }
 
     // Prints the regular expressions for each token present in the terminal
