@@ -1,0 +1,10 @@
+document.pdf
+presentation.pptx
+image.jpg
+video.mp4
+spreadsheet.xlsx
+code.java
+text.txt
+audio.mp3
+archive.zip
+database.db

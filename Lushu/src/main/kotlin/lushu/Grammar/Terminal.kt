@@ -15,15 +15,50 @@ class Terminal(
         tokens += token
     }
 
+    private fun match(str: String, flagSensitive: Boolean): Node? {
+
+        var tkAux: Node? = null
+
+        for (tk in tokens) {
+            if (matchToken(tk, str)) {
+            if (tk.sensitive) 
+                return tk
+            else if (tk.sensitive == flagSensitive) 
+                tkAux = tk
+            }
+
+        return tkAux
+    }
+
+    fun hasToken(str:String): Boolean{
+
+    }
+
     // Matches the string at the head of the input text list with the tokens in
     // the terminal node. If a match is found, removes the matched string from
     // the input list and returns the remaining strings. Otherwise, creates a
     // new token and adds it to the list of tokens.
-    override fun match(input: List<String>): List<String> {
+    override fun parser(input: List<String>): String {
         if (input.isEmpty()) {
-            return input
+            return ""
         }
-        val first_string = input[0]
+
+        var FLAGSENSITIVE = false
+
+        val firstString = input[0]
+
+        if (firstString[0] == '<') {
+            if (hasToken(firstString)) {
+                //
+                firstString = firstString.substring(3, firstString.length - 4)
+                //
+                //
+                FLAGSENSITIVE = true
+                //
+            }
+        }
+
+        Node tk = match(firstString, FLAGSENSITIVE)
         tokens.forEach { tk ->
             if (tk.match(first_string)) {
                 input.drop(1)
