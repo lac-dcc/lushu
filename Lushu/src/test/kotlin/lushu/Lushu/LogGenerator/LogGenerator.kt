@@ -1,13 +1,16 @@
 package lushu.Lushu.LogGenerator
 
 import java.io.File
+import java.nio.file.Paths
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Random
 import java.util.concurrent.TimeUnit
 
-class LogGenerator {
+class LogGenerator(
+    private val logExamplesDir: String
+) {
     private val random = Random()
     private val datefmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
@@ -67,13 +70,17 @@ class LogGenerator {
         return "\$${(random.nextInt(99901) + 10) * 100},00"
     }
 
+    private fun logExamplesFpath(relativePath: String): String {
+        return Paths.get(logExamplesDir, relativePath).toAbsolutePath().toString()
+    }
+
     private fun dispatchLogs(numLogs: Int, sensitiveMark: Boolean = false) {
         for (i in 0..numLogs) {
-            val fileName = getRandomLine("LogGenerator/text_files/files.txt")
-            val content = getRandomLine("LogGenerator/text_files/contents.txt")
-            val name = getRandomLine("LogGenerator/text_files/names.txt")
-            val action = getRandomLine("LogGenerator/text_files/action.txt")
-            val message = getRandomLine("LogGenerator/text_files/messages.txt")
+            val fileName = getRandomLine(logExamplesFpath("files.txt"))
+            val content = getRandomLine(logExamplesFpath("contents.txt"))
+            val name = getRandomLine(logExamplesFpath("names.txt"))
+            val action = getRandomLine(logExamplesFpath("action.txt"))
+            val message = getRandomLine(logExamplesFpath("messages.txt"))
 
             val cpf = if (sensitiveMark) "<s>${generateCPF()}</s>" else generateCPF()
             val to_user = if (sensitiveMark) "<s>${generateCPF()}</s>" else generateCPF()
