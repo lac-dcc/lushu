@@ -50,6 +50,30 @@ class Terminal(
         return Pair(s, false)
     }
 
+    // TODO: why does this need the argument flagSensitive?
+    private fun match(str: String, flagSensitive: Boolean): Node? {
+        var tkAux: Node? = null
+
+        tokens.forEach { tk ->
+            if (!matchToken(tk, str)) {
+                continue
+            }
+            if (tk.sensitive) {
+                return tk
+            }
+            if (tk.sensitive == flagSensitive) {
+                tkAux = tk
+            }
+        }
+
+        return tkAux
+    }
+
+    fun hasToken(s: String): Boolean {
+        // TODO
+        return true
+    }
+
     // Matches the string at the head of the input text list with the tokens in
     // the terminal node. If a match is found, removes the matched string from
     // the input list and returns the remaining strings. Otherwise, creates a

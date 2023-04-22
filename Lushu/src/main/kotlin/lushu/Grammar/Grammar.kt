@@ -1,6 +1,5 @@
 package lushu.Grammar
 
-import MergerInterface
 
 class Grammar(
     // The root(non-terminal node) of the grammar.
