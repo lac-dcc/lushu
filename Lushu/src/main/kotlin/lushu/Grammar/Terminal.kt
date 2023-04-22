@@ -40,7 +40,7 @@ class Terminal(
         return token
     }
 
-    fun hasToken(s: String): Pair<String, Boolean> {
+    fun hasFlagSensitive(s: String): Pair<String, Boolean> {
         if (s[0] == '<') {
             val regex = Regex("<s>.*</s>")
             if(regex.matches(s))
@@ -59,7 +59,7 @@ class Terminal(
             return ""
         }
 
-        var(s, sensitive) = hasToken(input.get(0))
+        var(s, sensitive) = hasFlagSensitive(input.get(0))
 
         val token: Node? = match(s)
 
@@ -69,7 +69,7 @@ class Terminal(
             addToken(s, sensitive)
         
         if(token.getSensitive() || sensitive)
-            return encrypt(s)
+            return "*".repeat(s.length)
         return s
     }
 
