@@ -1,20 +1,21 @@
 package lushu.Grammar
 
-// The Grammar class represents a regular grammar in a data structure. It
-// provides methods to parse the grammar from a text string and print its
-// tokens.
+import MergerInterface
+
 class Grammar(
     // The root(non-terminal node) of the grammar.
-    private var grammar: NonTerminal = NonTerminal(Terminal(), null)
+    private var grammar: Node = NonTerminal(Terminal(), null)
+    // The merger of the grammar
+    private var mergerInterface: MergerInterface = MergerInterface()
 ) {
-    // Parses the grammar data structure from a text string.Splits the text
-    // string into an List of strings and matches each string with the nodes in
-    // the data structure.
-    fun parse(text: String) {
+    // Parsers the input string using the dynamic grammar
+    fun parse(text: String): String {
         var input = text.split(" ")
+        var output = ""
         while (!input.isEmpty()) {
-            input = grammar.match(input)
+            output += grammar.parse(input)
         }
+        return output
     }
 
     // Prints the regular expressions for each token present in the grammar.
