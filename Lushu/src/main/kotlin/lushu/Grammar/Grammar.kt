@@ -8,16 +8,11 @@ class Grammar(
 ) {
     // Parsers the input string using the dynamic grammar
     fun parse(text: String): String {
-        var input = text.split(" ")
-        var output = ""
-        while (!input.isEmpty()) {
-            output += grammar.parse(input)
-        }
-        return output
+        return grammar.match(text.split(" "))
     }
 
     // Prints the regular expressions for each token present in the grammar.
-    fun print() {
-        grammar.print()
+    override fun toString(): String {
+        return grammar.toString()
     }
 }

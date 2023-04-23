@@ -104,9 +104,12 @@ class Terminal(
     }
 
     override fun print() {
+        var s = ""
         tokens.forEach { token ->
-            print(token.regex + " ")
+            s += token.regex
+            s += " "
         }
-        println("")
+        s += "\n"
+        return s
     }
 }
