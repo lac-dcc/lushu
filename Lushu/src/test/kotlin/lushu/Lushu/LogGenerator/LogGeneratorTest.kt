@@ -1,6 +1,7 @@
 package lushu.Lushu.LogGenerator
 
 import org.junit.jupiter.api.Test
+import java.io.PrintStream
 import java.nio.file.Paths
 
 class LogGeneratorTest {
@@ -11,6 +12,7 @@ class LogGeneratorTest {
             Paths.get("src", "test", "fixtures", "logs")
                 .toAbsolutePath().toString()
         )
-        lg.run(500)
+        lg.run(2)
+        System.setOut(PrintStream(System.out))
     }
 }

@@ -44,7 +44,7 @@ class LogGenerator(
     }
 
     private fun generateCPF(): String {
-        val cpf: String = ""
+        var cpf: String = ""
         for (i in 0..2) {
             for (j in 0..2) {
                 cpf += random.nextInt(10).toString()
@@ -58,12 +58,12 @@ class LogGenerator(
     }
 
     private fun generateRandomId(): String {
-        val validChars: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-        val sb: StringBuilder = StringBuilder()
+        val validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+        var s = ""
         for (i in 0..7) {
-            sb.append(validChars.charAt(random.nextInt(validChars.length())))
+            s += validChars[random.nextInt(validChars.length)]
         }
-        return sb.toString()
+        return s
     }
 
     private fun generateRandomAmount(): String {
@@ -79,8 +79,7 @@ class LogGenerator(
             val fileName = getRandomLine(logExamplesFpath("files.txt"))
             val content = getRandomLine(logExamplesFpath("contents.txt"))
             val name = getRandomLine(logExamplesFpath("names.txt"))
-            val action = getRandomLine(logExamplesFpath("action.txt"))
-            val message = getRandomLine(logExamplesFpath("messages.txt"))
+            val action = getRandomLine(logExamplesFpath("actions.txt"))
 
             val cpf = if (sensitiveMark) "<s>${generateCPF()}</s>" else generateCPF()
             val to_user = if (sensitiveMark) "<s>${generateCPF()}</s>" else generateCPF()
@@ -89,7 +88,7 @@ class LogGenerator(
             val date = generateDate()
             val hours = generateHours()
 
-            message = message
+            val message = getRandomLine(logExamplesFpath("messages.txt"))
                 .replace("{CUSTOMER_ID}", id)
                 .replace("{TIME}", hours)
                 .replace("{DATE}", date)
@@ -105,7 +104,7 @@ class LogGenerator(
                 .replace("{ACTION}", action)
                 .replace("{DATETIME}", datefmt.format(Date()))
 
-            System.out.println(message)
+            println(message)
         }
     }
 }
