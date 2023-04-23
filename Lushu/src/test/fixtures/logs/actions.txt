@@ -1,0 +1,15 @@
+login
+logout
+create_user
+delete_user
+update_profile
+search
+add_to_cart
+checkout
+send_message
+share
+download
+upload
+play
+stop
+like

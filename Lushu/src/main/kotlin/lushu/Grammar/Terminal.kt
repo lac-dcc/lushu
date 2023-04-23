@@ -37,10 +37,13 @@ class Terminal(
         return input
     }
 
-    override fun print() {
+    override fun toString(): String {
+        var s = ""
         tokens.forEach { token ->
-            print(token.regex + " ")
+            s += token.regex
+            s += " "
         }
-        println("")
+        s += "\n"
+        return s
     }
 }
