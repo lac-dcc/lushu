@@ -1,9 +1,8 @@
 package lushu.Grammar
 
-
 class Grammar(
     // The root(non-terminal node) of the grammar.
-    private var grammar: Node = NonTerminal(Terminal(), null)
+    private var grammar: Node = NonTerminal(Terminal(), null),
     // The merger of the grammar
     private var mergerInterface: MergerInterface = MergerInterface()
 ) {

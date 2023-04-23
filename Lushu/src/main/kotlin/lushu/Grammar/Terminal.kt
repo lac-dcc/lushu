@@ -11,17 +11,18 @@ class Terminal(
     // A list of tokens for the terminal node.
     private var tokens: List<Token> = listOf()
 ) : Node {
-    fun addToken(s: String, sensitive: Boolean): Unit {
-        val intervalNodes = getNodeFactory().buildIntervalNodes(s, sensitive);
-        
-        if(tokens.isEmpty())
+    fun addToken(s: String, sensitive: Boolean) {
+        val intervalNodes = getNodeFactory().buildIntervalNodes(s, sensitive)
+
+        if (tokens.isEmpty()) {
             tokens = getMerger().merge(intervalNodes, intervalNodes)
-        else{
-            val mergerResult = getMerger().merge(tokens, intervalNodes);
-            if((mergerResult.size() == 1) && (isTop(mergerResult)))
+        } else {
+            val mergerResult = getMerger().merge(tokens, intervalNodes)
+            if ((mergerResult.size() == 1) && (isTop(mergerResult))) {
                 tokens.plus(getMerger().merge(intervalNodes, intervalNodes))
-            else
+            } else {
                 tokens = mergerResult
+            }
         }
     }
 
@@ -30,11 +31,13 @@ class Terminal(
         var token: Node? = null
 
         tokens.forEach { tk ->
-            if(tk.match(s) )
-                if (tk.getSensitive())
+            if (tk.match(s)) {
+                if (tk.getSensitive()) {
                     return tk
-                else
+                } else {
                     token = tk
+                }
+            }
         }
 
         return token
@@ -43,8 +46,9 @@ class Terminal(
     fun hasFlagSensitive(s: String): Pair<String, Boolean> {
         if (s[0] == '<') {
             val regex = Regex("<s>.*</s>")
-            if(regex.matches(s))
+            if (regex.matches(s)) {
                 return Pair(s.substring(3, s.length - 4), true)
+            }
             return Pair(s, false)
         }
         return Pair(s, false)
@@ -87,13 +91,15 @@ class Terminal(
 
         val token: Node? = match(s)
 
-        if(token== null)
+        if (token == null) {
             addToken(s, sensitive)
-        else if (!token.getSensitive() && sensitive)
+        } else if (!token.getSensitive() && sensitive) {
             addToken(s, sensitive)
-        
-        if(token.getSensitive() || sensitive)
+        }
+
+        if (token.getSensitive() || sensitive) {
             return "*".repeat(s.length)
+        }
         return s
     }
 
