@@ -1,10 +1,10 @@
-package lushu.Lushu.LogGenerator
+package lushu.Interceptor
 
 import lushu.Grammar.Grammar
 import java.io.OutputStream
 import java.io.PrintStream
 
-class CustomPrintStream(
+class LushuPrintStream(
     ostream: OutputStream
 ) : PrintStream(ostream) {
     private val g = Grammar()
