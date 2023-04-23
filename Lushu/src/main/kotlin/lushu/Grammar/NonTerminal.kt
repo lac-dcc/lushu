@@ -1,43 +1,42 @@
 package lushu.Grammar
 
-import org.slf4j.LoggerFactory
-
+// The NonTerminal class represents a non-terminal node in a data structure. It
+// extends the Node class and provides methods to match input and print node
+// information.
 class NonTerminal(
+    // The first node in the non-terminal. This will be a terminal node.
     private var first: Node,
-    // second is null when it represents a leaf of the grammar
+    // The second node in the non-terminal. This will be a non-terminal node.
     private var second: Node? = NonTerminal(Terminal(), null)
 ) : Node {
-    private val logger = LoggerFactory.getLogger(this::class.java)
-
     // Matches the string at the head of the input text list with the tokens in
     // the first node. If a match is found, returns the tail of the input list
     // (the remaining strings after the matched string). Otherwise, creates a
     // new terminal node and tries to match again. If there is a second node,
     // passes the tail of the input list to it for further matching.
-    override fun match(input: List<String>): List<String> {
-        logger.debug("Matching input $input in non-terminal node")
+    override fun parse(input: List<String>): String {
+        val firstString = first.parse(input)
 
-        val tail = first.match(input)
-        if (tail.isEmpty()) {
-            logger.debug("Matched first: $tail")
-            return tail
+        input.drop(0)
+
+        if (input.isEmpty()) {
+            return ""
         }
 
-        val sec = second
-        if (sec == null) {
-            logger.debug("No match (second is null)")
-            return listOf<String>()
-        } else {
-            logger.debug("Second is not null")
-            return sec.match(tail)
+        if (second == null) {
+            second = NonTerminal(Terminal(), null)
         }
+
+        return firstString + " " + (second?.parse(input) ?: "")
     }
 
-    override fun toString(): String {
-        var s = first.toString()
-        if (second != null) {
-            s += second.toString()
+    // Prints the regular expressions for each token present in the terminal
+    // node and call to the next non-terminal node.
+    override fun print() {
+        first.print()
+        val sec = second
+        if (sec != null) {
+            sec.print()
         }
-        return s
     }
 }
