@@ -1,14 +1,14 @@
 # Lushu
 
-_Lushu_ (short for the Chinese 记录树, 录树), is a regular grammar generator for
-infinite text. _Lushu_ generates a tree of regular expressions that recognizes
-given log entries, in an online fashion.
-
-## Disclaimer
-
-_Lushu_ is a **work in progress**. Only one part of it is ready, the `Merger`.
+_Lushu_ (short for the Chinese 记录树, 录树), is a system that recognizes
+infinite languages and redacts sensitive strings embedded into sentences of this
+language. It is particularly useful to adjust running systems to data protection
+laws, because it is capable of redacting sensitive information right at their
+source.
 
 ## Running
+
+### Run the Merger
 
 Run `gradle fatJar` to generate the file `./Merger/build/libs/Merger.jar`. Run
 it following the example:
@@ -35,6 +35,8 @@ Also, try specifying different YAML configuration files. You may find it easier
 to edit the example file in `./example/config.yaml`.
 
 ## Testing
+
+### Testing the Merger
 
 To test, run `gradle test`. To see test cases or edit tests, find all source
 code under `./Merger/src/test/`.
