@@ -1,8 +1,18 @@
 package lushu.Grammar.Grammar
 
+import java.io.File
+
 class Grammar {
     private var grammar = NonTerminal.new()
     private val tokenSeparator = " "
+
+    fun train(exampleFile: String) {
+        File(exampleFile).useLines { lines ->
+            lines.forEach {
+                consume(it)
+            }
+        }
+    }
 
     fun consume(words: List<String>): String {
         val consumedWords = grammar.consume(words)

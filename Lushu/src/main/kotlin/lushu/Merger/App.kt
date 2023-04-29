@@ -18,7 +18,7 @@ fun mergeWordsFromStdin(cfg: Config): String {
     }
     var acc: List<Token> = nf.buildIntervalNodes(words[0])
     words.forEach {
-        acc = merger.merge(acc, nf.buildIntervalNodes(it))
+        acc = merger.merge(acc, nf.buildIntervalNodes(it)).tokens
     }
     return NodePrinter.print(acc)
 }

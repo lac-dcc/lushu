@@ -37,8 +37,8 @@ class Merger(
         return merge(ns1, s2)
     }
 
-    fun tokensFromString(s: String): List<Token> {
-        return nf.buildIntervalNodes(s)
+    fun tokensFromString(s: String, sensitive: Boolean = false): List<Token> {
+        return nf.buildIntervalNodes(s, sensitive)
     }
 
     companion object {

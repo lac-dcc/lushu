@@ -21,7 +21,12 @@ class Terminal(
         if (res.success) {
             logger.debug("Input entry $word merged! New tokens: ${res.tokens}")
             tokens = res.tokens
-            return Result(true, word)
+            val obfuscate = tokens[0].sensitive
+            if (obfuscate) {
+                return Result(true, constantMask)
+            } else {
+                return Result(true, word)
+            }
         }
         logger.debug("Input entry $word is not mergeable with $tokens")
         return Result(false, word)
@@ -37,8 +42,16 @@ class Terminal(
     }
 
     companion object {
+        private val sensitiveRegex = Regex("^<(\\p{Alnum}+)>(.+)</\\1>$")
+
+        private val constantMask = "*****"
+
         fun new(s: String = ""): Terminal {
-            return Terminal(MergerS.merger().tokensFromString(s))
+            return Terminal(MergerS.merger().tokensFromString(s, isSensitive(s)))
+        }
+
+        private fun isSensitive(word: String): Boolean {
+            return sensitiveRegex.matches(word)
         }
     }
 }
