@@ -17,22 +17,22 @@ class TerminalTest {
     fun testConsumeBasic() {
         data class TestCase(
             val desc: String,
-            val input: List<String>,
+            val input: String,
             val tokens: List<Token>,
-            val expected: List<String>
+            val expected: Terminal.Result
         )
         val testCases = listOf<TestCase>(
             TestCase(
                 "one word",
-                listOf<String>("a"),
+                "a",
                 buildTokens("abc"),
-                listOf<String>()
+                Terminal.Result(true, "a")
             ),
             TestCase(
                 "multiple words",
-                listOf<String>("a", "b", "c"),
+                "a",
                 buildTokens("abc"),
-                listOf<String>("b", "c")
+                Terminal.Result(true, "a")
             )
         )
         testCases.forEach {

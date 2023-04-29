@@ -10,23 +10,34 @@ class NonTerminal(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun consume(input: List<String>): List<String> {
-        var consumed = listOf<String>()
+        if (input.isEmpty()) {
+            return input
+        }
+        var res = Terminal.Result()
+        val word = input[0]
         terminals.forEach {
-            consumed = it.consume(input)
-            if (consumed.size != input.size) {
+            res = it.consume(word)
+            if (res.consumed) {
                 return@forEach
             }
         }
-        if (consumed.isEmpty()) {
-            // TODO: return value
-            return listOf()
+        if (!res.consumed) {
+            // No terminals were able to consume a word. So we must add a
+            // terminal with a new token that recognizes that word.
+            terminals += Terminal.new(word)
         }
+        if (input.size == 1) {
+            // Must have been consumed by the terminals already; return.
+            return listOf(res.obfuscated)
+        }
+
+        // Process the next word
+        val consumed = input.drop(1)
         val n = next
         if (n == null) {
             next = new(consumed[0], id + 1)
         }
-        // TODO: return value
-        return next!!.consume(consumed)
+        return listOf(res.obfuscated) + next!!.consume(consumed)
     }
 
     // print pretty-prints the NonTerminal tree
@@ -53,13 +64,7 @@ class NonTerminal(
 
     companion object {
         fun new(s: String = "", id: Int = 0): NonTerminal {
-            return NonTerminal(
-                id,
-                listOf<Terminal>(
-                    Terminal(MergerS.merger().tokensFromString(s))
-                ),
-                null
-            )
+            return NonTerminal(id, listOf(Terminal.new(s)), null)
         }
     }
 }

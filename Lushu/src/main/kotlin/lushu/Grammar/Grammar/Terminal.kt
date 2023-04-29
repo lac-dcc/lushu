@@ -10,23 +10,21 @@ class Terminal(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     data class Result(
-        val consumed: Boolean,
-        val obfuscated: List<String>
+        val consumed: Boolean = false,
+        val obfuscated: String = ""
     )
 
     // Consumes the string at the head of the input text list with the tokens in
     // the terminal node.
-    fun consume(input: List<String>): List<String> {
-        // Assume input has at least size one
-        val word = input[0]
+    fun consume(word: String): Result {
         val res = MergerS.merger().merge(tokens, word)
         if (res.success) {
             logger.debug("Input entry $word merged! New tokens: ${res.tokens}")
             tokens = res.tokens
-            return input.drop(1)
+            return Result(true, word)
         }
         logger.debug("Input entry $word is not mergeable with $tokens")
-        return input
+        return Result(false, word)
     }
 
     // print pretty-prints the NonTerminal tree
@@ -36,5 +34,11 @@ class Terminal(
 
     override fun toString(): String {
         return "Terminal(tokens=$tokens)"
+    }
+
+    companion object {
+        fun new(s: String = ""): Terminal {
+            return Terminal(MergerS.merger().tokensFromString(s))
+        }
     }
 }
