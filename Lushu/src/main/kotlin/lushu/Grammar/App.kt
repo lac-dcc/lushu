@@ -8,7 +8,8 @@ fun main(args: Array<String>) {
         return
     }
     val configFilePath = args[0]
-    val grammar = Grammar(configFilePath)
+    Merger.init(configFilePath)
+    val grammar = Grammar()
     grammar.matchFromStdin()
     print(grammar)
 }

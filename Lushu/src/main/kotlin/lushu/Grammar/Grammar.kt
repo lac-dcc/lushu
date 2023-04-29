@@ -1,22 +1,8 @@
 package lushu.Grammar
 
-import lushu.Merger.Config.Config
-import lushu.Merger.Lattice.NodeFactory
-import lushu.Merger.Merger.Merger
-
-class Grammar(
-    configFilePath: String
-) {
-    val merger: Merger
-    val nodeFactory: NodeFactory
-    val grammar: NonTerminal = NonTerminal(Terminal(), null)
-    val tokenSeparator = " "
-
-    init {
-        val config = Config.fromConfigFile(configFilePath)
-        nodeFactory = config.nodeFactory
-        merger = Merger.fromConfig(config)
-    }
+class Grammar {
+    private val grammar: NonTerminal = NonTerminal(Terminal(), null)
+    private val tokenSeparator = " "
 
     fun matchFromStdin() {
         val input = readLine()

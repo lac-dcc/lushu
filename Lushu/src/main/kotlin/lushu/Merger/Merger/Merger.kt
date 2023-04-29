@@ -2,10 +2,13 @@ package lushu.Merger.Merger
 
 import lushu.Merger.Config.Config
 import lushu.Merger.Lattice.MergerLattice
+import lushu.Merger.Lattice.NodeFactory
 
 class Merger(
-    private val lattice: MergerLattice
+    private val nf: NodeFactory
 ) {
+    private val lattice = MergerLattice(nf)
+
     private val reducer = Reducer(lattice)
     private val zipper = Zipper(lattice)
 
@@ -16,8 +19,13 @@ class Merger(
     }
 
     companion object {
+        fun fromConfigFile(fpath: String): Merger {
+            val config = Config.fromConfigFile(fpath)
+            return Merger(config.nodeFactory)
+        }
+
         fun fromConfig(cfg: Config): Merger {
-            return Merger(MergerLattice(cfg.nodeFactory))
+            return Merger(cfg.nodeFactory)
         }
     }
 }

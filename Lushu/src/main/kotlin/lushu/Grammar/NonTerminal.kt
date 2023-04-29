@@ -1,14 +1,14 @@
 package lushu.Grammar
 
 // The NonTerminal class represents a non-terminal node in a data structure. It
-// extends the Node class and provides methods to match input and print node
+// extends the Rule class and provides methods to match input and print node
 // information.
 class NonTerminal(
     // The first node in the non-terminal. This will be a terminal node.
-    private var first: Node,
+    private var first: Rule,
     // The second node in the non-terminal. This will be a non-terminal node.
-    private var second: Node? = NonTerminal(Terminal(), null)
-) : Node {
+    private var second: Rule? = NonTerminal(Terminal(), null)
+) : Rule {
     // Matches the string at the head of the input text list with the tokens in
     // the first node. If a match is found, returns the tail of the input list
     // (the remaining strings after the matched string). Otherwise, creates a
@@ -24,6 +24,7 @@ class NonTerminal(
         var s = first.toString()
         if (second != null) {
             s += second.toString()
-        } return s
+        }
+        return s
     }
 }

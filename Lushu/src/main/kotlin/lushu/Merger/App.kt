@@ -1,14 +1,13 @@
 package lushu.Merger
 
 import lushu.Merger.Config.Config
-import lushu.Merger.Lattice.MergerLattice
 import lushu.Merger.Lattice.NodePrinter
 import lushu.Merger.Merger.Merger
 import lushu.Merger.Merger.Token
 
 fun mergeWordsFromStdin(cfg: Config): String {
     val nf = cfg.nodeFactory
-    val merger = Merger(MergerLattice(nf))
+    val merger = Merger(nf)
     val input = readLine()
     if (input == null || input.isEmpty()) {
         return ""

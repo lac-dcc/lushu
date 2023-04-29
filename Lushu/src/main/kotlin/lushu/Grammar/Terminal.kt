@@ -3,12 +3,12 @@ package lushu.Grammar
 import lushu.Merger.Merger.Token
 
 // The Terminal class represents a terminal node in a data structure. It extends
-// the Node class and provides methods to add tokens, match input, and print
+// the Rule class and provides methods to add tokens, match input, and print
 // node information.
 class Terminal(
     // A list of tokens for the terminal node.
     private var tokens: List<Token> = listOf()
-) : Node {
+) : Rule {
     // fun addToken(s: String, sensitive: Boolean) {
     //     val intervalNodes = getNodeFactory().buildIntervalNodes(s, sensitive)
 
@@ -81,20 +81,6 @@ class Terminal(
     // new token and adds it to the list of tokens.
     override fun match(input: List<String>): List<String> {
         return input
-        // var(s, sensitive) = hasFlagSensitive(input.get(0))
-
-        // val token: Node? = match(s)
-
-        // if (token == null) {
-        //     addToken(s, sensitive)
-        // } else if (!token.getSensitive() && sensitive) {
-        //     addToken(s, sensitive)
-        // }
-
-        // if (token.getSensitive() || sensitive) {
-        //     return "*".repeat(s.length)
-        // }
-        // return s
     }
 
     override fun toString(): String {

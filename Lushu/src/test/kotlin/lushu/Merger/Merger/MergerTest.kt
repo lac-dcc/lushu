@@ -1,7 +1,6 @@
 package lushu.Merger.Merger
 
 import lushu.Merger.Config.Config
-import lushu.Merger.Lattice.MergerLattice
 import lushu.Merger.Lattice.Node.Node
 import lushu.Merger.Lattice.NodePrinter
 import lushu.Merger.TestUtils.Fixtures
@@ -13,8 +12,7 @@ import org.junit.jupiter.api.Test
 class MergerTest {
     private val cfg = Config.fromConfigFile(Utils.basicConfigFullPath())
     private val nf = cfg.nodeFactory
-    private val lattice = MergerLattice(nf)
-    private val merger = Merger(lattice)
+    private val merger = Merger(nf)
 
     @Test
     fun mergeOnce() {

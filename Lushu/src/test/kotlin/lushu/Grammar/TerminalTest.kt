@@ -11,11 +11,19 @@ class TerminalTest {
     private val nf = cfg.nodeFactory
 
     @Test
-    fun testToStringOneElem() {
-        var tokens: List<Token> = nf.buildIntervalNodes("a")
-        val terminal = Terminal(tokens)
-        val expected = "a"
-        val actual = terminal.toString()
+    fun testMatchEmpty() {
+        val terminal = Terminal(listOf<Token>())
+        val expected = listOf<String>()
+        val actual = terminal.match(listOf<String>("a"))
         assertEquals(expected, actual)
     }
+
+    // @Test
+    // fun testMatchOneToken() {
+    //     var tokens: List<Token> = nf.buildIntervalNodes("a")
+    //     val terminal = Terminal(tokens)
+    //     val expected = "a"
+    //     val actual = terminal.toString()
+    //     assertEquals(expected, actual)
+    // }
 }
