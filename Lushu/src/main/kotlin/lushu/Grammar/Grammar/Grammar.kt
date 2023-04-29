@@ -4,6 +4,20 @@ class Grammar {
     private var grammar = NonTerminal.new()
     private val tokenSeparator = " "
 
+    fun consume(words: List<String>): String {
+        val consumedWords = grammar.consume(words)
+        return consumedWords.joinToString(tokenSeparator)
+    }
+
+    fun consume(s: String): String {
+        return consume(s.split(tokenSeparator))
+    }
+
+    // consumeFromStdin starts a new grammar from scratch. It reads every line
+    // received from stdin, consuming every line.
+    //
+    // This is not very useful for interception, since usually the intercepted
+    // strings will come the program itself inside the JVM.
     fun consumeFromStdin() {
         var input = readLine()
         while (input == null || input.isEmpty()) {

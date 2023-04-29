@@ -105,14 +105,9 @@ tasks {
 }
 
 application {
-    // Remove default application
-    mainClassName = ""
+    // Default application name
+    mainClassName = "lushu.Grammar.AppKt"
 }
-
-// val buildMerger = tasks.register<JavaExec>("buildMerger") {
-//     classpath = sourceSets["merger"].runtimeClasspath
-//     main = "lushu.Merger.AppKt"
-// }
 
 tasks.test {
     testLogging.showStandardStreams = true

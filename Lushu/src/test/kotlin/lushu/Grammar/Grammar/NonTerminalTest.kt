@@ -79,6 +79,14 @@ class NonTerminalTest {
                 "R0 :: [ab]{1,1}\n"
             ),
             TestCase(
+                "two lines one word unmergeable",
+                listOf<List<String>>(
+                    listOf("a"),
+                    listOf("a.b")
+                ),
+                "R0 :: [a]{1,1} | [a]{1,1}[.]{1,1}[b]{1,1}\n"
+            ),
+            TestCase(
                 "two lines one words ip",
                 listOf<List<String>>(
                     listOf("1.2.3.4"),

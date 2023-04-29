@@ -9,6 +9,11 @@ class Terminal(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    data class Result(
+        val consumed: Boolean,
+        val obfuscated: List<String>
+    )
+
     // Consumes the string at the head of the input text list with the tokens in
     // the terminal node.
     fun consume(input: List<String>): List<String> {

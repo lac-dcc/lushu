@@ -9,7 +9,7 @@ class NonTerminal(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun consume(input: List<String>) {
+    fun consume(input: List<String>): List<String> {
         var consumed = listOf<String>()
         terminals.forEach {
             consumed = it.consume(input)
@@ -18,13 +18,15 @@ class NonTerminal(
             }
         }
         if (consumed.isEmpty()) {
-            return
+            // TODO: return value
+            return listOf()
         }
         val n = next
         if (n == null) {
             next = new(consumed[0], id + 1)
         }
-        next!!.consume(consumed)
+        // TODO: return value
+        return next!!.consume(consumed)
     }
 
     // print pretty-prints the NonTerminal tree
