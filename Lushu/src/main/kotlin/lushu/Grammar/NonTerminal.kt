@@ -1,30 +1,55 @@
 package lushu.Grammar
 
-// The NonTerminal class represents a non-terminal node in a data structure. It
-// extends the Rule class and provides methods to match input and print node
-// information.
+import org.slf4j.LoggerFactory
+
 class NonTerminal(
-    // The first node in the non-terminal. This will be a terminal node.
-    private var first: Rule,
-    // The second node in the non-terminal. This will be a non-terminal node.
-    private var second: Rule? = NonTerminal(Terminal(), null)
-) : Rule {
-    // Matches the string at the head of the input text list with the tokens in
-    // the first node. If a match is found, returns the tail of the input list
-    // (the remaining strings after the matched string). Otherwise, creates a
-    // new terminal node and tries to match again. If there is a second node,
-    // passes the tail of the input list to it for further matching.
-    override fun match(input: List<String>): List<String> {
-        return input
+    private var terminals: List<Terminal>,
+    private var next: NonTerminal? = null
+) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
+    fun consume(input: List<String>) {
+        var consumed = listOf<String>()
+        terminals.forEach {
+            consumed = it.consume(input)
+            if (consumed.size != input.size) {
+                return@forEach
+            }
+        }
+        if (consumed.isEmpty()) {
+            return
+        }
+        val n = next
+        if (n == null) {
+            next = new(consumed[0])
+        }
+        next!!.consume(consumed)
     }
 
-    // Prints the regular expressions for each token present in the terminal
-    // node and call to the next non-terminal node.
-    override fun toString(): String {
-        var s = first.toString()
-        if (second != null) {
-            s += second.toString()
+    // print pretty-prints the NonTerminal tree
+    fun print(): String {
+        var s = ""
+        terminals.forEach {
+            s += it.print()
+        }
+        if (next != null) {
+            s += next.toString()
         }
         return s
+    }
+
+    override fun toString(): String {
+        return "NonTerminal(terminals=$terminals next=$next)"
+    }
+
+    companion object {
+        fun new(s: String): NonTerminal {
+            return NonTerminal(
+                listOf<Terminal>(
+                    Terminal(MergerS.merger().tokensFromString(s))
+                ),
+                null
+            )
+        }
     }
 }

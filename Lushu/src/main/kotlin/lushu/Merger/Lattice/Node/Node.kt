@@ -59,7 +59,7 @@ class IntervalNode(
     }
 
     override fun toString(): String {
-        return "IntervalNode(baseNode=$baseNode charset=$charset interval=$interval " +
+        return "IntervalNode(charset=$charset interval=$interval " +
             "sensitive=$sensitive)"
     }
 }

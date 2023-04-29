@@ -2,12 +2,12 @@ package lushu.Grammar
 
 import lushu.Merger.Merger.Merger
 
-// Merger is a singleton
-class Merger private constructor() {
+// MergerS is a singleton of lushu.Merger.Merger.Merger
+class MergerS private constructor() {
     companion object {
         private var instance: Merger? = null
 
-        fun init(configFilePath: String) {
+        fun load(configFilePath: String) {
             instance = Merger.fromConfigFile(configFilePath)
         }
 

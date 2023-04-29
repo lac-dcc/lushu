@@ -81,7 +81,7 @@ class MergerTest {
             val ns1 = nf.buildIntervalNodes(it.s1)
             val ns2 = nf.buildIntervalNodes(it.s2)
             val actual = merger.merge(ns1, ns2)
-            val actualStr = NodePrinter.print(actual)
+            val actualStr = NodePrinter.print(actual.tokens)
             if (it.expected != actualStr) {
                 throw Exception(
                     "For test '${it.desc}', expected ${it.expected}, " +
@@ -136,7 +136,7 @@ class MergerTest {
             for (i in 1..it.ss.size - 1) {
                 val ns = nf.buildIntervalNodes(it.ss[i])
                 println("Merging $actual and ${it.ss[i]}")
-                actual = merger.merge(actual, ns)
+                actual = merger.merge(actual, ns).tokens
             }
             val actualStr = NodePrinter.print(actual)
             if (it.expected != actualStr) {

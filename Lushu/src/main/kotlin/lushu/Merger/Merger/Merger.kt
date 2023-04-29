@@ -12,10 +12,33 @@ class Merger(
     private val reducer = Reducer(lattice)
     private val zipper = Zipper(lattice)
 
-    fun merge(ns1: List<Token>, ns2: List<Token>): List<Token> {
+    data class Result(
+        val success: Boolean,
+        val tokens: List<Token>
+    )
+
+    fun merge(ns1: List<Token>, ns2: List<Token>): Result {
         val reduc1 = reducer.reduce(ns1)
         val reduc2 = reducer.reduce(ns2)
-        return zipper.zip(reduc1, reduc2)
+        val merged = zipper.zip(reduc1, reduc2)
+        return Result(isSuccessful(merged), merged)
+    }
+
+    // This overload is useful when you have a pre-built list of tokens ready,
+    // and you need to merge in a string in an online manner.
+    fun merge(ns1: List<Token>, s: String): Result {
+        val ns2 = tokensFromString(s)
+        return merge(ns1, ns2)
+    }
+
+    // This overload is useful when you have no pre-built list of tokens ready.
+    fun merge(s1: String, s2: String): Result {
+        val ns1 = tokensFromString(s1)
+        return merge(ns1, s2)
+    }
+
+    fun tokensFromString(s: String): List<Token> {
+        return nf.buildIntervalNodes(s)
     }
 
     companion object {
@@ -27,5 +50,9 @@ class Merger(
         fun fromConfig(cfg: Config): Merger {
             return Merger(cfg.nodeFactory)
         }
+    }
+
+    private fun isSuccessful(merged: List<Token>): Boolean {
+        return merged.size != 1 || !NodeFactory.isTop(merged[0])
     }
 }

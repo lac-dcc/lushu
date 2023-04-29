@@ -1,29 +1,50 @@
 package lushu.Grammar
 
-import lushu.Merger.Config.Config
 import lushu.Merger.Merger.Token
-import lushu.Merger.TestUtils.Utils
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import lushu.Merger.TestUtils.Utils as MergerTestUtils
 
 class TerminalTest {
-    private val cfg = Config.fromConfigFile(Utils.basicConfigFullPath())
-    private val nf = cfg.nodeFactory
-
-    @Test
-    fun testMatchEmpty() {
-        val terminal = Terminal(listOf<Token>())
-        val expected = listOf<String>()
-        val actual = terminal.match(listOf<String>("a"))
-        assertEquals(expected, actual)
+    init {
+        MergerS.load(MergerTestUtils.basicConfigFullPath())
     }
 
-    // @Test
-    // fun testMatchOneToken() {
-    //     var tokens: List<Token> = nf.buildIntervalNodes("a")
-    //     val terminal = Terminal(tokens)
-    //     val expected = "a"
-    //     val actual = terminal.toString()
-    //     assertEquals(expected, actual)
-    // }
+    private fun buildTokens(s: String): List<Token> {
+        return MergerS.merger().tokensFromString(s)
+    }
+
+    @Test
+    fun testConsumeBasic() {
+        data class TestCase(
+            val desc: String,
+            val input: List<String>,
+            val tokens: List<Token>,
+            val expected: List<String>
+        )
+        val testCases = listOf<TestCase>(
+            TestCase(
+                "one word",
+                listOf<String>("a"),
+                buildTokens("abc"),
+                listOf<String>()
+            ),
+            TestCase(
+                "multiple words",
+                listOf<String>("a", "b", "c"),
+                buildTokens("abc"),
+                listOf<String>("b", "c")
+            )
+        )
+        testCases.forEach {
+            println("Starting test ${it.desc}")
+            val rule = Terminal(it.tokens)
+            val actual = rule.consume(it.input)
+            if (it.expected != actual) {
+                throw Exception(
+                    "For test '${it.desc}', expected ${it.expected}, " +
+                        "but got $actual"
+                )
+            }
+        }
+    }
 }
