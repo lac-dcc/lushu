@@ -1,4 +1,4 @@
-package lushu.Grammar
+package lushu.Grammar.Grammar
 
 import lushu.Merger.TestUtils.Utils
 import org.junit.jupiter.api.Test
@@ -35,14 +35,14 @@ class NonTerminalTest {
                 "two ips",
                 listOf<String>("1.2.3.4", "4.3.2.1"),
                 "R0 :: [1]{1,1}[.]{1,1}[2]{1,1}[.]{1,1}[3]{1,1}[.]{1,1}[4]{1,1} | R1\n" +
-                "R1 :: [4]{1,1}[.]{1,1}[3]{1,1}[.]{1,1}[2]{1,1}[.]{1,1}[1]{1,1}\n"
+                    "R1 :: [4]{1,1}[.]{1,1}[3]{1,1}[.]{1,1}[2]{1,1}[.]{1,1}[1]{1,1}\n"
             ),
             TestCase(
                 "three words",
                 listOf<String>("a", "b", "c"),
                 "R0 :: [a]{1,1} | R1\n" +
-                "R1 :: [b]{1,1} | R2\n" +
-                "R2 :: [c]{1,1}\n"
+                    "R1 :: [b]{1,1} | R2\n" +
+                    "R2 :: [c]{1,1}\n"
             )
         )
         testCases.forEach {
@@ -72,38 +72,48 @@ class NonTerminalTest {
         val testCases = listOf<TestCase>(
             TestCase(
                 "two lines one word",
-                listOf<List<String>>(listOf("a"),
-                                     listOf("b")),
+                listOf<List<String>>(
+                    listOf("a"),
+                    listOf("b")
+                ),
                 "R0 :: [ab]{1,1}\n"
             ),
             TestCase(
                 "two lines one words ip",
-                listOf<List<String>>(listOf("1.2.3.4"),
-                                     listOf("4.3.2.1")),
+                listOf<List<String>>(
+                    listOf("1.2.3.4"),
+                    listOf("4.3.2.1")
+                ),
                 "R0 :: [14]{1,1}[.]{1,1}[23]{1,1}[.]{1,1}[23]{1,1}[.]{1,1}[14]{1,1}\n"
             ),
             TestCase(
                 "two lines two words received ip",
-                listOf<List<String>>(listOf("received", "1.2.3.4"),
-                                     listOf("received", "4.3.2.1")),
+                listOf<List<String>>(
+                    listOf("received", "1.2.3.4"),
+                    listOf("received", "4.3.2.1")
+                ),
                 "R0 :: [cdeirv]{8,8} | R1\n" +
-                "R1 :: [14]{1,1}[.]{1,1}[23]{1,1}[.]{1,1}[23]{1,1}[.]{1,1}[14]{1,1}\n"
+                    "R1 :: [14]{1,1}[.]{1,1}[23]{1,1}[.]{1,1}[23]{1,1}[.]{1,1}[14]{1,1}\n"
             ),
             TestCase(
                 "two lines two words received got ip",
-                listOf<List<String>>(listOf("received", "1.2.3.4"),
-                                     listOf("got", "4.3.2.1")),
+                listOf<List<String>>(
+                    listOf("received", "1.2.3.4"),
+                    listOf("got", "4.3.2.1")
+                ),
                 "R0 :: [cdegiortv]{3,8} | R1\n" +
-                "R1 :: [14]{1,1}[.]{1,1}[23]{1,1}[.]{1,1}[23]{1,1}[.]{1,1}[14]{1,1}\n"
+                    "R1 :: [14]{1,1}[.]{1,1}[23]{1,1}[.]{1,1}[23]{1,1}[.]{1,1}[14]{1,1}\n"
             ),
             TestCase(
                 "two lines multiple words equal",
-                listOf<List<String>>(listOf("2023-04-29", "01:23:45,678", "received", "1.2.3.4"),
-                                     listOf("2023-04-29", "01:23:45,678", "received", "1.2.3.4")),
+                listOf<List<String>>(
+                    listOf("2023-04-29", "01:23:45,678", "received", "1.2.3.4"),
+                    listOf("2023-04-29", "01:23:45,678", "received", "1.2.3.4")
+                ),
                 "R0 :: [023]{4,4}[-]{1,1}[04]{2,2}[-]{1,1}[29]{2,2} | R1\n" +
-                "R1 :: [01]{2,2}[:]{1,1}[23]{2,2}[:]{1,1}[45]{2,2}[,]{1,1}[678]{3,3} | R2\n" +
-                "R2 :: [cdeirv]{8,8} | R3\n" +
-                "R3 :: [1]{1,1}[.]{1,1}[2]{1,1}[.]{1,1}[3]{1,1}[.]{1,1}[4]{1,1}\n"
+                    "R1 :: [01]{2,2}[:]{1,1}[23]{2,2}[:]{1,1}[45]{2,2}[,]{1,1}[678]{3,3} | R2\n" +
+                    "R2 :: [cdeirv]{8,8} | R3\n" +
+                    "R3 :: [1]{1,1}[.]{1,1}[2]{1,1}[.]{1,1}[3]{1,1}[.]{1,1}[4]{1,1}\n"
             )
         )
         testCases.forEach {

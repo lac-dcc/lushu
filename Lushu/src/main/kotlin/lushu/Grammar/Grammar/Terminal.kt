@@ -1,4 +1,4 @@
-package lushu.Grammar
+package lushu.Grammar.Grammar
 
 import lushu.Merger.Lattice.NodePrinter
 import lushu.Merger.Merger.Token

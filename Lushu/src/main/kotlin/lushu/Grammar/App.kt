@@ -1,5 +1,8 @@
 package lushu.Grammar
 
+import lushu.Grammar.Grammar.Grammar
+import lushu.Grammar.Grammar.MergerS
+
 fun main(args: Array<String>) {
     if (args.size < 1) {
         println(
@@ -8,8 +11,8 @@ fun main(args: Array<String>) {
         return
     }
     val configFilePath = args[0]
-    Merger.init(configFilePath)
+    MergerS.load(configFilePath)
     val grammar = Grammar()
-    grammar.matchFromStdin()
-    print(grammar)
+    grammar.consumeFromStdin()
+    print(grammar.print())
 }

@@ -1,4 +1,4 @@
-package lushu.Grammar
+package lushu.Grammar.Grammar
 
 import lushu.Merger.Merger.Token
 import org.junit.jupiter.api.Test

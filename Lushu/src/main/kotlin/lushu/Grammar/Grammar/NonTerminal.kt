@@ -1,4 +1,4 @@
-package lushu.Grammar
+package lushu.Grammar.Grammar
 
 import org.slf4j.LoggerFactory
 
@@ -22,7 +22,7 @@ class NonTerminal(
         }
         val n = next
         if (n == null) {
-            next = new(consumed[0], id+1)
+            next = new(consumed[0], id + 1)
         }
         next!!.consume(consumed)
     }
@@ -50,7 +50,7 @@ class NonTerminal(
     }
 
     companion object {
-        fun new(s: String, id: Int = 0): NonTerminal {
+        fun new(s: String = "", id: Int = 0): NonTerminal {
             return NonTerminal(
                 id,
                 listOf<Terminal>(
