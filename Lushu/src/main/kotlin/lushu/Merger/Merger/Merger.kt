@@ -1,5 +1,6 @@
 package lushu.Merger.Merger
 
+import lushu.Merger.Config.Config
 import lushu.Merger.Lattice.MergerLattice
 
 class Merger(
@@ -12,5 +13,11 @@ class Merger(
         val reduc1 = reducer.reduce(ns1)
         val reduc2 = reducer.reduce(ns2)
         return zipper.zip(reduc1, reduc2)
+    }
+
+    companion object {
+        fun fromConfig(cfg: Config): Merger {
+            return Merger(MergerLattice(cfg.nodeFactory))
+        }
     }
 }

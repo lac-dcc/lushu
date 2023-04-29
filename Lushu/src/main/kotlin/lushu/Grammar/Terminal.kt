@@ -1,7 +1,5 @@
 package lushu.Grammar
 
-// TODO: use Merger token -aholmquist 2023-04-15
-//
 import lushu.Merger.Merger.Token
 
 // The Terminal class represents a terminal node in a data structure. It extends
@@ -81,11 +79,8 @@ class Terminal(
     // the terminal node. If a match is found, removes the matched string from
     // the input list and returns the remaining strings. Otherwise, creates a
     // new token and adds it to the list of tokens.
-    override fun match(input: List<String>): String {
-        if (input.isEmpty()) {
-            return ""
-        }
-        return ""
+    override fun match(input: List<String>): List<String> {
+        return input
         // var(s, sensitive) = hasFlagSensitive(input.get(0))
 
         // val token: Node? = match(s)
@@ -103,12 +98,6 @@ class Terminal(
     }
 
     override fun toString(): String {
-        var s = ""
-        tokens.forEach { _ ->
-            // s += token.regex
-            s += " "
-        }
-        s += "\n"
-        return s
+        return "Terminal(tokens=$tokens)"
     }
 }

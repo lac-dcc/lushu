@@ -1,15 +1,41 @@
 package lushu.Grammar
 
+import lushu.Merger.Config.Config
+import lushu.Merger.Lattice.NodeFactory
+import lushu.Merger.Merger.Merger
+
 class Grammar(
-    // The root(non-terminal node) of the grammar.
-    private var grammar: Node = NonTerminal(Terminal(), null),
+    configFilePath: String
 ) {
-    // Parsers the input string using the dynamic grammar
-    fun parse(text: String): String {
-        return grammar.match(text.split(" "))
+    val merger: Merger
+    val nodeFactory: NodeFactory
+    val grammar: NonTerminal = NonTerminal(Terminal(), null)
+    val tokenSeparator = " "
+
+    init {
+        val config = Config.fromConfigFile(configFilePath)
+        nodeFactory = config.nodeFactory
+        merger = Merger.fromConfig(config)
     }
 
-    // Prints the regular expressions for each token present in the grammar.
+    fun matchFromStdin() {
+        val input = readLine()
+        while (input != null && !input.isEmpty()) {
+            val words = input.split(tokenSeparator)
+            if (words.isEmpty()) {
+                continue
+            }
+            val notMatched = grammar.match(words)
+
+            // This is an unexpected situation which indicated the program is
+            // not behaving as it should. So, as an assertion, we expect the
+            // program to stop here if that is the case.
+            if (!notMatched.isEmpty()) {
+                throw Exception("Grammar was unable to match all the tokens!")
+            }
+        }
+    }
+
     override fun toString(): String {
         return grammar.toString()
     }
