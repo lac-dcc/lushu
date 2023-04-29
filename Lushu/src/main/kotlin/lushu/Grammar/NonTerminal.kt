@@ -3,6 +3,7 @@ package lushu.Grammar
 import org.slf4j.LoggerFactory
 
 class NonTerminal(
+    val id: Int = 0,
     private var terminals: List<Terminal>,
     private var next: NonTerminal? = null
 ) {
@@ -21,19 +22,25 @@ class NonTerminal(
         }
         val n = next
         if (n == null) {
-            next = new(consumed[0])
+            next = new(consumed[0], id+1)
         }
         next!!.consume(consumed)
     }
 
     // print pretty-prints the NonTerminal tree
     fun print(): String {
-        var s = ""
+        var s = "R$id :: "
         terminals.forEach {
             s += it.print()
+            s += " | "
         }
-        if (next != null) {
-            s += next.toString()
+        val n = next
+        if (n != null) {
+            s += "R${n.id}\n"
+            s += n.print()
+        } else {
+            s = s.removeSuffix(" | ")
+            s += "\n"
         }
         return s
     }
@@ -43,8 +50,9 @@ class NonTerminal(
     }
 
     companion object {
-        fun new(s: String): NonTerminal {
+        fun new(s: String, id: Int = 0): NonTerminal {
             return NonTerminal(
+                id,
                 listOf<Terminal>(
                     Terminal(MergerS.merger().tokensFromString(s))
                 ),
