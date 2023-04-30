@@ -19,7 +19,7 @@ class Terminal(
     fun consume(word: String): Result {
         val res = MergerS.merger().merge(tokens, word)
         if (res.success) {
-            logger.debug("Input entry $word merged! New tokens: ${res.tokens}")
+            logger.debug("Word $word merged! New tokens: ${res.tokens}")
             tokens = res.tokens
             val obfuscate = tokens[0].sensitive
             if (obfuscate) {
@@ -28,7 +28,7 @@ class Terminal(
                 return Result(true, word)
             }
         }
-        logger.debug("Input entry $word is not mergeable with $tokens")
+        logger.debug("Word $word is not mergeable with $tokens")
         return Result(false, word)
     }
 
@@ -42,16 +42,27 @@ class Terminal(
     }
 
     companion object {
-        private val sensitiveRegex = Regex("^<(\\p{Alnum}+)>(.+)</\\1>$")
+        private val sensitiveRegex = Regex("^<(\\p{Alnum})+>(.+)</\\1>$")
 
-        private val constantMask = "*****"
+        val constantMask = "*****"
 
         fun new(s: String = ""): Terminal {
-            return Terminal(MergerS.merger().tokensFromString(s, isSensitive(s)))
+            val match = captureSensitivity(s)
+            if (match == "") {
+                return Terminal(MergerS.merger().tokensFromString(s, false))
+            } else {
+                return Terminal(MergerS.merger().tokensFromString(match, true))
+            }
         }
 
-        private fun isSensitive(word: String): Boolean {
-            return sensitiveRegex.matches(word)
+        private fun captureSensitivity(word: String): String {
+            val matches = sensitiveRegex.findAll(word)
+            if (matches.count() < 1) {
+                return ""
+            }
+            val groupValues = matches.single().groupValues
+            println("Group values: $groupValues")
+            return groupValues[2]
         }
     }
 }

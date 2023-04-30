@@ -2,7 +2,7 @@ package lushu.Grammar.Grammar
 
 import lushu.Merger.Merger.Token
 import org.junit.jupiter.api.Test
-import lushu.Merger.TestUtils.Utils as MergerTestUtils
+import lushu.Test.Utils.Utils as MergerTestUtils
 
 class TerminalTest {
     init {

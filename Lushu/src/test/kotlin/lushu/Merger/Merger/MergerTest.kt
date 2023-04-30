@@ -3,8 +3,8 @@ package lushu.Merger.Merger
 import lushu.Merger.Config.Config
 import lushu.Merger.Lattice.Node.Node
 import lushu.Merger.Lattice.NodePrinter
-import lushu.Merger.TestUtils.Fixtures
-import lushu.Merger.TestUtils.Utils
+import lushu.Test.Utils.Fixtures
+import lushu.Test.Utils.Utils
 import org.junit.jupiter.api.Test
 
 // TODO: add tests to test Inference Machine properties (iterative, set-driven,

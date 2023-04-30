@@ -1,6 +1,6 @@
 package lushu.Grammar.Grammar
 
-import lushu.Merger.TestUtils.Utils
+import lushu.Test.Utils.Utils
 import org.junit.jupiter.api.Test
 
 class NonTerminalTest {

@@ -2,8 +2,8 @@ package lushu.Merger.Lattice
 
 import lushu.Merger.Config.Config
 import lushu.Merger.Lattice.Node.Node
-import lushu.Merger.TestUtils.TestNodeBuilder
-import lushu.Merger.TestUtils.Utils
+import lushu.Test.Utils.TestNodeBuilder
+import lushu.Test.Utils.Utils
 import org.junit.jupiter.api.Test
 
 class MergerLatticeTest {

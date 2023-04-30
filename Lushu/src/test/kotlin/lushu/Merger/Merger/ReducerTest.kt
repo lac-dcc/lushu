@@ -3,7 +3,7 @@ package lushu.Merger.Merger
 import lushu.Merger.Config.Config
 import lushu.Merger.Lattice.MergerLattice
 import lushu.Merger.Lattice.NodePrinter
-import lushu.Merger.TestUtils.Utils
+import lushu.Test.Utils.Utils
 import org.junit.jupiter.api.Test
 
 class ReducerTest {

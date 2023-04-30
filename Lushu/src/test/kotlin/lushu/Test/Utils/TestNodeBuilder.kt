@@ -1,4 +1,4 @@
-package lushu.Merger.TestUtils
+package lushu.Test.Utils
 
 import lushu.Merger.Lattice.Node.Charset
 import lushu.Merger.Lattice.Node.Interval
