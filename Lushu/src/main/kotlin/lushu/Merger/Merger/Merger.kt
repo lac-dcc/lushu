@@ -38,7 +38,7 @@ class Merger(
     }
 
     fun tokensFromString(s: String, sensitive: Boolean = false): List<Token> {
-        return nf.buildIntervalNodes(s, sensitive)
+        return reducer.reduce(nf.buildIntervalNodes(s, sensitive))
     }
 
     companion object {

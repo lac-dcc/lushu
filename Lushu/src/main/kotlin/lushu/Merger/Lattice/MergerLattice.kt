@@ -14,8 +14,6 @@ class MergerLattice(
     private val ilatt = IntervalLattice(nf)
 
     override fun meet(n1: Node, n2: Node): Node {
-        logger.debug("Meeting nodes $n1 and $n2")
-
         if (isTop(n1) || isTop(n2)) {
             return topNode()
         }

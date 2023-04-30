@@ -12,7 +12,6 @@ fun main(args: Array<String>) {
     }
     val configFilePath = args[0]
     MergerS.load(configFilePath)
-    val grammar = Grammar()
-    grammar.consumeFromStdin()
+    val grammar = Grammar.fromStdin()
     print(grammar.print())
 }

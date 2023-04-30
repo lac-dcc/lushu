@@ -34,9 +34,7 @@ val fatJar = task("fatJar", type = Jar::class) {
             mapOf(
                 "Implementation-Title" to "Lushu",
                 "Implementation-Version" to "0.1",
-                // TODO: change main class of the fatJar task to the Interceptor one
-                // instead of the Grammar one.
-                "Main-Class" to "lushu.Grammar.AppKt"
+                "Main-Class" to "lushu.AppKt"
             )
         )
     }

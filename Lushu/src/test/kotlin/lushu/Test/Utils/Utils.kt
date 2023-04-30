@@ -16,6 +16,10 @@ class Utils {
             return getFixture(Paths.get("logs", fname).toString())
         }
 
+        fun logGeneratorFullPath(fname: String = ""): String {
+            return logFullPath(Paths.get("log-generator", fname).toString())
+        }
+
         fun configFullPath(fname: String): String {
             return getFixture(Paths.get("config", fname).toString())
         }

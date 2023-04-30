@@ -1,17 +1,26 @@
-// package lushu.Lushu.LogGenerator
+package lushu.Lushu.LogGenerator
 
-// import org.junit.jupiter.api.Test
-// import lushu.Interceptor.PrintStream.LushuPrintStream
+import lushu.Grammar.Grammar.Grammar
+import lushu.Grammar.Grammar.MergerS
+import lushu.Interceptor.PrintStream.LushuPrintStream
+import lushu.Test.Utils.Utils
+import org.junit.jupiter.api.Test
+import java.io.PrintStream
 
-// class LogGeneratorTest {
-//     @Test
-//     fun run() {
-//         System.setOut(LushuPrintStream(System.out))
-//         val lg = LogGenerator(
-//             Paths.get("src", "test", "fixtures", "logs")
-//                 .toAbsolutePath().toString()
-//         )
-//         lg.run(2)
-//         System.setOut(PrintStream(System.out))
-//     }
-// }
+class LogGeneratorTest {
+    init {
+        MergerS.load(Utils.basicConfigFullPath())
+    }
+
+    @Test
+    fun testLogGeneration() {
+        val grammar = Grammar.fromTrainFile(
+            Utils.logFullPath("train/user-is-sensitive.log")
+        )
+        println("Using grammar:\n${grammar.print()}")
+        System.setOut(LushuPrintStream(System.out, grammar))
+        val lg = LogGenerator(Utils.logGeneratorFullPath())
+        lg.run(6)
+        System.setOut(PrintStream(System.out))
+    }
+}

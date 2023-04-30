@@ -16,10 +16,10 @@ class NonTerminal(
         var res = Terminal.Result()
         val word = input[0]
         terminals.forEach {
-            res = it.consume(word)
             if (res.consumed) {
                 return@forEach
             }
+            res = it.consume(word)
         }
         if (!res.consumed) {
             // No terminals were able to consume a word. So we must add a
@@ -56,6 +56,10 @@ class NonTerminal(
             s += "\n"
         }
         return s
+    }
+
+    fun isLast(): Boolean {
+        return next == null
     }
 
     override fun toString(): String {

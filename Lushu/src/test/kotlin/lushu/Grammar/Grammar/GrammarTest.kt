@@ -34,7 +34,7 @@ class GrammarTest {
         )
         testCases.forEach {
             println("Starting test ${it.desc}")
-            val grammar = Grammar()
+            val grammar = Grammar.fromLine(it.input)
             val actual = grammar.consume(it.input)
             if (it.expected != actual) {
                 throw Exception(
@@ -81,9 +81,9 @@ class GrammarTest {
         )
         testCases.forEach {
             println("Starting test ${it.desc}")
-            val grammar = Grammar()
-            // Note that we train the grammar before running the test case
-            grammar.train(Utils.logFullPath("train/ip-is-sensitive.log"))
+            val grammar = Grammar.fromTrainFile(
+                Utils.logFullPath("train/ip-is-sensitive.log")
+            )
             val actual = grammar.consume(it.input)
             if (it.expected != actual) {
                 throw Exception(

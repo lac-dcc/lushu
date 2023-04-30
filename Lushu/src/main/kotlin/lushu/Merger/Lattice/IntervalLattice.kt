@@ -15,7 +15,6 @@ class IntervalLattice(
     }
 
     fun meet(n1: IntervalNode, n2: IntervalNode): IntervalNode {
-        logger.debug("Meeting nodes $n1 and $n2 in interval lattice")
         // Assume interval nodes are compatible (have same base node)
         return IntervalNode(
             n1.baseNode,

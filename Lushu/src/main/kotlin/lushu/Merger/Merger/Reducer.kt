@@ -9,8 +9,6 @@ class Reducer(private val lattice: MergerLattice) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun reduce(nodes: List<Node>): List<Node> {
-        logger.debug("Reducing nodes: $nodes")
-
         if (nodes.isEmpty()) {
             return listOf<Node>()
         } else if (nodes.size == 1) {
@@ -46,8 +44,6 @@ class Reducer(private val lattice: MergerLattice) {
                 glb
             }
         }
-
-        logger.debug("Reduced nodes: $reducedNodes")
 
         return reducedNodes
     }

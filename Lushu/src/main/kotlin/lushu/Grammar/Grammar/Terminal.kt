@@ -17,19 +17,25 @@ class Terminal(
     // Consumes the string at the head of the input text list with the tokens in
     // the terminal node.
     fun consume(word: String): Result {
-        val res = MergerS.merger().merge(tokens, word)
+        logger.debug("Terminal matching $word")
+        var cleanWord = word
+        val match = captureSensitivity(word)
+        if (match != "") {
+            cleanWord = match
+        }
+        val res = MergerS.merger().merge(tokens, cleanWord)
         if (res.success) {
-            logger.debug("Word $word merged! New tokens: ${res.tokens}")
+            logger.debug("Word $cleanWord merged! New tokens: ${res.tokens}")
             tokens = res.tokens
             val obfuscate = tokens[0].sensitive
             if (obfuscate) {
                 return Result(true, constantMask)
             } else {
-                return Result(true, word)
+                return Result(true, cleanWord)
             }
         }
-        logger.debug("Word $word is not mergeable with $tokens")
-        return Result(false, word)
+        logger.debug("Word $cleanWord is not mergeable with $tokens")
+        return Result(false, cleanWord)
     }
 
     // print pretty-prints the NonTerminal tree
@@ -42,7 +48,7 @@ class Terminal(
     }
 
     companion object {
-        private val sensitiveRegex = Regex("^<(\\p{Alnum})+>(.+)</\\1>$")
+        private val sensitiveRegex = Regex("^<s>(.+)</s>$")
 
         val constantMask = "*****"
 
@@ -55,14 +61,12 @@ class Terminal(
             }
         }
 
-        private fun captureSensitivity(word: String): String {
+        fun captureSensitivity(word: String): String {
             val matches = sensitiveRegex.findAll(word)
             if (matches.count() < 1) {
                 return ""
             }
-            val groupValues = matches.single().groupValues
-            println("Group values: $groupValues")
-            return groupValues[2]
+            return matches.single().groupValues[1]
         }
     }
 }

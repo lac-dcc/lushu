@@ -5,14 +5,13 @@ import java.io.OutputStream
 import java.io.PrintStream
 
 class LushuPrintStream(
-    ostream: OutputStream
-) : PrintStream(ostream) {
+    ostream: OutputStream,
     // The grammar is kept for as long as the PrintStream lives. This way, it
     // keeps memory of what it's seen.
-    private val g = Grammar()
-
+    private val grammar: Grammar
+) : PrintStream(ostream) {
     override fun print(s: String) {
-        val obfuscated = g.consume(s)
+        val obfuscated = grammar.consume(s)
         super.print(obfuscated)
     }
 

@@ -14,15 +14,12 @@ class LogGenerator(
     private val random = Random()
     private val datefmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-    init {
-        // Train grammar by dispatching a few logs
-        dispatchLogs(100, true)
-    }
-
-    fun run(numLogs: Int) {
+    fun run(numLogs: Int, sleepTime: Long = 0.toLong()) {
         for (i in 0..numLogs) {
             dispatchLogs(numLogs)
-            TimeUnit.SECONDS.sleep(1)
+            if (sleepTime > 0) {
+                TimeUnit.MILLISECONDS.sleep(sleepTime)
+            }
         }
     }
 
