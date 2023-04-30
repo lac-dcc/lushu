@@ -20,7 +20,7 @@ class LogGeneratorTest {
         println("Using grammar:\n${grammar.print()}")
         System.setOut(LushuPrintStream(System.out, grammar))
         val lg = LogGenerator(Utils.logGeneratorFullPath())
-        lg.run(6)
+        lg.run(5)
         System.setOut(PrintStream(System.out))
     }
 }

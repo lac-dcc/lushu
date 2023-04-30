@@ -16,6 +16,19 @@ class Grammar(
         return consume(s.split(tokenSeparator))
     }
 
+    fun consumeStdin(firstLine: String? = null): String {
+        var consumed = listOf<String>()
+        var line = firstLine
+        if (line == null) {
+            line = readLine()
+        }
+        while (line != null && !line.isEmpty()) {
+            consumed += consume(line)
+            line = readLine()
+        }
+        return consumed.joinToString(logSeparator) + "\n"
+    }
+
     // print pretty-prints the grammar
     fun print(): String {
         return root.print()
@@ -27,8 +40,11 @@ class Grammar(
 
     companion object {
         private val tokenSeparator = " "
+        private val logSeparator = "\n"
 
         fun fromTrainFile(trainFile: String): Grammar {
+            println("Training grammar with file '$trainFile'")
+            println("----------------------------------------")
             val reader = BufferedReader(FileReader(File(trainFile)))
             var line = reader.readLine()
             while (line == null || line.isEmpty()) {
@@ -40,10 +56,12 @@ class Grammar(
                 grammar.consume(line)
                 line = reader.readLine()
             }
+            println("----------------------------------------")
+            println("Finished training grammar\n")
             return grammar
         }
 
-        // consumeFromStdin starts a new grammar from scratch. It reads every line
+        // fromStdin starts a new grammar from scratch. It reads every line
         // received from stdin, consuming every line.
         //
         // This is not very useful for interception, since usually the intercepted
@@ -54,10 +72,7 @@ class Grammar(
                 line = readLine()
             }
             val grammar = Grammar(nonTerminalFromLine(line))
-            while (line != null && !line.isEmpty()) {
-                grammar.consume(line)
-                line = readLine()
-            }
+            grammar.consumeStdin(line)
             return grammar
         }
 
