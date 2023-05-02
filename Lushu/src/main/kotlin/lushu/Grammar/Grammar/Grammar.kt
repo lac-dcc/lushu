@@ -43,7 +43,7 @@ class Grammar(
         private val logSeparator = "\n"
 
         fun fromTrainFile(trainFile: String): Grammar {
-            println("Training grammar with file '$trainFile'")
+            println("Training Lushu Grammar with file '$trainFile'")
             println("----------------------------------------")
             val reader = BufferedReader(FileReader(File(trainFile)))
             var line = reader.readLine()
@@ -52,7 +52,7 @@ class Grammar(
             }
             val grammar = Grammar(nonTerminalFromLine(line))
             while (line != null && !line.isEmpty()) {
-                println("Training with line $line")
+                println("Training with log: $line")
                 grammar.consume(line)
                 line = reader.readLine()
             }
