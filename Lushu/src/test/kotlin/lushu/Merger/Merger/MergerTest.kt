@@ -1,11 +1,10 @@
 package lushu.Merger.Merger
 
 import lushu.Merger.Config.Config
-import lushu.Merger.Lattice.MergerLattice
 import lushu.Merger.Lattice.Node.Node
 import lushu.Merger.Lattice.NodePrinter
-import lushu.Merger.TestUtils.Fixtures
-import lushu.Merger.TestUtils.Utils
+import lushu.Test.Utils.Fixtures
+import lushu.Test.Utils.Utils
 import org.junit.jupiter.api.Test
 
 // TODO: add tests to test Inference Machine properties (iterative, set-driven,
@@ -13,8 +12,7 @@ import org.junit.jupiter.api.Test
 class MergerTest {
     private val cfg = Config.fromConfigFile(Utils.basicConfigFullPath())
     private val nf = cfg.nodeFactory
-    private val lattice = MergerLattice(nf)
-    private val merger = Merger(lattice)
+    private val merger = Merger(nf)
 
     @Test
     fun mergeOnce() {
@@ -83,7 +81,7 @@ class MergerTest {
             val ns1 = nf.buildIntervalNodes(it.s1)
             val ns2 = nf.buildIntervalNodes(it.s2)
             val actual = merger.merge(ns1, ns2)
-            val actualStr = NodePrinter.print(actual)
+            val actualStr = NodePrinter.print(actual.tokens)
             if (it.expected != actualStr) {
                 throw Exception(
                     "For test '${it.desc}', expected ${it.expected}, " +
@@ -138,7 +136,7 @@ class MergerTest {
             for (i in 1..it.ss.size - 1) {
                 val ns = nf.buildIntervalNodes(it.ss[i])
                 println("Merging $actual and ${it.ss[i]}")
-                actual = merger.merge(actual, ns)
+                actual = merger.merge(actual, ns).tokens
             }
             val actualStr = NodePrinter.print(actual)
             if (it.expected != actualStr) {

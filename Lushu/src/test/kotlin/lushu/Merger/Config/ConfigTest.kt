@@ -1,7 +1,7 @@
 package lushu.Merger.Config
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import lushu.Merger.TestUtils.Utils
+import lushu.Test.Utils.Utils
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 

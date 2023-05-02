@@ -1,18 +1,18 @@
-package lushu.Interceptor
+package lushu.Interceptor.PrintStream
 
-import lushu.Grammar.Grammar
+import lushu.Grammar.Grammar.Grammar
 import java.io.OutputStream
 import java.io.PrintStream
 
 class LushuPrintStream(
-    ostream: OutputStream
+    ostream: OutputStream,
+    // The grammar is kept for as long as the PrintStream lives. This way, it
+    // keeps memory of what it's seen.
+    private val grammar: Grammar
 ) : PrintStream(ostream) {
-    private val g = Grammar()
-
     override fun print(s: String) {
-        val preffix: String = "> "
-        super.print(preffix)
-        super.print(g.parse(s))
+        val obfuscated = grammar.consume(s)
+        super.print(obfuscated)
     }
 
     override fun print(b: Boolean) {

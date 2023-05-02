@@ -93,7 +93,7 @@ class NodeFactory(
     // buildIntervalNode builds a node with one character and interval {1,
     // 1}. Putting this in NodeFactory is necessary so that we attribute the
     // right roof-top node (base node) for the node, from the start. When a node
-    // has multiple characters, it become harder to determine it's base node.
+    // has multiple characters, it becomes harder to determine its base node.
     fun buildIntervalNode(c: Char, sensitive: Boolean = false): IntervalNode {
         return IntervalNode(
             pwsetNodes.getValue(charToBaseNodeID.getValue(c)),

@@ -1,10 +1,6 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
-val projectVersion = "0.1"
-val projectName = "Lushu"
-val applicationMainClassName = "lushu.Merger.AppKt"
-
 repositories {
     jcenter()
 }
@@ -34,9 +30,53 @@ dependencies {
 val fatJar = task("fatJar", type = Jar::class) {
     description = "Creates a self-contained fat JAR of the application."
     manifest {
-        attributes["Implementation-Title"] = projectName
-        attributes["Implementation-Version"] = projectVersion
-        attributes["Main-Class"] = applicationMainClassName
+        attributes(
+            mapOf(
+                "Implementation-Title" to "Lushu",
+                "Implementation-Version" to "0.1",
+                "Main-Class" to "lushu.AppKt"
+            )
+        )
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    val dependencies = configurations
+        .runtimeClasspath
+        .get()
+        .map(::zipTree)
+    from(dependencies)
+    with(tasks.jar.get())
+}
+
+val grammarJar = task("grammarJar", type = Jar::class) {
+    archiveBaseName.set("Grammar")
+    manifest {
+        attributes(
+            mapOf(
+                "Implementation-Title" to "Grammar",
+                "Implementation-Version" to "0.1",
+                "Main-Class" to "lushu.Grammar.AppKt"
+            )
+        )
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    val dependencies = configurations
+        .runtimeClasspath
+        .get()
+        .map(::zipTree)
+    from(dependencies)
+    with(tasks.jar.get())
+}
+
+val mergerJar = task("mergerJar", type = Jar::class) {
+    archiveBaseName.set("Merger")
+    manifest {
+        attributes(
+            mapOf(
+                "Implementation-Title" to "Merger",
+                "Implementation-Version" to "0.1",
+                "Main-Class" to "lushu.Merger.AppKt"
+            )
+        )
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     val dependencies = configurations
@@ -63,7 +103,8 @@ tasks {
 }
 
 application {
-    mainClassName = applicationMainClassName
+    // Default application name
+    mainClassName = "lushu.Grammar.AppKt"
 }
 
 tasks.test {

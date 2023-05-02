@@ -1,4 +1,4 @@
-package lushu.Merger.TestUtils
+package lushu.Test.Utils
 
 import java.nio.file.Paths
 
@@ -10,6 +10,14 @@ class Utils {
 
         fun getFixture(relativePath: String): String {
             return Paths.get(getFixturesDir(), relativePath).toAbsolutePath().toString()
+        }
+
+        fun logFullPath(fname: String): String {
+            return getFixture(Paths.get("logs", fname).toString())
+        }
+
+        fun logGeneratorFullPath(fname: String = ""): String {
+            return logFullPath(Paths.get("log-generator", fname).toString())
         }
 
         fun configFullPath(fname: String): String {
