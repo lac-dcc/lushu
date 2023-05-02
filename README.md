@@ -43,33 +43,27 @@ Run `gradle grammarJar` to generate the file
 `./Lushu/build/libs/Grammar.jar`. Run it following the example:
 
 ```sh
-cat example/log/test/ip-is-sensitive.log | \
+cat example/log/test/simple-ip.log | \
   java -jar ./Lushu/build/libs/Grammar.jar ./example/config.yaml
 ```
 
 You should see an ouput like the following:
 
 ```
-R0 :: [023]{4,4}[-]{1,1}[04]{2,2}[-]{1,1}[29]{2,2} | [CLMNPabceilmnoqrstu]{4,12} | R1
-R1 :: [0]{2,2}[:]{1,1}[0]{2,2}[:]{1,1}[0]{2,2}[,]{1,1}[123456789]{3,3} | [aceilmnoprstuv]{3,9} | R2
-R2 :: [RScdefilmorstv]{3,8} | [ams]{5,5}[,]{1,1} | R3
-R3 :: [dehimoqrstu]{2,7} | [cior]{4,4}[,]{1,1} | R4
-R4 :: [acefghilmnoprstuyz]{3,9} | [aemt]{4,4}[,]{1,1} | R5
-R5 :: [0123456789]{1,3}[.]{1,1}[0123456789]{1,3}[.]{1,1}[0123456789]{1,3}[.]{1,1}[0123456789]{1,3} | [abcdegilnoprstu]{3,11} | [agilmoqu]{3,7}[!"#$%&'()*+,-./:;<=>?@\[\\]^_`{|}~]+ | [glo]{3,3}[.]{1,1}[j]{3,3}[.]{1,1}[abdlu]{5,5}[.]{1,1} | [KNOUW]{7,7}[_]{1,1}[IP]{2,2} | R6
-R6 :: [HIabcdeghilnopqrstuw]{1,10} | [no]{3,3}[,]{1,1} | R7
-R7 :: [abcdeilmqrstu]{2,11} | [eilt]{4,4}[.]{1,1} | R8
-R8 :: [DIabcdeilnrstuvy]{1,9} | R9
-R9 :: [adefioprstuvy]{2,6} | [aceilmorstu]{4,6}[.]{1,1} | R10
-R10 :: [Sacdefinprsuyz]{4,11} | [anru]{4,4}[,]{1,1} | R11
-R11 :: [abcdeimnruvyz]{5,8} | R12
-R12 :: [delstu]{3,6} | R13
-R13 :: [adeinps]{3,6} | R14
-R14 :: [a]{1,1}[,]{1,1} | [eiltv]{5,5} | R15
-R15 :: [cdegilmnrstu]{8,9} | R16
-R16 :: [dgimns]{9,9} | [defiln]{8,8}[.]{1,1} | R17
-R17 :: [jostu]{5,5}[.]{1,1} | [Nalu]{5,5} | R18
-R18 :: [acfils]{8,8}[.]{1,1}
+R0 :: [023]{4,4}[-]{1,1}[04]{2,2}[-]{1,1}[29]{2,2} | R1
+R1 :: [0]{2,2}[:]{1,1}[0]{2,2}[:]{1,1}[0]{2,2}[,]{1,1}[123456789]{3,3} | R2
+R2 :: [RScdeimov]{4,8} | R3
+R3 :: [ehoqrstu]{5,7} | R4
+R4 :: [acfmoryz]{4,5} | R5
+R5 :: [0123456789]{1,3}[.]{1,1}[0123456789]{1,3}[.]{1,1}[0123456789]{1,3}[.]{1,1}[0123456789]{1,3} | [glo]{3,3} | R6
+R6 :: [ehr]{4,4} | R7
+R7 :: [abl]{3,3} | R8
+R8 :: [abl]{3,3}
 ```
+
+Note that the first production of the grammar in rule `R5` has the format of an
+IP address. This is because the file `example/log/test/simple-ip.log` we gave as
+an input contains examples of IP addresses at that position.
 
 ### Run the Merger
 
