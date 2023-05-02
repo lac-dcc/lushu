@@ -4,7 +4,7 @@ import lushu.Grammar.Grammar.Grammar
 import lushu.Grammar.Grammar.MergerS
 
 fun main(args: Array<String>) {
-    if (args.size < 1) {
+    if (args.size < 2) {
         println(
             "Usage: cat <input-file> | <this-program> <merger-config-file> <log-train-file>"
         )
