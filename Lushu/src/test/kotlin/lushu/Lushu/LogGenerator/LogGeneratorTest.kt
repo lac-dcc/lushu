@@ -23,4 +23,16 @@ class LogGeneratorTest {
         lg.run(5)
         System.setOut(PrintStream(System.out))
     }
+
+    @Test
+    fun testInfinitLogGeneration() {
+        val grammar = Grammar.fromTrainFile(
+            Utils.logFullPath("train/user-is-sensitive.log")
+        )
+        println("Using grammar:\n${grammar.print()}")
+        System.setOut(LushuPrintStream(System.out, grammar))
+        val lg = LogGenerator(Utils.logGeneratorFullPath())
+        lg.runInfinite(50)
+        System.setOut(PrintStream(System.out))
+    }
 }
