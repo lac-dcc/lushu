@@ -7,8 +7,11 @@ import java.io.FileReader
 class Grammar(
     private var root: NonTerminal
 ) {
+    var numConsumes = 0
+
     fun consume(words: List<String>): String {
         val consumedWords = root.consume(words)
+        numConsumes += words.size
         return consumedWords.joinToString(tokenSeparator)
     }
 

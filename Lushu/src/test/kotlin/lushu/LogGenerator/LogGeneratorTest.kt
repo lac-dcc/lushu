@@ -1,4 +1,4 @@
-package lushu.Lushu.LogGenerator
+package lushu.LogGenerator
 
 import lushu.Grammar.Grammar.Grammar
 import lushu.Grammar.Grammar.MergerS

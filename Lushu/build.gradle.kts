@@ -87,6 +87,26 @@ val mergerJar = task("mergerJar", type = Jar::class) {
     with(tasks.jar.get())
 }
 
+val timeOverheadJar = task("timeOverheadJar", type = Jar::class) {
+    archiveBaseName.set("TestTimeOverhead")
+    manifest {
+        attributes(
+            mapOf(
+                "Implementation-Title" to "TestTimeOverhead",
+                "Implementation-Version" to "0.1",
+                "Main-Class" to "lushu.TestApps.TimeOverhead.AppKt"
+            )
+        )
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    val dependencies = configurations
+        .runtimeClasspath
+        .get()
+        .map(::zipTree)
+    from(dependencies)
+    with(tasks.jar.get())
+}
+
 tasks {
     "build" {
         dependsOn(fatJar)
@@ -110,7 +130,7 @@ application {
 tasks.test {
     testLogging.showStandardStreams = true
 
-    useJUnitPlatform() // JUnit5
+    useJUnitPlatform()
 
     testLogging {
         lifecycle {

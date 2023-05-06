@@ -95,3 +95,89 @@ to edit the example file in `./example/config.yaml`.
 
 To test, run `gradle test`. Find all source code for the tests under
 `./Lushu/src/test/`.
+
+## Theory
+
+Lushu includes a novel way to merge regular expressions, based on a lattice we
+call the Regex Lattice. The meet of two regexes in the Regex Lattice indicates
+the result of their merge. A single word may be composed of multiple lattice
+nodes. It all depends on how we structure the lattice. For instance, if we say
+that punctuations are "blacklisted" by "alpha" characters, then their meet will
+go to the lattice top. This can be configured by the following `config.yaml`
+file:
+
+```yaml
+latticeBase:
+  alpha:
+    interval: 1,32
+    charset: "abcdefghijklmnopqrstuvwxyz"
+  punct:
+    interval: 1,2
+    charset: "\"!#\\$%&'()*+,-./:;<>=?@\\[\\]^_`{}|~\\\\"
+    blacklist:
+      - alpha
+```
+
+Arbitrary text is not in the format we require, originally. So the first thing
+we do with text is divide it into words separated by space. We call these words
+_tokens_. Each token might be composed of multiple lattice nodes. For instance,
+suppose we have two tokens, `ab:c` and `de:fg`. They are first transformed to
+_primitive_ lattice nodes:
+
+```
+[a]{1,1}[b]{1,1}[:]{1,1}[c]{1,1}
+[d]{1,1}[e]{1,1}[:]{1,1}[f]{1,1}[g]{1,1}
+```
+
+These are called _primitive_ because the charset for each node is a single
+character, and the interval is (1,1). Then, we _reduce_ these primitive nodes
+into a more compact format. We collapse as much as possible, using the lattice
+meet to check if the GLB is the Top node. If it is the top node, we do not merge
+the nodes. For our example:
+
+```
+reduce([a]{1,1}[b]{1,1}[:]{1,1}[c]{1,1}) ==>
+  [ab]{2,2}[:]{1,1}[c]{1,1}
+
+reduce([d]{1,1}[e]{1,1}[:]{1,1}[f]{1,1}[g]{1,1}) ==>
+  [de]{2,2}[:]{1,1}[fg]{2,2}
+```
+
+Finally, two turn these two regular expressions into one, we perform a _zip_ and
+then a _map_ operation (in the functional sense). The _zip_ operation checks
+that the lists must have the same size and forms pairs like `([ab]{2,2},
+[de]{2,2})`. For each pair, we map their elements to their lattice meet. In
+a pseudo-functional syntax:
+
+```
+map(zip(nodes1, nodes2), (first, second) => {
+     lattice.meet(first, second)
+})
+```
+
+If the lattice goes to top, the words are not mergeable. Otherwise, we merge
+them. The result for our example would be:
+
+```
+merge(ab:c, de:fg) =
+  map(zip(reduce(ab:c), reduce(de:fg)), (first, second) -> {
+    lattice.meet(first, second).then { it ->
+        when(it) {
+            is Top: not mergeable
+            else: it
+        }
+  })
+
+==> merge(ab:c, de:fg) = [abde]{2,2}[:]{1,1}[cfg]{1,2}
+```
+
+### Merger
+
+
+The Merger merges regular expressions using the Regex Lattice. Here is the
+algorithm in pseudo Python:
+
+```python
+def merge():
+    
+```

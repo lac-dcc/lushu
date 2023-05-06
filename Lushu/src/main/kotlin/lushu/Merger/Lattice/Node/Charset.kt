@@ -30,6 +30,10 @@ class Charset(
         }
     }
 
+    override fun hashCode(): Int {
+        return "$charset".hashCode()
+    }
+
     override fun toString(): String {
         return "Charset($charset)"
     }

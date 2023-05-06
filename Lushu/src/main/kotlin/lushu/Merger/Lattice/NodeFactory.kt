@@ -6,22 +6,24 @@ import lushu.Merger.Lattice.Node.Interval
 import lushu.Merger.Lattice.Node.IntervalNode
 import lushu.Merger.Lattice.Node.Node
 import lushu.Merger.Lattice.Node.PwsetNode
-import org.slf4j.LoggerFactory
 
 class NodeFactory(
     yaml: ConfigYAML
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
-
     private val pwsetNodes = mutableMapOf<Int, PwsetNode>()
     private val charToBaseNodeID = mutableMapOf<Char, Int>()
 
-    private var globalNodeID: Int = 0
-
     init {
-        // First create top node. This ensures that the top node is the one with
-        // ID 0.
-        buildPwsetNode(setOf<Int>(), Charset(setOf<Char>()), Interval.kleene, false)
+        var initialID = 0
+        // Lattice top node
+        buildPwsetNode(
+            initialID,
+            setOf<Int>(),
+            Charset(setOf<Char>()),
+            Interval.kleene,
+            false
+        )
+        initialID++
 
         // Build roof truss of the lattice, which corresponds to the base of the
         // powerset lattice.
@@ -49,11 +51,13 @@ class NodeFactory(
                 }
             }
             val pnode = buildPwsetNode(
+                initialID,
                 blacklist,
                 Charset.fromString(yamlNode.charset),
                 Interval(yamlNode.intervalMin, yamlNode.intervalMax),
                 false
             )
+            initialID++
             yamlNode.charset.forEach { c ->
                 charToBaseNodeID[c] = pnode.id
             }
@@ -72,15 +76,20 @@ class NodeFactory(
             // Avoid building another replica node
             return n1
         }
+        val newID = n1.charset.union(n2.charset).hashCode()
+        if (pwsetNodes.containsKey(newID)) {
+            return pwsetNodes.getValue(newID)
+        }
         // Check if any existing node has either n1 or n2 blacklisted. If so, we
         // must add the ID that will be used to its blacklist.
         pwsetNodes.forEach {
             val node = it.value
             if (node.blacklists(n1) || node.blacklists(n2)) {
-                node.addToBlacklist(globalNodeID)
+                node.addToBlacklist(newID)
             }
         }
         return buildPwsetNode(
+            newID,
             n1.joinBlacklist(n2),
             n1.joinCharset(n2),
             // For now, we always use kleene interval for powerset nodes that
@@ -122,15 +131,14 @@ class NodeFactory(
     // initialization, only joins of base nodes should be allowed, but there is
     // another, public, function for that.
     private fun buildPwsetNode(
+        id: Int,
         blacklist: Set<Int>,
         charset: Charset,
         interval: Interval,
         sensitive: Boolean
     ): PwsetNode {
-        val nodeID = globalNodeID
-        globalNodeID++
-        val newNode = PwsetNode(nodeID, blacklist, charset, interval, sensitive)
-        pwsetNodes[nodeID] = newNode
+        val newNode = PwsetNode(id, blacklist, charset, interval, sensitive)
+        pwsetNodes[id] = newNode
         return newNode
     }
 }
