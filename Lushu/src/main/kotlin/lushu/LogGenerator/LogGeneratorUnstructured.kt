@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 // genereate a very large grammar (the largest possible, indeed!)
 class LogGeneratorUnstructured(
     private val maxLogSize: Int = 16,
-    private val maxWordSize: Int = 16,
+    private val maxWordSize: Int = 16
 ) {
     fun run(numLogs: Int, sleepTime: Long = 0.toLong()) {
         for (i in 0 until numLogs) {
@@ -37,6 +37,6 @@ class LogGeneratorUnstructured(
             }
             log += wordSep()
         }
-        println(log.substring(0, log.length-1))
+        println(log.substring(0, log.length - 1))
     }
 }
