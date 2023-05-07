@@ -87,14 +87,36 @@ val mergerJar = task("mergerJar", type = Jar::class) {
     with(tasks.jar.get())
 }
 
-val stressTestJar = task("stressTestTimeJar", type = Jar::class) {
-    archiveBaseName.set("StressTestTime")
+val stressTestWithLushuJar =
+    task("stressTestWithLushuJar", type = Jar::class) {
+    archiveBaseName.set("StressTestWithLushu")
     manifest {
         attributes(
             mapOf(
-                "Implementation-Title" to "StressTestTime",
+                "Implementation-Title" to "StressTestWithLushu",
                 "Implementation-Version" to "0.1",
-                "Main-Class" to "lushu.TestApps.StressTest.Time.AppKt"
+                "Main-Class" to "lushu.TestApps.StressTest.WithLushu.AppKt"
+            )
+        )
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    val dependencies = configurations
+        .runtimeClasspath
+        .get()
+        .map(::zipTree)
+    from(dependencies)
+    with(tasks.jar.get())
+}
+
+val stressTestWoutLushuJar =
+    task("stressTestWoutLushuJar", type = Jar::class) {
+    archiveBaseName.set("StressTestWoutLushu")
+    manifest {
+        attributes(
+            mapOf(
+                "Implementation-Title" to "StressTestWoutLushu",
+                "Implementation-Version" to "0.1",
+                "Main-Class" to "lushu.TestApps.StressTest.WoutLushu.AppKt"
             )
         )
     }

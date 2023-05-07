@@ -1,4 +1,4 @@
-package lushu.TestApps.StressTest.Time
+package lushu.TestApps.StressTest.Time.WithLushu
 
 import lushu.Grammar.Grammar.Grammar
 import lushu.Grammar.Grammar.MergerS
@@ -24,15 +24,14 @@ fun main(args: Array<String>) {
     MergerS.load(configFilePath)
     val lg = LogGenerator(logGeneratorBaseDir)
 
-    // Without Lushu
-    val woutLushuTime = measureTimeMillis { lg.run(numLogs) }
-
-    // With Lushu
     val grammar = Grammar.fromTrainFile(trainFile)
     System.setOut(LushuPrintStream(System.out, grammar))
-    val withLushuTime = measureTimeMillis { lg.run(numLogs) }
+    val time = measureTimeMillis { lg.run(numLogs) }
+    val runtime = Runtime.getRuntime()
+    runtime.gc()
+    val memory = runtime.totalMemory() - runtime.freeMemory()
     System.setOut(PrintStream(System.out))
-
-    System.err.println("$woutLushuTime")
-    System.err.println("$withLushuTime")
+    
+    System.err.println("$time")
+    System.err.println("$memory")
 }
