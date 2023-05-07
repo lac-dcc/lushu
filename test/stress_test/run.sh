@@ -4,11 +4,12 @@
 min_logs="$1"
 step="$2"
 max_logs="$3"
+jar_prefix="$4"
+output_dir="$5"
 
 # Prepare
-results_dir='test/results/time_overhead_full_speed'
-mkdir -p "$results_dir"
-gradle timeOverheadJar
+mkdir -p "$output_dir"
+gradle "${jar_prefix}Jar"
 
 # For each number of logs, we run it this many times to minimize the effect of
 # noise.
@@ -19,13 +20,13 @@ while [ "$num_logs" -le "$max_logs" ]; do
     simul_num=0
     while [ "$simul_num" -lt "$num_simuls_each" ]; do
         echo "$simul_num running with $num_logs logs"
-        java -jar ./Lushu/build/libs/TestTimeOverhead.jar \
+        java -jar "./Lushu/build/libs/${jar_prefix}.jar" \
 	           example/config.yaml \
 	           example/log/train/cpf-is-sensitive.log \
 	           Lushu/src/test/fixtures/logs/log-generator \
              "$num_logs" \
              1> /dev/null \
-             2> "$results_dir/${num_logs}-${simul_num}"
+             2> "$output_dir/${num_logs}-${simul_num}"
         simul_num=$(( simul_num + 1 ))
     done
     num_logs=$(( num_logs * step ))

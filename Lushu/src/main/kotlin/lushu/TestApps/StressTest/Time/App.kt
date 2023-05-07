@@ -1,4 +1,4 @@
-package lushu.TestApps.TimeOverhead
+package lushu.TestApps.StressTest.Time
 
 import lushu.Grammar.Grammar.Grammar
 import lushu.Grammar.Grammar.MergerS

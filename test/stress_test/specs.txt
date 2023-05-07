@@ -6,3 +6,4 @@ Tested on:
   Memory: Samsung, 8GB @ 2667 MT/s and 8GB @ 3200 MT/s
 Logs origin: Lushu log generator (from github.com/lac-dcc/lushu) at SHA 368d2da7afb4bf23e0eb87e233ef64dfa64a714e
 Policy: emit as many logs, as fast as possible
+Goal: check overhead introduced by Lushu in time and memory

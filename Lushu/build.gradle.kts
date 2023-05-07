@@ -87,14 +87,14 @@ val mergerJar = task("mergerJar", type = Jar::class) {
     with(tasks.jar.get())
 }
 
-val timeOverheadJar = task("timeOverheadJar", type = Jar::class) {
-    archiveBaseName.set("TestTimeOverhead")
+val stressTestJar = task("stressTestTimeJar", type = Jar::class) {
+    archiveBaseName.set("StressTestTime")
     manifest {
         attributes(
             mapOf(
-                "Implementation-Title" to "TestTimeOverhead",
+                "Implementation-Title" to "StressTestTime",
                 "Implementation-Version" to "0.1",
-                "Main-Class" to "lushu.TestApps.TimeOverhead.AppKt"
+                "Main-Class" to "lushu.TestApps.StressTest.Time.AppKt"
             )
         )
     }
