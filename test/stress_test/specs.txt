@@ -4,6 +4,31 @@ Tested on:
   Operating system: Ubuntu 20.04.6 LTS
   CPU: Intel i7-1065G7 @ 3.90GHz, 4 cores
   Memory: Samsung, 8GB @ 2667 MT/s and 8GB @ 3200 MT/s
-Logs origin: Lushu log generator (from github.com/lac-dcc/lushu) at SHA 368d2da7afb4bf23e0eb87e233ef64dfa64a714e
+Logs origin:
+  - Lushu log generator (from github.com/lac-dcc/lushu) at SHA 1b8b0b9cf90d65ba2cf6dff17dd1752de178bca0
+
+  - Postgresql logs. These logs were generated with PostgreSQL 14.7, the
+    following way:
+    - Modify following values out of a default postgresql.conf:
+      - log_destination = 'stderr'
+      - logging_collector = on
+      - log_min_messages = info
+      - log_min_error_statement = info
+      - log_min_duration_statement = 0
+      - log_min_duration_sample = 0
+      - log_checkpoints = on
+      - log_connections = on
+      - log_disconnections = on
+      - log_duration = on
+      - log_hostname = on
+      - log_statement = 'all'
+    - Restart postgresl using `sudo systemctl restart postgresql.service`
+    - Run `rm /var/lib/postgresql/14/main/log/*`
+    - Create empty database in postgresql called lushu_testdb
+    - Run pgbench: `pgbench --user postgres -c 10 -j 2 -t 10000 lushu_testdb`
+    - Extract logs with `cat /var/lib/postgresql/14/main/log/* > pglogs.log`
+
+
 Policy: emit as many logs, as fast as possible
+
 Goal: check overhead introduced by Lushu in time and memory

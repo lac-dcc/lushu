@@ -170,14 +170,3 @@ merge(ab:c, de:fg) =
 
 ==> merge(ab:c, de:fg) = [abde]{2,2}[:]{1,1}[cfg]{1,2}
 ```
-
-### Merger
-
-
-The Merger merges regular expressions using the Regex Lattice. Here is the
-algorithm in pseudo Python:
-
-```python
-def merge():
-    
-```

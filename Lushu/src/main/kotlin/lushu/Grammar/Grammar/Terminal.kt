@@ -41,6 +41,10 @@ class Terminal(
         return NodePrinter.print(tokens)
     }
 
+    fun numTokens(): Int {
+        return tokens.size
+    }
+
     override fun toString(): String {
         return "Terminal(tokens=$tokens)"
     }

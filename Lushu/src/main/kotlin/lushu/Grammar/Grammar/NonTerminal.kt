@@ -59,6 +59,24 @@ class NonTerminal(
         return s
     }
 
+    fun numNonTerminals(): Int {
+        return 1 + (if (next != null) next!!.numNonTerminals() else 0)
+    }
+
+    fun numTerminals(): Int {
+        var num = terminals.size
+        if (next != null) {
+            num += next!!.numTerminals()
+        }
+        return num
+    }
+
+    fun numTokens(): Int {
+        var num = 0
+        terminals.forEach { num += it.numTokens() }
+        return num + (if (next != null) next!!.numTokens() else 0)
+    }
+
     fun isLast(): Boolean {
         return next == null
     }

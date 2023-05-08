@@ -7,11 +7,8 @@ import java.io.FileReader
 class Grammar(
     private var root: NonTerminal
 ) {
-    var numConsumes = 0
-
     fun consume(words: List<String>): String {
         val consumedWords = root.consume(words)
-        numConsumes += words.size
         return consumedWords.joinToString(tokenSeparator)
     }
 
@@ -35,6 +32,14 @@ class Grammar(
     // print pretty-prints the grammar
     fun print(): String {
         return root.print()
+    }
+
+    fun statistics(): String {
+        val numNonTerminals = root.numNonTerminals()
+        val numTerminals = root.numTerminals()
+        val numTokens = root.numTokens()
+        return "numNonTerminals=$numNonTerminals numTerminals=$numTerminals\n"+
+               "numTokens=$numTokens"
     }
 
     override fun toString(): String {
