@@ -12,15 +12,12 @@ class Merger(
     private val reducer = Reducer(lattice)
     private val zipper = Zipper(lattice)
 
-    var numMerges = 0
-
     data class Result(
         val success: Boolean,
         val tokens: List<Token>
     )
 
     fun merge(ns1: List<Token>, ns2: List<Token>): Result {
-        numMerges++
         val reduc1 = reducer.reduce(ns1)
         val reduc2 = reducer.reduce(ns2)
         val merged = zipper.zip(reduc1, reduc2)
