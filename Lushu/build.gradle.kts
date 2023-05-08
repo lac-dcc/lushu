@@ -87,6 +87,48 @@ val mergerJar = task("mergerJar", type = Jar::class) {
     with(tasks.jar.get())
 }
 
+val stressTestWithLushuJar =
+    task("stressTestWithLushuJar", type = Jar::class) {
+        archiveBaseName.set("StressTestWithLushu")
+        manifest {
+            attributes(
+                mapOf(
+                    "Implementation-Title" to "StressTestWithLushu",
+                    "Implementation-Version" to "0.1",
+                    "Main-Class" to "lushu.TestApps.StressTest.WithLushu.AppKt"
+                )
+            )
+        }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        val dependencies = configurations
+            .runtimeClasspath
+            .get()
+            .map(::zipTree)
+        from(dependencies)
+        with(tasks.jar.get())
+    }
+
+val stressTestWoutLushuJar =
+    task("stressTestWoutLushuJar", type = Jar::class) {
+        archiveBaseName.set("StressTestWoutLushu")
+        manifest {
+            attributes(
+                mapOf(
+                    "Implementation-Title" to "StressTestWoutLushu",
+                    "Implementation-Version" to "0.1",
+                    "Main-Class" to "lushu.TestApps.StressTest.WoutLushu.AppKt"
+                )
+            )
+        }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        val dependencies = configurations
+            .runtimeClasspath
+            .get()
+            .map(::zipTree)
+        from(dependencies)
+        with(tasks.jar.get())
+    }
+
 tasks {
     "build" {
         dependsOn(fatJar)
@@ -110,7 +152,7 @@ application {
 tasks.test {
     testLogging.showStandardStreams = true
 
-    useJUnitPlatform() // JUnit5
+    useJUnitPlatform()
 
     testLogging {
         lifecycle {

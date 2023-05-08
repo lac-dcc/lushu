@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+# Python
+.ipynb_checkpoints
+
 # Log file
 *.log
 
@@ -29,3 +32,4 @@ hs_err_pid*
 .gradle
 
 testlogs
+pglogs.log

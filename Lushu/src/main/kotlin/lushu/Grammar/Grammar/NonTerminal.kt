@@ -15,11 +15,12 @@ class NonTerminal(
         }
         var res = Terminal.Result()
         val word = input[0]
-        terminals.forEach {
+        for (i in 0 until terminals.size) {
             if (res.consumed) {
-                return@forEach
+                numTerminalConsumes++
+                break
             }
-            res = it.consume(word)
+            res = terminals[i].consume(word)
         }
         if (!res.consumed) {
             // No terminals were able to consume a word. So we must add a
@@ -58,6 +59,24 @@ class NonTerminal(
         return s
     }
 
+    fun numNonTerminals(): Int {
+        return 1 + (if (next != null) next!!.numNonTerminals() else 0)
+    }
+
+    fun numTerminals(): Int {
+        var num = terminals.size
+        if (next != null) {
+            num += next!!.numTerminals()
+        }
+        return num
+    }
+
+    fun numTokens(): Int {
+        var num = 0
+        terminals.forEach { num += it.numTokens() }
+        return num + (if (next != null) next!!.numTokens() else 0)
+    }
+
     fun isLast(): Boolean {
         return next == null
     }
@@ -67,6 +86,8 @@ class NonTerminal(
     }
 
     companion object {
+        var numTerminalConsumes = 0
+
         fun new(s: String = "", id: Int = 0): NonTerminal {
             return NonTerminal(id, listOf(Terminal.new(s)), null)
         }

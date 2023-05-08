@@ -27,12 +27,10 @@ class Terminal(
         if (res.success) {
             logger.debug("Word $cleanWord merged! New tokens: ${res.tokens}")
             tokens = res.tokens
-            val obfuscate = tokens[0].sensitive
-            if (obfuscate) {
+            if (tokens.size > 0 && tokens[0].sensitive) {
                 return Result(true, constantMask)
-            } else {
-                return Result(true, cleanWord)
             }
+            return Result(true, cleanWord)
         }
         logger.debug("Word $cleanWord is not mergeable with $tokens")
         return Result(false, cleanWord)
@@ -41,6 +39,10 @@ class Terminal(
     // print pretty-prints the NonTerminal tree
     fun print(): String {
         return NodePrinter.print(tokens)
+    }
+
+    fun numTokens(): Int {
+        return tokens.size
     }
 
     override fun toString(): String {
