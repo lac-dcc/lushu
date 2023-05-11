@@ -104,8 +104,14 @@ class NodeFactory(
     // right roof-top node (base node) for the node, from the start. When a node
     // has multiple characters, it becomes harder to determine its base node.
     fun buildIntervalNode(c: Char, sensitive: Boolean = false): IntervalNode {
+        val pwsetNode: PwsetNode
+        if (charToBaseNodeID.containsKey(c)) {
+            pwsetNode = pwsetNodes.getValue(charToBaseNodeID.getValue(c))
+        } else {
+            pwsetNode = topNode()
+        }
         return IntervalNode(
-            pwsetNodes.getValue(charToBaseNodeID.getValue(c)),
+            pwsetNode,
             Charset(setOf(c)),
             Interval(1, 1),
             sensitive

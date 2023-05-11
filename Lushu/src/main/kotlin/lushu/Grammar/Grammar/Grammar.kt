@@ -38,8 +38,9 @@ class Grammar(
         val numNonTerminals = root.numNonTerminals()
         val numTerminals = root.numTerminals()
         val numTokens = root.numTokens()
-        return "numNonTerminals=$numNonTerminals numTerminals=$numTerminals\n"+
-               "numTokens=$numTokens"
+        return "numNonTerminals=$numNonTerminals\n" +
+            "numTerminals=$numTerminals\n" +
+            "numTokens=$numTokens\n"
     }
 
     override fun toString(): String {
@@ -55,8 +56,8 @@ class Grammar(
             println("----------------------------------------")
             val reader = BufferedReader(FileReader(File(trainFile)))
             var line = reader.readLine()
-            while (line == null || line.isEmpty()) {
-                line = reader.readLine()
+            if (line == null) {
+                line = ""
             }
             val grammar = Grammar(nonTerminalFromLine(line))
             while (line != null && !line.isEmpty()) {

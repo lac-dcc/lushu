@@ -10,7 +10,11 @@ class IntervalLattice(
 
     companion object {
         fun areCompatible(n1: IntervalNode, n2: IntervalNode): Boolean {
-            return n1.baseNode == n2.baseNode
+            if (!NodeFactory.isTop(n1.baseNode)) {
+                return n1.baseNode == n2.baseNode
+            } else {
+                return n1.charset == n2.charset
+            }
         }
     }
 

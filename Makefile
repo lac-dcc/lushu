@@ -46,3 +46,21 @@ test/stress/with-lushu/pglogs:
     $(TEST_STRESS_NUM_SIMULS) \
     test/stress_test/results/with-lushu/pglogs \
     $(TEST_PGLOGS_PATH)
+
+# This test tries to emulate what Zhefuscator (Saffran et. al) did. Zhefuscator
+# only recognized integer numbers as an aggregate entity.
+test/emulate/zhe:
+	gradle fatjar
+	temp="$$(mktemp)" && \
+	head -1000 test/stress_test/pglogs | java -jar ./Lushu/build/libs/Lushu.jar \
+    example/zhe.yaml \
+    "$$temp" \
+    true \
+    1>/dev/null
+
+	temp="$$(mktemp)" && \
+	head -1000 test/stress_test/pglogs | java -jar ./Lushu/build/libs/Lushu.jar \
+    example/config.yaml \
+    "$$temp" \
+    true \
+    1>/dev/null
