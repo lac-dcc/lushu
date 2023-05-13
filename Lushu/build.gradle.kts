@@ -129,6 +129,27 @@ val stressTestWoutLushuJar =
         with(tasks.jar.get())
     }
 
+val stressTestGrammarStatisticsJar =
+    task("stressTestGrammarStatisticsJar", type = Jar::class) {
+        archiveBaseName.set("StressTestGrammarStatistics")
+        manifest {
+            attributes(
+                mapOf(
+                    "Implementation-Title" to "StressTestGrammarStatistics",
+                    "Implementation-Version" to "0.1",
+                    "Main-Class" to "lushu.TestApps.StressTest.GrammarStatistics.AppKt"
+                )
+            )
+        }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        val dependencies = configurations
+            .runtimeClasspath
+            .get()
+            .map(::zipTree)
+        from(dependencies)
+        with(tasks.jar.get())
+    }
+
 tasks {
     "build" {
         dependsOn(fatJar)

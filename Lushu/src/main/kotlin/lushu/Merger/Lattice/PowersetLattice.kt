@@ -12,6 +12,9 @@ class PowersetLattice(
         if (n1.blacklists(n2) || n2.blacklists(n1)) {
             return nf.topNode()
         }
+        if (NodeFactory.isTop(n1) || NodeFactory.isTop(n2)) {
+            return nf.topNode()
+        }
         return nf.joinPwsetNodes(n1, n2)
     }
 }

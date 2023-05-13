@@ -1,0 +1,7 @@
+# This lattice config tries to emulate what Zhefuscator (Saffran et. al)
+# did. Zhefuscator only recognized integer numbers as an aggregate entity.
+latticeBase:
+  num:
+    intervalMin: 1
+    intervalMax: 16
+    charset: "0123456789"

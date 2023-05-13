@@ -25,7 +25,7 @@ class MergerLattice(
         }
 
         val intervalNode = ilatt.meet(n1, n2)
-        if (!intervalNode.isWithinBounds()) {
+        if (!intervalNode.isWithinBounds() && !isTop(intervalNode.baseNode)) {
             logger.debug(
                 "Interval node $intervalNode is not within bounds. " +
                     "Elevating to powerset lattice."

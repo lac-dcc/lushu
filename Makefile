@@ -46,3 +46,20 @@ test/stress/with-lushu/pglogs:
     $(TEST_STRESS_NUM_SIMULS) \
     test/stress_test/results/with-lushu/pglogs \
     $(TEST_PGLOGS_PATH)
+
+# This test tries to emulate what Zhefuscator (Saffran et. al) did. Zhefuscator
+# only recognized integer numbers as an aggregate entity.
+test/compare/zhe:
+	./test/compare_to_zhe/run.sh \
+	  1 \
+	  10 \
+	  1000 \
+	  example/zhe.yaml \
+	  test/compare_to_zhe/results/zhe
+
+	./test/compare_to_zhe/run.sh \
+	  1 \
+	  10 \
+	  1000 \
+	  example/config.yaml \
+	  test/compare_to_zhe/results/lushu
