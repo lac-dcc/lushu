@@ -53,13 +53,13 @@ test/compare/zhe:
 	./test/compare_to_zhe/run.sh \
 	  1 \
 	  10 \
-	  1000 \
+	  2010 \
 	  example/zhe.yaml \
 	  test/compare_to_zhe/results/zhe
 
 	./test/compare_to_zhe/run.sh \
 	  1 \
 	  10 \
-	  1000 \
+	  2010 \
 	  example/config.yaml \
 	  test/compare_to_zhe/results/lushu
