@@ -1,5 +1,5 @@
 <div align="center">
-  <span><img src="docs/images/LushuFinalLogo.png" alt="Lushu Logo" width="200" height="200">
+  <span><img src="docs/images/LushuLogo.png" alt="Lushu Logo" width="200" height="200">
 </div>
 
 # Lushu
