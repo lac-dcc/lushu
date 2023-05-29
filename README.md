@@ -1,3 +1,7 @@
+<div align="center">
+  <span><img src="https://github.com/Vitor-Git15/AddLogo/assets/89043212/4fbc9749-122c-4404-a22c-55bc244d7e04" alt="Lushu Logo" width="200" height="200">
+</div>
+
 # Lushu
 
 _Lushu_ (short for the Chinese 记录树, 录树), is a system that recognizes
