@@ -19,6 +19,9 @@ plugins {
 dependencies {
     implementation("org.slf4j:slf4j-log4j12:2.0.3")
 
+    // Kotlin coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+
     // Jackson -- to parse YAML files
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.2")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.2")
