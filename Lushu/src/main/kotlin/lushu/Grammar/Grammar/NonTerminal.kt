@@ -9,7 +9,7 @@ class NonTerminal(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun consume(input: List<String>): List<String> {
+    fun consume(input: List<String>): List<Terminal.Result> {
         if (input.isEmpty()) {
             return input
         }

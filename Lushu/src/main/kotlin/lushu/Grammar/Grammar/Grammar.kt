@@ -7,16 +7,21 @@ import java.io.FileReader
 class Grammar(
     private var root: NonTerminal
 ) {
-    fun consume(words: List<String>): String {
+    data class Result(
+        terminals: List<Terminal>
+        
+    )
+
+    fun consume(words: List<String>): Result {
         val consumedWords = root.consume(words)
         return consumedWords.joinToString(tokenSeparator)
     }
 
-    fun consume(s: String): String {
+    fun consume(s: String): Result {
         return consume(s.split(tokenSeparator))
     }
 
-    fun consumeStdin(firstLine: String? = null): String {
+    fun consumeStdin(firstLine: String? = null): Result {
         var consumed = listOf<String>()
         var line = firstLine
         if (line == null) {

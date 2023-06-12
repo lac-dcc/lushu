@@ -9,18 +9,17 @@ import java.io.PrintStream
 
 class LushuPrintStream(
     ostream: OutputStream,
-    // The grammar is kept for as long as the PrintStream lives. This way, it
-    // keeps memory of what it's seen.
-    private val grammar: Grammar
+    private val grammar: Grammar,
+    private val dispatcher: Dispatcher,
 ) : PrintStream(ostream) {
     val chan = Channel<String>(Channel.UNLIMITED)
-
     init {
         GlobalScope.launch {
             while (true) {
                 val s = chan.receive()
-                val obfuscated = grammar.consume(s)
-                super.print(obfuscated)
+                val result = grammar.consume(s)
+                val command = Command(result)
+                dispatcher.queue(command)
             }
         }
     }
