@@ -1,3 +1,7 @@
+<div align="center">
+  <span><img src="docs/images/LushuLogo.png" alt="Lushu Logo" width="100" height="100">
+</div>
+
 # Lushu
 
 _Lushu_ (short for the Chinese 记录树, 录树), is a system that recognizes
