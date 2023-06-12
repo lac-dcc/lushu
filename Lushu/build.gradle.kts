@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 plugins {
