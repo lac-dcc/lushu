@@ -1,13 +1,13 @@
 package lushu.Interceptor
 
+import lushu.Grammar.Grammar.Grammar
+import lushu.Interceptor.PrintStream.LushuPrintStream
 import java.io.OutputStream
 import java.io.PrintStream
-import lushu.Interceptor.PrintStream.LushuPrintStream
-import lushu.Grammar.Grammar.Grammar
 
 class Interceptor(
     private val ostream: OutputStream,
-    private val grammar: Grammar,
+    private val grammar: Grammar
 ) {
     private val lushuPS = LushuPrintStream(ostream, grammar)
 

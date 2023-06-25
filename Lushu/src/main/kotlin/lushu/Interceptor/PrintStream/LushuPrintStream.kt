@@ -10,7 +10,7 @@ import java.io.PrintStream
 class LushuPrintStream(
     ostream: OutputStream,
     private val grammar: Grammar,
-    private val dispatcher: Dispatcher = Dispatcher(),
+    private val dispatcher: Dispatcher = Dispatcher()
 ) : PrintStream(ostream) {
     val chan = Channel<String>(Channel.UNLIMITED)
     private val state = State(ostream)

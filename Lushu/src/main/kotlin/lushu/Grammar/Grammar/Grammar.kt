@@ -11,7 +11,7 @@ class Grammar(
         val results: List<NonTerminal.Result>
     ) {
         override fun toString(): String {
-            return results.joinToString(logSeparator) + "\n"
+            return results.joinToString(logSeparator)
         }
     }
 

@@ -3,7 +3,6 @@ package lushu.LogGenerator
 import lushu.Grammar.Grammar.Grammar
 import lushu.Grammar.Grammar.MergerS
 import lushu.Interceptor.Interceptor
-import lushu.Interceptor.PrintStream.LushuPrintStream
 import lushu.Test.Utils.Utils
 import org.junit.jupiter.api.Test
 

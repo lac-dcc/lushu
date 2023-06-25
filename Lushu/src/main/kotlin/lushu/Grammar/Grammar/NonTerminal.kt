@@ -10,7 +10,7 @@ class NonTerminal(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     class Result(
-        val results: List<Terminal.Result>,
+        val results: List<Terminal.Result>
     ) {
         override fun toString(): String {
             return results.joinToString(" ")

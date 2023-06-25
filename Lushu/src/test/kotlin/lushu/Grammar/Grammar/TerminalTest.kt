@@ -40,7 +40,7 @@ class TerminalTest {
             println("Starting test ${it.desc}")
             val rule = Terminal.new(it.tokens)
             val actual = rule.consume(it.input)
-            if (it.expected != actual) {
+            if (it.expected.consumed != actual.consumed || it.expected.obfuscated != actual.obfuscated) {
                 throw Exception(
                     "For test '${it.desc}', expected ${it.expected}, " +
                         "but got $actual"
