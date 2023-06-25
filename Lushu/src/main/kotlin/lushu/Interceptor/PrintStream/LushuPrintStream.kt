@@ -6,22 +6,22 @@ import kotlinx.coroutines.launch
 import lushu.Grammar.Grammar.Grammar
 import java.io.OutputStream
 import java.io.PrintStream
-import lushu.Interceptor.Dispatcher.Dispatcher
 
 class LushuPrintStream(
     ostream: OutputStream,
     private val grammar: Grammar,
-    private val dispatcher: Dispatcher = Dispatcher(ostream),
+    private val dispatcher: Dispatcher = Dispatcher(),
 ) : PrintStream(ostream) {
     val chan = Channel<String>(Channel.UNLIMITED)
+    private val state = State(ostream)
+
     init {
         GlobalScope.launch {
             while (true) {
                 val s = chan.receive()
                 val result = grammar.consume(s)
-                super.print(result)
-                // val command = Command(result)
-                // dispatcher.queue(command)
+                val command = Command.build(result, state)
+                dispatcher.queue(command)
             }
         }
     }
