@@ -6,11 +6,12 @@ import kotlinx.coroutines.launch
 import lushu.Grammar.Grammar.Grammar
 import java.io.OutputStream
 import java.io.PrintStream
+import lushu.Interceptor.Dispatcher.Dispatcher
 
 class LushuPrintStream(
     ostream: OutputStream,
     private val grammar: Grammar,
-    private val dispatcher: Dispatcher,
+    private val dispatcher: Dispatcher = Dispatcher(ostream),
 ) : PrintStream(ostream) {
     val chan = Channel<String>(Channel.UNLIMITED)
     init {
@@ -18,8 +19,9 @@ class LushuPrintStream(
             while (true) {
                 val s = chan.receive()
                 val result = grammar.consume(s)
-                val command = Command(result)
-                dispatcher.queue(command)
+                super.print(result)
+                // val command = Command(result)
+                // dispatcher.queue(command)
             }
         }
     }

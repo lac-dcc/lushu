@@ -9,10 +9,14 @@ class Terminal(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    data class Result(
+    class Result(
         val consumed: Boolean = false,
         val obfuscated: String = ""
-    )
+    ) {
+        override fun toString(): String {
+            return obfuscated
+        }
+    }
 
     // Consumes the string at the head of the input text list with the tokens in
     // the terminal node.

@@ -9,9 +9,17 @@ class NonTerminal(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun consume(input: List<String>): List<Terminal.Result> {
+    class Result(
+        val results: List<Terminal.Result>,
+    ) {
+        override fun toString(): String {
+            return results.joinToString(" ")
+        }
+    }
+
+    fun consumeRecursive(input: List<String>): List<Terminal.Result> {
         if (input.isEmpty()) {
-            return input
+            return listOf<Terminal.Result>()
         }
         var res = Terminal.Result()
         val word = input[0]
@@ -29,7 +37,7 @@ class NonTerminal(
         }
         if (input.size == 1) {
             // Must have been consumed by the terminals already; return.
-            return listOf(res.obfuscated)
+            return listOf(res)
         }
 
         // Process the next word
@@ -38,7 +46,12 @@ class NonTerminal(
         if (n == null) {
             next = new(consumed[0], id + 1)
         }
-        return listOf(res.obfuscated) + next!!.consume(consumed)
+        return listOf(res) + next!!.consume(consumed).results
+    }
+
+    fun consume(input: List<String>): Result {
+        val results = consumeRecursive(input)
+        return Result(results)
     }
 
     // print pretty-prints the NonTerminal tree

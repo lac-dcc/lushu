@@ -36,7 +36,7 @@ class GrammarTest {
             println("Starting test ${it.desc}")
             val grammar = Grammar.fromLine(it.input)
             val actual = grammar.consume(it.input)
-            if (it.expected != actual) {
+            if (it.expected != actual.toString()) {
                 throw Exception(
                     "For test '${it.desc}', expected ${it.expected}, " +
                         "but got $actual"
@@ -85,7 +85,7 @@ class GrammarTest {
                 Utils.logFullPath("train/ip-is-sensitive.log")
             )
             val actual = grammar.consume(it.input)
-            if (it.expected != actual) {
+            if (it.expected != actual.toString()) {
                 throw Exception(
                     "For test '${it.desc}', expected ${it.expected}, " +
                         "but got $actual"

@@ -7,14 +7,16 @@ import java.io.FileReader
 class Grammar(
     private var root: NonTerminal
 ) {
-    data class Result(
-        terminals: List<Terminal>
-        
-    )
+    class Result(
+        val results: List<NonTerminal.Result>
+    ) {
+        override fun toString(): String {
+            return results.joinToString(logSeparator) + "\n"
+        }
+    }
 
     fun consume(words: List<String>): Result {
-        val consumedWords = root.consume(words)
-        return consumedWords.joinToString(tokenSeparator)
+        return Result(listOf(root.consume(words)))
     }
 
     fun consume(s: String): Result {
@@ -22,16 +24,16 @@ class Grammar(
     }
 
     fun consumeStdin(firstLine: String? = null): Result {
-        var consumed = listOf<String>()
+        var results = listOf<NonTerminal.Result>()
         var line = firstLine
         if (line == null) {
             line = readLine()
         }
         while (line != null && !line.isEmpty()) {
-            consumed += consume(line)
+            results += consume(line).results
             line = readLine()
         }
-        return consumed.joinToString(logSeparator) + "\n"
+        return Result(results)
     }
 
     // print pretty-prints the grammar
