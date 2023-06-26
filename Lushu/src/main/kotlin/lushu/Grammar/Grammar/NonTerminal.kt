@@ -13,7 +13,7 @@ class NonTerminal(
         val results: List<Terminal.Result>
     ) {
         override fun toString(): String {
-            return results.map{ it.word }.joinToString(" ")
+            return results.map { it.word }.joinToString(" ")
         }
     }
 
@@ -46,7 +46,7 @@ class NonTerminal(
         if (n == null) {
             next = new(consumed[0], id + 1)
         }
-        return listOf(res) + next!!.consume(consumed).results
+        return listOf(res) + next!!.consumeRecursive(consumed)
     }
 
     fun consume(input: List<String>): Result {

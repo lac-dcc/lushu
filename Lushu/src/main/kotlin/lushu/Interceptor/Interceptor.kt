@@ -1,13 +1,13 @@
 package lushu.Interceptor
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import lushu.Grammar.Grammar.Grammar
 import lushu.Interceptor.PrintStream.Dispatcher
 import lushu.Interceptor.PrintStream.LushuPrintStream
 import java.io.OutputStream
 import java.io.PrintStream
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.Dispatchers
 
 class Interceptor(
     private val ostream: OutputStream,

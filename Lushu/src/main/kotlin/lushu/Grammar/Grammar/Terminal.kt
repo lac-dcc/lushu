@@ -12,7 +12,7 @@ class Terminal(
     data class Result(
         val consumed: Boolean = false,
         val sensitive: Boolean = false,
-        val word: String = "",
+        val word: String = ""
     )
 
     // Consumes the string at the head of the input text list with the tokens in
@@ -29,6 +29,7 @@ class Terminal(
             logger.debug("Word $cleanWord merged! New tokens: ${res.tokens}")
             tokens = res.tokens
             if (tokens.size > 0 && tokens[0].sensitive) {
+                System.err.println("The word " + cleanWord + " is sensitive!")
                 return Result(true, true, cleanWord)
             }
             return Result(true, false, cleanWord)

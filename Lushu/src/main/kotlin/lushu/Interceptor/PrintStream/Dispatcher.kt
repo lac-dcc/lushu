@@ -1,12 +1,10 @@
 package lushu.Interceptor.PrintStream
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
+import kotlinx.coroutines.withContext
 
 class Dispatcher {
     val chan = Channel<Command>(Channel.UNLIMITED)
