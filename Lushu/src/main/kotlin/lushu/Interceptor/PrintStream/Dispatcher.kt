@@ -1,24 +1,48 @@
 package lushu.Interceptor.PrintStream
 
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.selects.select
 
 class Dispatcher {
     val chan = Channel<Command>(Channel.UNLIMITED)
+    val stopChan = Channel<Boolean>(Channel.UNLIMITED)
+    val stoppedChan = Channel<Boolean>(Channel.UNLIMITED)
 
-    init {
-        GlobalScope.launch {
-            while (true) {
-                val command = chan.receive()
-                command.execute()
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    suspend fun start() {
+        withContext(Dispatchers.Default) {
+            var shouldStop = false
+            while (!shouldStop || !chan.isEmpty) {
+                select<Unit> {
+                    chan.onReceive() {
+                        it.execute()
+                    }
+                    stopChan.onReceive() {
+                        shouldStop = true
+                    }
+                }
             }
+            stoppedChan.send(true)
         }
     }
 
-    fun queue(command: Command) {
-        GlobalScope.launch {
+    suspend fun queue(command: Command) {
+        withContext(Dispatchers.Default) {
             chan.send(command)
+        }
+    }
+
+    fun join() {
+        runBlocking {
+            withContext(Dispatchers.Default) {
+                stopChan.send(true)
+                stoppedChan.receive()
+            }
         }
     }
 }

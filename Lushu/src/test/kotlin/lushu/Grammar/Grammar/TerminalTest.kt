@@ -21,26 +21,26 @@ class TerminalTest {
                 "one token",
                 "abc",
                 "a",
-                Terminal.Result(true, "a")
+                Terminal.Result(true, false, "a")
             ),
             TestCase(
                 "multiple tokens",
                 "abcdefghijklmnop",
                 "HelloFriend",
-                Terminal.Result(true, "HelloFriend")
+                Terminal.Result(true, false, "HelloFriend")
             ),
             TestCase(
                 "multiple words unmergeable",
                 "abc",
                 "...",
-                Terminal.Result(false, "...")
+                Terminal.Result(false, false, "...")
             )
         )
         testCases.forEach {
             println("Starting test ${it.desc}")
             val rule = Terminal.new(it.tokens)
             val actual = rule.consume(it.input)
-            if (it.expected.consumed != actual.consumed || it.expected.obfuscated != actual.obfuscated) {
+            if (it.expected != actual) {
                 throw Exception(
                     "For test '${it.desc}', expected ${it.expected}, " +
                         "but got $actual"

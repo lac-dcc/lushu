@@ -3,33 +3,66 @@ package lushu.Interceptor.PrintStream
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 import lushu.Grammar.Grammar.Grammar
 import java.io.OutputStream
 import java.io.PrintStream
+import kotlinx.coroutines.selects.select
 
 class LushuPrintStream(
     ostream: OutputStream,
     private val grammar: Grammar,
-    private val dispatcher: Dispatcher = Dispatcher()
+    private val dispatcher: Dispatcher,
 ) : PrintStream(ostream) {
     val chan = Channel<String>(Channel.UNLIMITED)
+    val stopChan = Channel<Boolean>(Channel.UNLIMITED)
+    val stoppedChan = Channel<Boolean>(Channel.UNLIMITED)
     private val state = State(ostream)
 
-    init {
-        GlobalScope.launch {
-            while (true) {
-                val s = chan.receive()
-                val result = grammar.consume(s)
-                val command = Command.build(result, state)
-                dispatcher.queue(command)
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    suspend fun start() {
+        withContext(Dispatchers.Default) {
+            var shouldStop = false
+            while (!shouldStop || !chan.isEmpty) {
+                select<Unit> {
+                    chan.onReceive() {
+                        val result = grammar.consume(it)
+                        val command = Command.build(result, state)
+                        System.err.println("Dispatching command")
+                        dispatcher.queue(command)
+                    }
+                    stopChan.onReceive() {
+                        System.err.println("Received stop command in print stream")
+                        shouldStop = true
+                    }
+                }
+            }
+            dispatcher.join()
+            stoppedChan.send(true)
+        }
+    }
+
+    fun join() {
+        runBlocking {
+            withContext(Dispatchers.Default) {
+                stopChan.send(true)
+                stoppedChan.receive()
             }
         }
     }
 
     override fun print(s: String) {
-        GlobalScope.launch {
-            chan.send(s)
+        runBlocking {
+            launch {
+                chan.send(s)
+            }
         }
+    }
+
+    override fun print(o: Any?) {
+        this.print(o.toString())
     }
 
     override fun print(b: Boolean) {

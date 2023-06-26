@@ -31,23 +31,23 @@ fun main(args: Array<String>) {
 
     val grammar = Grammar.fromTrainFile(trainFile)
     val interceptor = Interceptor(System.out, grammar)
-    interceptor.intercept()
-    var time: Long
-    if (logsFile == "") {
-        val lg = LogGenerator(logGeneratorBaseDir)
-        time = measureTimeMillis { lg.run(numLogs) }
-    } else {
-        val logs = File(logsFile).readLines()
-        time = measureTimeMillis {
-            logs.forEach {
-                println(it)
+    var time: Long = 0
+    interceptor.intercept {
+        if (logsFile == "") {
+            val lg = LogGenerator(logGeneratorBaseDir)
+            time = measureTimeMillis { lg.run(numLogs) }
+        } else {
+            val logs = File(logsFile).readLines()
+            time = measureTimeMillis {
+                logs.forEach {
+                    println(it)
+                }
             }
         }
     }
     val runtime = Runtime.getRuntime()
     runtime.gc()
     val memory = runtime.totalMemory() - runtime.freeMemory()
-    interceptor.passThrough()
 
     System.err.println("$time")
     System.err.println("$memory")

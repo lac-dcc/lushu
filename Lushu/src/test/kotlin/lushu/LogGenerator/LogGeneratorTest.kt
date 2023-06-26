@@ -18,9 +18,9 @@ class LogGeneratorTest {
         )
         println("Using grammar:\n${grammar.print()}")
         val interceptor = Interceptor(System.out, grammar)
-        interceptor.intercept()
-        val lg = LogGenerator(Utils.logGeneratorFullPath())
-        lg.run(5)
-        interceptor.passThrough()
+        interceptor.intercept {
+            val lg = LogGenerator(Utils.logGeneratorFullPath())
+            lg.run(5)
+        }
     }
 }

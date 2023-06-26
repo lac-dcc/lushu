@@ -1,5 +1,8 @@
 package lushu
 
+import java.util.concurrent.TimeUnit
+import lushu.Interceptor.Interceptor
+import lushu.Interceptor.PrintStream.LushuPrintStream
 import lushu.Grammar.Grammar.Grammar
 import lushu.Grammar.Grammar.MergerS
 
@@ -20,9 +23,14 @@ fun main(args: Array<String>) {
 
     MergerS.load(configFilePath)
     val grammar = Grammar.fromTrainFile(trainFile)
-    val obfuscatedLines = grammar.consumeStdin()
+    val res = grammar.consumeStdin()
 
-    print(obfuscatedLines)
+    val interceptor = Interceptor(System.out, grammar)
+    System.err.println("Created interceptor")
+    interceptor.intercept {
+        System.err.println("Starting to print!")
+        print(res)
+    }
 
     if (printStatistics) {
         System.err.print("${grammar.statistics()}")

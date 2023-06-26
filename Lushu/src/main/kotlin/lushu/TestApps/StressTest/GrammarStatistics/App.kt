@@ -22,10 +22,10 @@ fun main(args: Array<String>) {
 
     val grammar = Grammar.fromTrainFile(trainFile)
     val interceptor = Interceptor(System.out, grammar)
-    interceptor.intercept()
-    val lg = LogGenerator(logGeneratorBaseDir)
-    lg.run(numLogs)
-    interceptor.passThrough()
+    interceptor.intercept {
+        val lg = LogGenerator(logGeneratorBaseDir)
+        lg.run(numLogs)
+    }
 
     System.err.print("${grammar.statistics()}")
 }

@@ -13,7 +13,7 @@ class NonTerminal(
         val results: List<Terminal.Result>
     ) {
         override fun toString(): String {
-            return results.joinToString(" ")
+            return results.map{ it.word }.joinToString(" ")
         }
     }
 
