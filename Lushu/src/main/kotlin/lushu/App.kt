@@ -25,8 +25,8 @@ fun main(args: Array<String>) {
 
     val interceptor = Interceptor(System.out, grammar)
     System.err.println("Created interceptor")
+
     interceptor.intercept {
-        System.err.println("Starting to print!")
         print(res)
     }
 

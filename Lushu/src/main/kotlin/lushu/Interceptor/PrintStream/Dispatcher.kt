@@ -12,21 +12,19 @@ class Dispatcher {
     val stoppedChan = Channel<Boolean>(Channel.UNLIMITED)
 
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-    suspend fun start() {
-        withContext(Dispatchers.Default) {
-            var shouldStop = false
-            while (!shouldStop || !chan.isEmpty) {
-                select<Unit> {
-                    chan.onReceive() {
-                        it.execute()
-                    }
-                    stopChan.onReceive() {
-                        shouldStop = true
-                    }
+    suspend fun start() = withContext(Dispatchers.Default) {
+        var shouldStop = false
+        while (!shouldStop || !chan.isEmpty) {
+            select<Unit> {
+                chan.onReceive() {
+                    it.execute()
+                }
+                stopChan.onReceive() {
+                    shouldStop = true
                 }
             }
-            stoppedChan.send(true)
         }
+        stoppedChan.send(true)
     }
 
     suspend fun queue(command: Command) {
