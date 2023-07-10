@@ -31,9 +31,6 @@ class NonTerminal(
             // terminal with a new token that recognizes that word.
             terminals += Terminal.new(word)
         }
-        if (res.sensitive) {
-            // System.err.println("Got sensitive terminal result: $res")
-        }
         if (words.size == 1) {
             // Must have been consumed by the terminals already; return.
             return listOf(res)
@@ -50,6 +47,7 @@ class NonTerminal(
 
     fun consume(words: List<String>): Result {
         val results = consumeRecursive(words)
+        System.err.println("Got NonTerminal results: $results")
         return Result(results)
     }
 
