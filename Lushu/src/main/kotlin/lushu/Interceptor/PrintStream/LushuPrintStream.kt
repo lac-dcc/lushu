@@ -27,13 +27,13 @@ class LushuPrintStream(
             while (!shouldStop || !chan.isEmpty) {
                 select<Unit> {
                     chan.onReceive() {
-                        val result = grammar.consume(it)
+                        val result = grammar.consumeLines(it)
                         val cmds = Command.build(result, state)
-                        System.err.println("Dispatching commands")
+                        // System.err.println("Dispatching commands")
                         cmds.forEach { dispatcher.queue(it) }
                     }
                     stopChan.onReceive() {
-                        System.err.println("Received stop command in print stream")
+                        // System.err.println("Received stop command in print stream")
                         shouldStop = true
                     }
                 }

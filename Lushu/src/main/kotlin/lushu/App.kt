@@ -21,13 +21,14 @@ fun main(args: Array<String>) {
 
     MergerS.load(configFilePath)
     val grammar = Grammar.fromTrainFile(trainFile)
-    val res = grammar.consumeStdin()
-
     val interceptor = Interceptor(System.out, grammar)
-    System.err.println("Created interceptor")
 
     interceptor.intercept {
-        print(res)
+        var line = readLine()
+        while (line != null && !line.isEmpty()) {
+            print(line)
+            line = readLine()
+        }
     }
 
     if (printStatistics) {

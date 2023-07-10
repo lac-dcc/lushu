@@ -7,20 +7,25 @@ import java.io.FileReader
 class Grammar(
     private var root: NonTerminal
 ) {
-    class Result(
+    data class Result(
         val results: List<NonTerminal.Result>
-    ) {
-        override fun toString(): String {
-            return results.joinToString(logSeparator)
-        }
-    }
+    )
 
     fun consume(words: List<String>): Result {
         return Result(listOf(root.consume(words)))
     }
 
-    fun consume(s: String): Result {
-        return consume(s.split(tokenSeparator))
+    fun consume(line: String): Result {
+        return consume(line.split(tokenSeparator))
+    }
+
+    fun consumeLines(lines: String): Result = lines.let {
+        Result(
+            it.split(logSeparator).fold(listOf<NonTerminal.Result>()) {
+                    acc, next ->
+                acc + consume(next.split(tokenSeparator)).results
+            }
+        )
     }
 
     fun consumeStdin(firstLine: String? = null): Result {
@@ -33,7 +38,9 @@ class Grammar(
             results += consume(line).results
             line = readLine()
         }
-        return Result(results)
+        val res = Result(results)
+        // System.err.println("Got grammar result: $res")
+        return res
     }
 
     // print pretty-prints the grammar

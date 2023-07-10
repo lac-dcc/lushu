@@ -9,20 +9,16 @@ class NonTerminal(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    class Result(
+    data class Result(
         val results: List<Terminal.Result>
-    ) {
-        override fun toString(): String {
-            return results.map { it.word }.joinToString(" ")
-        }
-    }
+    )
 
-    fun consumeRecursive(input: List<String>): List<Terminal.Result> {
-        if (input.isEmpty()) {
+    fun consumeRecursive(words: List<String>): List<Terminal.Result> {
+        if (words.isEmpty()) {
             return listOf<Terminal.Result>()
         }
         var res = Terminal.Result()
-        val word = input[0]
+        val word = words[0]
         for (i in 0 until terminals.size) {
             if (res.consumed) {
                 numTerminalConsumes++
@@ -35,13 +31,16 @@ class NonTerminal(
             // terminal with a new token that recognizes that word.
             terminals += Terminal.new(word)
         }
-        if (input.size == 1) {
+        if (res.sensitive) {
+            // System.err.println("Got sensitive terminal result: $res")
+        }
+        if (words.size == 1) {
             // Must have been consumed by the terminals already; return.
             return listOf(res)
         }
 
         // Process the next word
-        val consumed = input.drop(1)
+        val consumed = words.drop(1)
         val n = next
         if (n == null) {
             next = new(consumed[0], id + 1)
@@ -49,8 +48,8 @@ class NonTerminal(
         return listOf(res) + next!!.consumeRecursive(consumed)
     }
 
-    fun consume(input: List<String>): Result {
-        val results = consumeRecursive(input)
+    fun consume(words: List<String>): Result {
+        val results = consumeRecursive(words)
         return Result(results)
     }
 
