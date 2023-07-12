@@ -2,11 +2,11 @@ package lushu.ContextGrammar.Grammar
 
 class Parser (private val rules: Rules = Rules()){
 
-    fun parsing(wordsList: MutableList<String>): MutableList<String>{
-        return rules.standardize(wordsList)
+    fun parsing(wordsList: MutableList<String>): List<String>{
+        return rules.tokens2CipherTokens(wordsList)
     }
 
-    fun createRules(wordsList: MutableList<String>): Unit{
-        rules.getContext(wordsList)
+    fun createRules(words: String?){
+        rules.getContext(words)
     }
 }

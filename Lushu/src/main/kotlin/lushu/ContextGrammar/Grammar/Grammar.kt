@@ -1,7 +1,5 @@
 package lushu.ContextGrammar.Grammar
 
-
-
 class Grammar(private val parser: Parser = Parser()){
     private fun consume(words: MutableList<String>): String{
         val consumedWords = parser.parsing(words)
@@ -20,7 +18,7 @@ class Grammar(private val parser: Parser = Parser()){
         return consumed.joinToString(logSeparator) + "\n"
     }
 
-    private fun train(words: MutableList<String>): Unit{
+    private fun train(words: String?): Unit{
         parser.createRules(words)
     }
 
@@ -30,10 +28,10 @@ class Grammar(private val parser: Parser = Parser()){
             line = readLine()
         }
         while (!line.isNullOrEmpty()) {
-            train(line.split(" ").toMutableList())
+            train(line)
             line = readLine()
         }
-        train(line!!.split(" ").toMutableList())
+        train(line)
     }
 
     companion object{
