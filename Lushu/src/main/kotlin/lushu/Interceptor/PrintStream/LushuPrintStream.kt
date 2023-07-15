@@ -1,5 +1,8 @@
 package lushu.Interceptor.PrintStream
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import lushu.Grammar.Grammar.Grammar
 import java.io.OutputStream
 import java.io.PrintStream
@@ -10,9 +13,22 @@ class LushuPrintStream(
     // keeps memory of what it's seen.
     private val grammar: Grammar
 ) : PrintStream(ostream) {
+    val chan = Channel<String>(Channel.UNLIMITED)
+
+    init {
+        GlobalScope.launch {
+            while (true) {
+                val s = chan.receive()
+                val obfuscated = grammar.consume(s)
+                super.print(obfuscated)
+            }
+        }
+    }
+
     override fun print(s: String) {
-        val obfuscated = grammar.consume(s)
-        super.print(obfuscated)
+        GlobalScope.launch {
+            chan.send(s)
+        }
     }
 
     override fun print(b: Boolean) {
