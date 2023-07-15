@@ -1,6 +1,7 @@
 package lushu.ContextGrammar.Grammar
 
 import java.util.regex.Pattern
+
 class Rules(private val root: Node = Node()) {
 
     private val terminalNode: Node = Node()
@@ -15,9 +16,9 @@ class Rules(private val root: Node = Node()) {
      * Input: word = "example", current = Node(label = "root", children = [Node(label = "host"), Node(label = "example"), Node(label = "ip")])
      * Output: true
      */
-    private fun isEndingPlusCase(word: String, current: Node?): Boolean{
+    private fun isEndingPlusCase(word: String, current: Node?): Boolean {
         return word.endsWith(logSeparator) ||
-                (current != null && current.getChildren().any { it.match(word) })
+            (current != null && current.getChildren().any { it.match(word) })
     }
 
     /**
@@ -36,9 +37,15 @@ class Rules(private val root: Node = Node()) {
      *        current = Node(label = "Emily", children = [Node(label = "is")])
      * Output: (4, Node(label = "is"))
      */
-    private fun plusCaseMatcher(inputTokens: MutableList<String>, mutableTokens: MutableList<String>, index: Int, current: Node?): Pair<Int, Node?> {
-        if(current == null)
+    private fun plusCaseMatcher(
+        inputTokens: MutableList<String>,
+        mutableTokens: MutableList<String>,
+        index: Int,
+        current: Node?,
+    ): Pair<Int, Node?> {
+        if (current == null) {
             return Pair(1, null)
+        }
 
         if (isEndingPlusCase(mutableTokens[index], current)) {
             inputTokens.clear()
@@ -49,13 +56,14 @@ class Rules(private val root: Node = Node()) {
         }
 
         if (current.match(mutableTokens[index])) {
-            if(current.isSensitive())
-                mutableTokens[index] = "*".repeat(mutableTokens[index].length)
+            if (current.isSensitive()) {
+                mutableTokens[index] = asteriskSymbol.repeat(mutableTokens[index].length)
+            }
 
             return plusCaseMatcher(inputTokens, mutableTokens, index + 1, current)
         }
 
-        return Pair(1, null)
+        return Pair(noMatchFound, null)
     }
 
     /**
@@ -67,12 +75,14 @@ class Rules(private val root: Node = Node()) {
      * Input: current = Node(label = "root", children = [Node(label = "host"), Node(label = "warning"), Node(label = "ip")]), word = "host"
      * Output: Node(label = "host")
      */
-    private fun matcher(current: Node?, word: String): Node?{
-        if(current == null)
+    private fun matcher(current: Node?, word: String): Node? {
+        if (current == null) {
             return null
+        }
 
-        if(current!!.getChildren().isNullOrEmpty())
+        if (current!!.getChildren().isNullOrEmpty()) {
             return terminalNode
+        }
 
         return current?.getChildren()?.find { child ->
             child.match(word)
@@ -94,17 +104,22 @@ class Rules(private val root: Node = Node()) {
      *       current = rootNode
      * Output: 3
      */
-    private fun matchTokensAgainstPatternContext(inputTokens: MutableList<String>, mutableTokens: MutableList<String>, index: Int, current: Node?): Int {
+    private fun matchTokensAgainstPatternContext(
+        inputTokens: MutableList<String>,
+        mutableTokens: MutableList<String>,
+        index: Int,
+        current: Node?,
+    ): Int {
         if (current == null) {
-            return 1
+            return noMatchFound
         }
         if (index >= inputTokens.size) {
-            if(current.getChildren().isNullOrEmpty()){
+            if (current.getChildren().isNullOrEmpty()) {
                 inputTokens.clear()
                 inputTokens.addAll(mutableTokens)
                 return (inputTokens.size - index - 1)
             }
-            return 1
+            return noMatchFound
         }
 
         if (current == terminalNode) {
@@ -115,16 +130,17 @@ class Rules(private val root: Node = Node()) {
         if (current.isPlus()) {
             val (nextIndex: Int, nextNode: Node?) = plusCaseMatcher(inputTokens, mutableTokens, index, current)
 
-            if ((nextNode != null) && (nextNode.isSensitive()))
-                mutableTokens[nextIndex] = "*".repeat(mutableTokens[nextIndex].length)
+            if ((nextNode != null) && (nextNode.isSensitive())) {
+                mutableTokens[nextIndex] = asteriskSymbol.repeat(mutableTokens[nextIndex].length)
+            }
 
             return matchTokensAgainstPatternContext(inputTokens, mutableTokens, nextIndex, nextNode)
-        }
-        else {
+        } else {
             val nextNode = matcher(current, inputTokens[index])
 
-            if ((nextNode != null) && (nextNode.isSensitive()))
-                mutableTokens[index] = "*".repeat(mutableTokens[index].length)
+            if ((nextNode != null) && (nextNode.isSensitive())) {
+                mutableTokens[index] = asteriskSymbol.repeat(mutableTokens[index].length)
+            }
 
             return matchTokensAgainstPatternContext(inputTokens, mutableTokens, index + 1, nextNode)
         }
@@ -140,7 +156,6 @@ class Rules(private val root: Node = Node()) {
      * Output: [0, 2, 3]
      */
     private fun findMatchingIndex(inputTokens: List<String>, regexList: List<String>): List<Int> {
-
         val matchingIndex = regexList.flatMap { regex ->
             val pattern = Pattern.compile(regex)
             inputTokens.mapIndexedNotNull { index, word ->
@@ -162,17 +177,18 @@ class Rules(private val root: Node = Node()) {
      * Input: ["server", "host", "ip:",  "123.123.123.123", "is", "online"]
      * Output: ["server", "host", "ip:",  "***************", "is", "online"]
      */
-    fun tokens2CipherTokens(inputTokens: List<String>): List<String>{
+    fun tokens2CipherTokens(inputTokens: List<String>): List<String> {
         val regexList: List<String> = root.getChildren().map { child -> child.getRegex() }
         val matchingIndex: List<Int> = findMatchingIndex(inputTokens, regexList)
 
-        var i = -1
+        var i = defaultMinimalIndex
 
         val cipherTokens = inputTokens.toMutableList()
 
         matchingIndex.forEach { index ->
-            if(i <= index){
-                i = matchTokensAgainstPatternContext(cipherTokens, inputTokens.toMutableList(), index, root)}
+            if (i <= index) {
+                i = matchTokensAgainstPatternContext(cipherTokens, inputTokens.toMutableList(), index, root)
+            }
         }
 
         return cipherTokens
@@ -198,7 +214,13 @@ class Rules(private val root: Node = Node()) {
 
         dsl.setIsCase(isCase)
 
-        val updatedCurrent = current?.addChild(word, s = dsl.isSensitive(), pc = dsl.isPlus(), npc = nextCase[isStar], m = dsl.isTerminal())
+        val updatedCurrent = current?.addChild(
+            word,
+            s = dsl.isSensitive(),
+            pc = dsl.isPlus(),
+            npc = nextCase[isStar],
+            m = dsl.isTerminal(),
+        )
 
         dsl.setIsCase(nextCase)
 
@@ -213,14 +235,16 @@ class Rules(private val root: Node = Node()) {
      * - Example:
      * Input: This is an example sentence <c>with context</c> and <c>another context</c>
      */
-    fun getContext(words: String?){
+    fun getContext(words: String?) {
         val contexts = dsl.extractContext(words ?: "")
-        contexts.forEach { context -> addContextToGrammar(context.split(" ").toMutableList())}
+        contexts.forEach { context -> addContextToGrammar(context.split(" ").toMutableList()) }
     }
 
-    companion object{
+    companion object {
         private val logSeparator = "\n"
+        private val asteriskSymbol = "*"
         private val isStar = 2
+        private val noMatchFound = 1
+        private val defaultMinimalIndex = -1
     }
-
 }

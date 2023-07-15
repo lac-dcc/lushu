@@ -30,6 +30,7 @@ hs_err_pid*
 **~
 
 .gradle
+.idea
 
 testlogs
 pglogs.log

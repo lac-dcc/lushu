@@ -1,41 +1,42 @@
 package lushu.ContextGrammar.Grammar
 
 class DSL(
-    val tags: MutableList<String> = mutableListOf("<c>","<s>","<*>","<t>"),
-    val isCase: MutableList<Boolean> = mutableListOf(false, false, false, false)
+    val tags: MutableList<String> = mutableListOf("<c>", "<s>", "<*>", "<t>"),
+    val isCase: MutableList<Boolean> = mutableListOf(false, false, false, false),
 ) {
 
     /**
      * Checks if the current case is a sensitive case.
      * @return true if the current case is a sensitive case, false otherwise.
      */
-    fun isSensitive(): Boolean{
-        return isCase[sensitive_case]
+    fun isSensitive(): Boolean {
+        return isCase[sensitiveCase]
     }
 
     /**
      * Checks if the current case is a star case.
      * @return true if the current case is a star case, false otherwise.
      */
-    fun isPlus(): Boolean{
-        return isCase[star_case]
+    fun isPlus(): Boolean {
+        return isCase[starCase]
     }
 
     /**
      * Checks if the current case is a terminal case.
      * @return true if the current case is a terminal case, false otherwise.
      */
-    fun isTerminal(): Boolean{
-        return isCase[terminal_case]
+    fun isTerminal(): Boolean {
+        return isCase[terminalCase]
     }
 
     /**
      * Sets the isCase list with the values from the previous list.
      * @param previous The list of boolean values to set the isCase list.
      */
-    fun setIsCase(previous: List<Boolean>){
-        if(isCase.size != previous.size)
+    fun setIsCase(previous: List<Boolean>) {
+        if (isCase.size != previous.size) {
             return
+        }
         isCase.clear()
         isCase.addAll(previous)
     }
@@ -44,7 +45,7 @@ class DSL(
      * Adds a new opening flag to the list of tags.
      * @param newOpeningFlag The new opening flag to be added.
      */
-    fun addFlag(newOpeningFlag: String, newEndFlag: String){
+    fun addFlag(newOpeningFlag: String, newEndFlag: String) {
         tags.add(newOpeningFlag)
     }
 
@@ -72,7 +73,7 @@ class DSL(
      * Input: "<tag><tag1>example</tag1>"
      * Output: "example"
      */
-    fun removeAllTagsFromWord(word: String): String{
+    fun removeAllTagsFromWord(word: String): String {
         return removeTagsFromWord(removeTagsFromWord(word, tags.toList()), openingTags2ClosingTags(tags))
     }
 
@@ -119,10 +120,10 @@ class DSL(
 
      */
     fun hasTags(word: String): Pair<List<Boolean>, List<Boolean>> {
-
-        val isCase = tags.map{word.contains(it)}
+        val isCase = tags.map { word.contains(it) }
         val closerTags = openingTags2ClosingTags(tags)
-        val nextCase = closerTags.map { !word.contains(it) }.zip(isCase).map{(next, current) -> if (next) current else next}
+        val nextCase =
+            closerTags.map { !word.contains(it) }.zip(isCase).map { (next, current) -> if (next) current else next }
 
         return Pair(isCase, nextCase)
     }
@@ -138,15 +139,17 @@ class DSL(
      * Output: ["some", "text"]
      **/
     fun extractContext(input: String): List<String> {
-        val regex = Regex("<c>(.*?)</c>")
+        val regex = Regex("$contextOpeningTag(.*?)$contextCloserTag")
         val matches = regex.findAll(input)
         val substrings = matches.map { it.groupValues[1] }.toList()
         return substrings
     }
 
-    companion object{
-        private val sensitive_case = 1
-        private val star_case = 2
-        private val terminal_case = 3
+    companion object {
+        private val sensitiveCase = 1
+        private val starCase = 2
+        private val terminalCase = 3
+        private val contextOpeningTag = "<c>"
+        private val contextCloserTag = "</c>"
     }
 }
