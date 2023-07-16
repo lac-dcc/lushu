@@ -3,7 +3,6 @@ package lushu.Interceptor.PrintStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.withContext
 import lushu.Grammar.Grammar.Grammar
 import java.io.OutputStream
@@ -15,25 +14,20 @@ class LushuPrintStream(
     private val dispatcher: Dispatcher
 ) : PrintStream(ostream) {
     val chan = Channel<String>(Channel.UNLIMITED)
-    val stopChan = Channel<Boolean>(Channel.UNLIMITED)
     val stoppedChan = Channel<Boolean>(Channel.UNLIMITED)
     private val state = State(ostream)
 
-    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     suspend fun start() {
         withContext(Dispatchers.Default) {
             var shouldStop = false
-            while (!shouldStop || !chan.isEmpty) {
-                select<Unit> {
-                    chan.onReceive() {
-                        val result = grammar.consumeLines(it)
-                        val cmds = Command.build(result, state)
-                        cmds.forEach { dispatcher.queue(it) }
-                    }
-                    stopChan.onReceive() {
-                        shouldStop = true
-                    }
+            while (!(shouldStop && chan.isEmpty)) {
+                val s = chan.receive()
+                if (s.isEmpty()) {
+                    shouldStop = true
                 }
+                val result = grammar.consumeLines(s)
+                val cmds = Command.build(result, state)
+                cmds.forEach { dispatcher.queue(it) }
             }
             dispatcher.join()
             stoppedChan.send(true)
@@ -43,7 +37,7 @@ class LushuPrintStream(
     fun join() {
         runBlocking {
             withContext(Dispatchers.Default) {
-                stopChan.send(true)
+                chan.send("")
                 stoppedChan.receive()
             }
         }
@@ -55,10 +49,6 @@ class LushuPrintStream(
                 chan.send(s)
             }
         }
-    }
-
-    override fun print(o: Any?) {
-        this.print(o.toString())
     }
 
     override fun print(b: Boolean) {
@@ -83,5 +73,9 @@ class LushuPrintStream(
 
     override fun print(l: Long) {
         this.print(l.toString())
+    }
+
+    override fun print(o: Any?) {
+        this.print(o.toString())
     }
 }

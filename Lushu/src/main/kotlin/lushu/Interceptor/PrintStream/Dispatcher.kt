@@ -3,25 +3,20 @@ package lushu.Interceptor.PrintStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.withContext
 
 class Dispatcher {
-    val chan = Channel<Command>(Channel.UNLIMITED)
-    val stopChan = Channel<Boolean>(Channel.UNLIMITED)
+    val chan = Channel<Command?>(Channel.UNLIMITED)
     val stoppedChan = Channel<Boolean>(Channel.UNLIMITED)
 
-    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     suspend fun start() = withContext(Dispatchers.Default) {
         var shouldStop = false
-        while (!shouldStop || !chan.isEmpty) {
-            select<Unit> {
-                chan.onReceive() {
-                    it.execute()
-                }
-                stopChan.onReceive() {
-                    shouldStop = true
-                }
+        while (!(shouldStop && chan.isEmpty)) {
+            val cmd = chan.receive()
+            if (cmd == null) {
+                shouldStop = true
+            } else {
+                cmd.execute()
             }
         }
         stoppedChan.send(true)
@@ -36,7 +31,7 @@ class Dispatcher {
     fun join() {
         runBlocking {
             withContext(Dispatchers.Default) {
-                stopChan.send(true)
+                chan.send(null)
                 stoppedChan.receive()
             }
         }
