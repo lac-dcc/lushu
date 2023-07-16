@@ -18,7 +18,6 @@ class Interceptor(
 
     fun intercept(f: () -> Any?) {
         runBlocking {
-            System.err.println("Starting interception")
             System.setOut(lushuPS)
             val djob = launch(Dispatchers.Default) {
                 dispatcher.start()
@@ -26,14 +25,11 @@ class Interceptor(
             val psjob = launch(Dispatchers.Default) {
                 lushuPS.start()
             }
-            System.err.println("Starting f")
             f()
             lushuPS.join()
             djob.cancel()
             psjob.cancel()
-            System.err.println("Finished f")
             System.setOut(PrintStream(ostream))
-            System.err.println("Finished interception")
         }
     }
 }

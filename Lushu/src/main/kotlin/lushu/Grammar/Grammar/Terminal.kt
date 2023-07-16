@@ -29,7 +29,6 @@ class Terminal(
             logger.debug("Word $cleanWord merged! New tokens: ${res.tokens}")
             tokens = res.tokens
             if (tokens.size > 0 && tokens[0].sensitive) {
-                // System.err.println("The word " + cleanWord + " is sensitive!")
                 return Result(true, true, cleanWord)
             }
             return Result(true, false, cleanWord)

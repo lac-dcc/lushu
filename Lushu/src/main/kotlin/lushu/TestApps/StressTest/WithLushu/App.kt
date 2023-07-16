@@ -32,19 +32,24 @@ fun main(args: Array<String>) {
     val grammar = Grammar.fromTrainFile(trainFile)
     val interceptor = Interceptor(System.out, grammar)
     var time: Long = 0
-    interceptor.intercept {
-        if (logsFile == "") {
-            val lg = LogGenerator(logGeneratorBaseDir)
-            time = measureTimeMillis { lg.run(numLogs) }
-        } else {
-            val logs = File(logsFile).readLines()
-            time = measureTimeMillis {
+    if (logsFile == "") {
+        val lg = LogGenerator(logGeneratorBaseDir)
+        time = measureTimeMillis {
+            interceptor.intercept {
+                lg.run(numLogs)
+            }
+        }
+    } else {
+        val logs = File(logsFile).readLines()
+        time = measureTimeMillis {
+            interceptor.intercept {
                 logs.forEach {
                     println(it)
                 }
             }
         }
     }
+
     val runtime = Runtime.getRuntime()
     runtime.gc()
     val memory = runtime.totalMemory() - runtime.freeMemory()

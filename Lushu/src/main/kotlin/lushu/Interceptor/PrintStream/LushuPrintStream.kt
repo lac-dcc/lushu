@@ -2,7 +2,6 @@ package lushu.Interceptor.PrintStream
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.withContext
@@ -29,11 +28,9 @@ class LushuPrintStream(
                     chan.onReceive() {
                         val result = grammar.consumeLines(it)
                         val cmds = Command.build(result, state)
-                        // System.err.println("Dispatching commands")
                         cmds.forEach { dispatcher.queue(it) }
                     }
                     stopChan.onReceive() {
-                        // System.err.println("Received stop command in print stream")
                         shouldStop = true
                     }
                 }
@@ -54,7 +51,7 @@ class LushuPrintStream(
 
     override fun print(s: String) {
         runBlocking {
-            launch {
+            withContext(Dispatchers.Default) {
                 chan.send(s)
             }
         }

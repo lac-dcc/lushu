@@ -3,10 +3,10 @@ package lushu.Interceptor.PrintStream
 import java.io.OutputStream
 
 class CommandPlainText(
-    private val s: String,
-    private val ostream: OutputStream
+    val s: String,
+    val ostream: OutputStream
 ) : Command {
-    override fun execute() {
+    override inline fun execute() {
         ostream.write(s.toByteArray())
     }
 }

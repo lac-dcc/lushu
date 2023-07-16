@@ -39,7 +39,6 @@ class Grammar(
             line = readLine()
         }
         val res = Result(results)
-        // System.err.println("Got grammar result: $res")
         return res
     }
 
@@ -62,8 +61,8 @@ class Grammar(
     }
 
     companion object {
-        private val tokenSeparator = " "
-        private val logSeparator = "\n"
+        val tokenSeparator = " "
+        val logSeparator = "\n"
 
         fun fromTrainFile(trainFile: String): Grammar {
             println("Training Lushu Grammar with file '$trainFile'")

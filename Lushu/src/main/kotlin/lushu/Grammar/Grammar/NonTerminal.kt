@@ -47,7 +47,6 @@ class NonTerminal(
 
     fun consume(words: List<String>): Result {
         val results = consumeRecursive(words)
-        System.err.println("Got NonTerminal results: $results")
         return Result(results)
     }
 

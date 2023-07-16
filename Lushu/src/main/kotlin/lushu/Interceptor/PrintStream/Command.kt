@@ -8,19 +8,15 @@ interface Command {
     companion object {
         // build is a command factory
         fun build(grammarResult: Grammar.Result, state: State): List<Command> {
-            var cmds = listOf<Command>()
-            grammarResult.results.forEach { result ->
-                result.results.forEach { terminalResult ->
-                    if (terminalResult.sensitive) {
-                        cmds += CommandObfuscate(terminalResult.word, state.ostream)
+            return grammarResult.results.fold(listOf<Command>()) { r, result ->
+                result.results.fold(r) { rr, terminalResult ->
+                    rr + if (terminalResult.sensitive) {
+                        CommandObfuscate(terminalResult.word, state.ostream)
                     } else {
-                        cmds += CommandPlainText(terminalResult.word, state.ostream)
-                    }
-                    cmds += CommandPlainText(" ", state.ostream)
-                }
-                cmds += CommandPlainText("\n", state.ostream)
+                        CommandPlainText(terminalResult.word, state.ostream)
+                    } + CommandPlainText(Grammar.tokenSeparator, state.ostream)
+                } + CommandPlainText(Grammar.logSeparator, state.ostream)
             }
-            return cmds
         }
     }
 }
