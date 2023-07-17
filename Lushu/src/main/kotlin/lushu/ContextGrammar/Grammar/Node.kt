@@ -12,7 +12,7 @@ class Node(
         return this.regex
     }
 
-    fun getChildren(): MutableList<Node> {
+    fun getChildren(): List<Node> {
         return this.children
     }
 
@@ -50,26 +50,46 @@ class Node(
     }
 
     /**
-     * Adds a child node to the current node based on the specified parameters.
-     * @param r The rule to match against the child nodes.
-     * @param s Indicates whether the child node is sensitive.
-     * @param pc Indicates whether the child node is plus case.
-     * @param npc Indicates whether the next word is plus case too.
-     * @param m Indicates whether the child node is mergeable.
-     * @return The added child node that matches the rule, or the last child node if none match.
+     * Adds a new node to the children set.
+     * @param regex The node regular expression.
+     * @param sensitive A boolean value indicating if the new node is sensitive.
+     * @param plusCase A boolean value indicating if the new node is a plus case.
+     * @param terminal A boolean value indicating if the new node is terminal.
      */
-    fun addChild(r: String, s: Boolean, pc: Boolean, npc: Boolean, m: Boolean): Node {
-        this.getChildren().forEach {
-            if (it.match(r)) {
-                return it
-            }
-        }
-        this.getChildren().add(Node(r, s, pc, m))
+    private fun addChild(r: String, s: Boolean, pc: Boolean, m: Boolean) {
+        val newNode = Node(r, s, pc, m)
+        this.children.add(newNode)
+    }
 
-        if (pc && npc) {
-            return this
+    /**
+     * Adds a new child node to the current node's children list.
+     * @param newNode The node to be added as a child.
+     */
+    private fun addChild(newNode: Node) {
+        if (newNode != null) {
+            this.children.add(newNode)
+        }
+    }
+
+    /**
+     * Finds an existing child node in the 'children' set that matches the provided criteria,
+     * or adds a new node with the given properties if no match is found.
+     *
+     * @param regex The node regular expression.
+     * @param sensitive A boolean value indicating if the new node is sensitive.
+     * @param plusCase A boolean value indicating if the new node is a plus case.
+     * @param terminal A boolean value indicating if the new node is terminal.
+     * @return The existing child node that matches the criteria, if found. Otherwise, a new node
+     *         with the given properties will be added to the 'children' set and returned.
+     */
+    fun findOrAddChild(regex: String, sensitive: Boolean, plusCase: Boolean, terminal: Boolean): Node {
+        val existingChild = children.find { it.match(regex) }
+        if (existingChild != null) {
+            return existingChild
         }
 
-        return this.getChildren().last()
+        val newNode = Node(regex, sensitive, plusCase, terminal)
+        this.addChild(newNode)
+        return newNode
     }
 }

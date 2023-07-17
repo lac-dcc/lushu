@@ -1,8 +1,15 @@
 package lushu.ContextGrammar.Grammar
 
+enum class TagNames(val tagName: String) {
+    CONTEXT("c"),
+    SENSITIVE("s"),
+    STAR("*"),
+    TERMINAL("t")
+}
+
 class DSL(
-    val tags: MutableList<String> = mutableListOf("<c>", "<s>", "<*>", "<t>"),
     val isCase: MutableList<Boolean> = mutableListOf(false, false, false, false),
+    val tags: List<String> = TagNames.values().map { it.tagName }.map { "<$it>" }
 ) {
 
     /**
@@ -10,7 +17,7 @@ class DSL(
      * @return true if the current case is a sensitive case, false otherwise.
      */
     fun isSensitive(): Boolean {
-        return isCase[sensitiveCase]
+        return isCase[TagNames.SENSITIVE.ordinal]
     }
 
     /**
@@ -18,7 +25,7 @@ class DSL(
      * @return true if the current case is a star case, false otherwise.
      */
     fun isPlus(): Boolean {
-        return isCase[starCase]
+        return isCase[TagNames.STAR.ordinal]
     }
 
     /**
@@ -26,7 +33,7 @@ class DSL(
      * @return true if the current case is a terminal case, false otherwise.
      */
     fun isTerminal(): Boolean {
-        return isCase[terminalCase]
+        return isCase[TagNames.TERMINAL.ordinal]
     }
 
     /**
@@ -39,14 +46,6 @@ class DSL(
         }
         isCase.clear()
         isCase.addAll(previous)
-    }
-
-    /**
-     * Adds a new opening flag to the list of tags.
-     * @param newOpeningFlag The new opening flag to be added.
-     */
-    fun addFlag(newOpeningFlag: String, newEndFlag: String) {
-        tags.add(newOpeningFlag)
     }
 
     /**
@@ -100,7 +99,7 @@ class DSL(
      * Input: mutableListOf("<tag1>", "<tag2>", "<tag3>")
      * Output: ["</tag1>", "</tag2>", "</tag3>"]
      */
-    fun openingTags2ClosingTags(tags: MutableList<String>): List<String> {
+    fun openingTags2ClosingTags(tags: List<String>): List<String> {
         return tags.map { opening2CloserTag(it) }.toList()
     }
 

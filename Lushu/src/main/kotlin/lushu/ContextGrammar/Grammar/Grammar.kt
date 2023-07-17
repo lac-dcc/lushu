@@ -55,33 +55,5 @@ class Grammar(private val parser: Parser = Parser()) {
     companion object {
         private val tokenSeparator = " "
         private val logSeparator = "\n"
-        private val grammar: Grammar = Grammar()
-        fun trainFromStdin(): Grammar {
-            var line = readLine()
-
-            while (line.isNullOrEmpty()) {
-                line = readLine()
-            }
-            grammar.trainStdin(line)
-            return grammar
-        }
-
-        fun consumeStdin(): Grammar {
-            var line = readLine()
-            while (line.isNullOrEmpty()) {
-                line = readLine()
-            }
-            println(grammar.consumeStdin(line))
-            return grammar
-        }
-
-        fun consumeTextFile(filePath: String) {
-            val file = File(filePath)
-            val lines = file.readLines()
-
-            for (line in lines) {
-                println(grammar.consumeText(line))
-            }
-        }
     }
 }

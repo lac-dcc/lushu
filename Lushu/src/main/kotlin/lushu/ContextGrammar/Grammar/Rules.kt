@@ -202,7 +202,7 @@ class Rules(private val root: Node = Node()) {
      * - Example:
      * Input: mutableListOf("This", "<t>is", "an</t>", "<s>example</s>", "sentence.")
      */
-    private fun addContextToGrammar(contextRule: MutableList<String>, current: Node? = root) {
+    private fun addContextRule(contextRule: MutableList<String>, current: Node? = root) {
         if (contextRule.isNullOrEmpty()) {
             return
         }
@@ -214,18 +214,22 @@ class Rules(private val root: Node = Node()) {
 
         dsl.setIsCase(isCase)
 
-        val updatedCurrent = current?.addChild(
+        val updatedCurrent = current?.findOrAddChild(
             word,
-            s = dsl.isSensitive(),
-            pc = dsl.isPlus(),
-            npc = nextCase[isStar],
-            m = dsl.isTerminal(),
+            dsl.isSensitive(),
+            dsl.isPlus(),
+            dsl.isTerminal(),
         )
 
         dsl.setIsCase(nextCase)
 
         contextRule.removeAt(firstWord)
-        addContextToGrammar(contextRule, updatedCurrent)
+
+        if (nextCase[isStar]) {
+            addContextRule(contextRule, current)
+        } else {
+            addContextRule(contextRule, updatedCurrent)
+        }
     }
 
     /**
@@ -235,9 +239,9 @@ class Rules(private val root: Node = Node()) {
      * - Example:
      * Input: This is an example sentence <c>with context</c> and <c>another context</c>
      */
-    fun getContext(words: String?) {
+    fun addContextsFromWords(words: String?) {
         val contexts = dsl.extractContext(words ?: "")
-        contexts.forEach { context -> addContextToGrammar(context.split(" ").toMutableList()) }
+        contexts.forEach { context -> addContextRule(context.split(" ").toMutableList()) }
     }
 
     companion object {

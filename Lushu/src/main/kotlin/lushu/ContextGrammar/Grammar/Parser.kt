@@ -7,6 +7,6 @@ class Parser(private val rules: Rules = Rules()) {
     }
 
     fun createRules(words: String?) {
-        rules.getContext(words)
+        rules.addContextsFromWords(words)
     }
 }
