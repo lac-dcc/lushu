@@ -1,33 +1,81 @@
 package lushu.Interceptor.PrintStream
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import lushu.Grammar.Grammar.Grammar
 import java.io.OutputStream
 import java.io.PrintStream
 
 class LushuPrintStream(
     ostream: OutputStream,
-    // The grammar is kept for as long as the PrintStream lives. This way, it
-    // keeps memory of what it's seen.
-    private val grammar: Grammar
+    private val grammar: Grammar,
+    private val dispatcher: Dispatcher
 ) : PrintStream(ostream) {
-    val chan = Channel<String>(Channel.UNLIMITED)
+    private val numListeners = 4
+    private val chan = Channel<Job>(Channel.UNLIMITED)
+    private val stopChan = Channel<Boolean>(Channel.UNLIMITED)
+    private val stoppedChan = Channel<Boolean>(Channel.UNLIMITED)
+    private val state = State(ostream)
+    private var shouldStop = false
 
-    init {
-        GlobalScope.launch {
-            while (true) {
-                val s = chan.receive()
-                val obfuscated = grammar.consume(s)
-                super.print(obfuscated)
+    data class Job(
+        val s: String,
+        val id: Int = globalID
+    ) {
+        init {
+            globalID++
+        }
+
+        companion object {
+            private var globalID = 0
+        }
+    }
+
+    suspend fun start() {
+        withContext(Dispatchers.Default) {
+            for (i in 0 until numListeners) {
+                launch {
+                    listen()
+                }
+            }
+            wait()
+        }
+    }
+
+    private suspend fun listen() {
+        while (!(shouldStop && chan.isEmpty)) {
+            val job = chan.receive()
+            val result = grammar.consumeLines(job.s)
+            val cmds = Command.build(result, state)
+            dispatcher.queue(job.id, cmds)
+        }
+    }
+
+    private suspend fun wait() {
+        shouldStop = stopChan.receive()
+        // TODO: avoid crazy while loop - aholmquist 2023-07-16
+        while (!chan.isEmpty) {}
+        dispatcher.join()
+        stoppedChan.send(true)
+    }
+
+    fun join() {
+        runBlocking {
+            withContext(Dispatchers.Default) {
+                stopChan.send(true)
+                stoppedChan.receive()
             }
         }
     }
 
     override fun print(s: String) {
-        GlobalScope.launch {
-            chan.send(s)
+        runBlocking {
+            withContext(Dispatchers.Default) {
+                chan.send(Job(s))
+            }
         }
     }
 
@@ -53,5 +101,9 @@ class LushuPrintStream(
 
     override fun print(l: Long) {
         this.print(l.toString())
+    }
+
+    override fun print(o: Any?) {
+        this.print(o.toString())
     }
 }

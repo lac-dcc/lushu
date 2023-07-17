@@ -2,9 +2,8 @@ package lushu.TestApps.StressTest.GrammarStatistics
 
 import lushu.Grammar.Grammar.Grammar
 import lushu.Grammar.Grammar.MergerS
-import lushu.Interceptor.PrintStream.LushuPrintStream
+import lushu.Interceptor.Interceptor
 import lushu.LogGenerator.LogGenerator
-import java.io.PrintStream
 
 fun main(args: Array<String>) {
     if (args.size < 4) {
@@ -22,10 +21,11 @@ fun main(args: Array<String>) {
     MergerS.load(configFilePath)
 
     val grammar = Grammar.fromTrainFile(trainFile)
-    System.setOut(LushuPrintStream(System.out, grammar))
-    val lg = LogGenerator(logGeneratorBaseDir)
-    lg.run(numLogs)
-    System.setOut(PrintStream(System.out))
+    val interceptor = Interceptor(System.out, grammar)
+    interceptor.intercept {
+        val lg = LogGenerator(logGeneratorBaseDir)
+        lg.run(numLogs)
+    }
 
     System.err.print("${grammar.statistics()}")
 }

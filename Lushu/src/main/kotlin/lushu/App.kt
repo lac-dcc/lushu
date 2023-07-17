@@ -2,6 +2,7 @@ package lushu
 
 import lushu.Grammar.Grammar.Grammar
 import lushu.Grammar.Grammar.MergerS
+import lushu.Interceptor.Interceptor
 
 fun main(args: Array<String>) {
     if (args.size < 2) {
@@ -20,9 +21,15 @@ fun main(args: Array<String>) {
 
     MergerS.load(configFilePath)
     val grammar = Grammar.fromTrainFile(trainFile)
-    val obfuscatedLines = grammar.consumeStdin()
+    val interceptor = Interceptor(System.out, grammar)
 
-    print(obfuscatedLines)
+    interceptor.intercept {
+        var line = readLine()
+        while (line != null && !line.isEmpty()) {
+            print(line)
+            line = readLine()
+        }
+    }
 
     if (printStatistics) {
         System.err.print("${grammar.statistics()}")

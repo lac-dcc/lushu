@@ -7,26 +7,39 @@ import java.io.FileReader
 class Grammar(
     private var root: NonTerminal
 ) {
-    fun consume(words: List<String>): String {
-        val consumedWords = root.consume(words)
-        return consumedWords.joinToString(tokenSeparator)
+    data class Result(
+        val results: List<NonTerminal.Result>
+    )
+
+    fun consume(words: List<String>): Result {
+        return Result(listOf(root.consume(words)))
     }
 
-    fun consume(s: String): String {
-        return consume(s.split(tokenSeparator))
+    fun consume(line: String): Result {
+        return consume(line.split(tokenSeparator))
     }
 
-    fun consumeStdin(firstLine: String? = null): String {
-        var consumed = listOf<String>()
+    fun consumeLines(lines: String): Result = lines.let {
+        Result(
+            it.split(logSeparator).fold(listOf<NonTerminal.Result>()) {
+                    acc, next ->
+                acc + consume(next.split(tokenSeparator)).results
+            }
+        )
+    }
+
+    fun consumeStdin(firstLine: String? = null): Result {
+        var results = listOf<NonTerminal.Result>()
         var line = firstLine
         if (line == null) {
             line = readLine()
         }
         while (line != null && !line.isEmpty()) {
-            consumed += consume(line)
+            results += consume(line).results
             line = readLine()
         }
-        return consumed.joinToString(logSeparator) + "\n"
+        val res = Result(results)
+        return res
     }
 
     // print pretty-prints the grammar
@@ -48,8 +61,8 @@ class Grammar(
     }
 
     companion object {
-        private val tokenSeparator = " "
-        private val logSeparator = "\n"
+        val tokenSeparator = " "
+        val logSeparator = "\n"
 
         fun fromTrainFile(trainFile: String): Grammar {
             println("Training Lushu Grammar with file '$trainFile'")

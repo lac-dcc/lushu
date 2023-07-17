@@ -21,19 +21,19 @@ class TerminalTest {
                 "one token",
                 "abc",
                 "a",
-                Terminal.Result(true, "a")
+                Terminal.Result(true, false, "a")
             ),
             TestCase(
                 "multiple tokens",
                 "abcdefghijklmnop",
                 "HelloFriend",
-                Terminal.Result(true, "HelloFriend")
+                Terminal.Result(true, false, "HelloFriend")
             ),
             TestCase(
                 "multiple words unmergeable",
                 "abc",
                 "...",
-                Terminal.Result(false, "...")
+                Terminal.Result(false, false, "...")
             )
         )
         testCases.forEach {
