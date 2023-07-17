@@ -14,6 +14,13 @@ class LushuPrintStream(
     private val grammar: Grammar,
     private val dispatcher: Dispatcher
 ) : PrintStream(ostream) {
+    private val numListeners = 4
+    private val chan = Channel<Job>(Channel.UNLIMITED)
+    private val stopChan = Channel<Boolean>(Channel.UNLIMITED)
+    private val stoppedChan = Channel<Boolean>(Channel.UNLIMITED)
+    private val state = State(ostream)
+    private var shouldStop = false
+
     data class Job(
         val s: String,
         val id: Int = globalID
@@ -26,13 +33,6 @@ class LushuPrintStream(
             private var globalID = 0
         }
     }
-
-    private val numListeners = 4
-    private val chan = Channel<Job>(Channel.UNLIMITED)
-    private val stopChan = Channel<Boolean>(Channel.UNLIMITED)
-    private val stoppedChan = Channel<Boolean>(Channel.UNLIMITED)
-    private val state = State(ostream)
-    private var shouldStop = false
 
     suspend fun start() {
         withContext(Dispatchers.Default) {
@@ -56,7 +56,7 @@ class LushuPrintStream(
 
     private suspend fun wait() {
         shouldStop = stopChan.receive()
-        // Todo: avoid crazy while loop
+        // TODO: avoid crazy while loop - aholmquist 2023-07-16
         while (!chan.isEmpty) {}
         dispatcher.join()
         stoppedChan.send(true)

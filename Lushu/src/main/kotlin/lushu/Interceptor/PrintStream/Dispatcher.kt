@@ -42,12 +42,13 @@ class Dispatcher {
                 continue
             }
 
+            // Add job for later processing, ignore it for now, will get to it
+            // at some point.
             if (jobID != curJobID) {
-                // Add job for later processing, ignore it for now, will get to
-                // it at some point.
                 pickedUpCommands[jobID] = cmds
                 continue
             }
+
             cmds.forEach { it.execute() }
             curJobID++
         }
