@@ -7,8 +7,8 @@ interface Command {
 
     companion object {
         // build is a command factory
-        fun build(grammarResult: Grammar.Result, state: State): List<Command> {
-            return grammarResult.results.fold(listOf<Command>()) { r, result ->
+        fun build(grammarResult: Grammar.Result, state: State): List<Command> =
+            grammarResult.results.fold(listOf<Command>()) { r, result ->
                 result.results.fold(r) { rr, terminalResult ->
                     rr + if (terminalResult.sensitive) {
                         CommandObfuscate(terminalResult.word, state.ostream)
@@ -17,6 +17,5 @@ interface Command {
                     } + CommandPlainText(Grammar.tokenSeparator, state.ostream)
                 } + CommandPlainText(Grammar.logSeparator, state.ostream)
             }
-        }
     }
 }
