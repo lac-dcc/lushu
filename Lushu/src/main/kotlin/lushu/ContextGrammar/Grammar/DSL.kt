@@ -4,16 +4,17 @@ enum class TagNames(val tagName: String) {
     CONTEXT("c"),
     SENSITIVE("s"),
     STAR("*"),
-    TERMINAL("t")
+    NONMERGEABLE("m")
 }
 
-class DSL(
+class DSL( 
     val isCase: MutableList<Boolean> = mutableListOf(false, false, false, false),
-    val tags: List<String> = TagNames.values().map { it.tagName }.map { "<$it>" }
+    val tags: List<String> = TagNames.values().map { it.tagName }.map { "<$it>" },
 ) {
 
     /**
      * Checks if the current case is a sensitive case.
+     *
      * @return true if the current case is a sensitive case, false otherwise.
      */
     fun isSensitive(): Boolean {
@@ -22,22 +23,25 @@ class DSL(
 
     /**
      * Checks if the current case is a star case.
+     *
      * @return true if the current case is a star case, false otherwise.
      */
-    fun isPlus(): Boolean {
+    fun isStar(): Boolean {
         return isCase[TagNames.STAR.ordinal]
     }
 
     /**
-     * Checks if the current case is a terminal case.
-     * @return true if the current case is a terminal case, false otherwise.
+     * Checks if the current case is a NONMERGEABLE case.
+     *
+     * @return true if the current case is a NONMERGEABLE case, false otherwise.
      */
-    fun isTerminal(): Boolean {
-        return isCase[TagNames.TERMINAL.ordinal]
+    fun isNonMergeable(): Boolean {
+        return isCase[TagNames.NONMERGEABLE.ordinal]
     }
 
     /**
      * Sets the isCase list with the values from the previous list.
+     *
      * @param previous The list of boolean values to set the isCase list.
      */
     fun setIsCase(previous: List<Boolean>) {
@@ -49,8 +53,8 @@ class DSL(
     }
 
     /**
-     *
      * Removes tags from a given word by replacing occurrences of tags in the word with an empty string.
+     *
      * @param word The word from which tags need to be removed.
      * @param tagSet The list of tags to be removed from the word.
      * @return The word with tags removed.
@@ -59,12 +63,13 @@ class DSL(
      * Input: (word: <tag><tag1>example</tag1>; tagSet: ListOf("<tag>","<tag1>"))
      * Output: "example</tag1>"
      */
-    private fun removeTagsFromWord(word: String, tagSet: List<String>): String {
+    fun removeTagsFromWord(word: String, tagSet: List<String>): String {
         return tagSet.fold(word) { acc, tag -> acc.replace(tag, "") }
     }
 
     /**
      * Removes all tags from a word by recursively removing opening and closing tags.
+     *
      * @param word The word from which tags should be removed.
      * @return The word without any tags.
      *
@@ -78,8 +83,10 @@ class DSL(
 
     /**
      * Converts an opening tag to its corresponding closing tag.
+     *
      * @param openingTag The opening tag to convert.
      * @return The closing tag corresponding to the given opening tag.
+     *
      * - Example:
      * Input: "<tag>"
      * Output: "</tag>"
@@ -90,8 +97,8 @@ class DSL(
     }
 
     /**
-     *
      * Converts a list of opening tags to their corresponding closing tags.
+     *
      * @param tags The list of opening tags to convert.
      * @return A list of corresponding closing tags.
 
@@ -105,16 +112,17 @@ class DSL(
 
     /**
      * Checks if a word contains specific tags and returns two lists indicating the presence of opening tags and closing tags.
+     *
      * @param word The word to check for tags.
      * @return A pair of lists where the first list represents the presence of opening tags in the word, and the second list represents the presence of closing tags.
      *
      * - Example:
-     * Let tags = mutableListOf("<c>","<s>","<*>","<t>");
-     * Input: "<s><*>example</s>";
-     * Output: Pair([false, true, true, false], [false, true, false, false]).
+     * Let tags = mutableListOf("<c>","<s>","<*>","<m>");
+     * Input: "<s><m>example</s>";
+     * Output: Pair([false, true, false, true], [false, true, false, false]).
      *
      * - Explanation:
-     *  The word contains the tags "<s>" and "<*>", but not the tags "<c>" and "<t>", resulting in [false, true, true, false] for the presence of tags.
+     *  The word contains the tags "<s>" and "<*>", but not the tags "<c>" and "<m>", resulting in [false, true, true, false] for the presence of tags.
      *  The next case indicates that the closer tag "</s>" is present, but doesn't have any other closing tags, resulting in [false, true, false, false] for the next case.
 
      */
@@ -147,7 +155,7 @@ class DSL(
     companion object {
         private val sensitiveCase = 1
         private val starCase = 2
-        private val terminalCase = 3
+        private val nonmergeableCase = 3
         private val contextOpeningTag = "<c>"
         private val contextCloserTag = "</c>"
     }
