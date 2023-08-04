@@ -3,7 +3,7 @@ package lushu.ContextGrammar.Grammar
 import java.io.File
 
 class Grammar(private val parser: Parser = Parser()) {
-    private fun consume(words: MutableList<String>): String {
+    fun consume(words: MutableList<String>): String {
         val consumedWords = parser.parsing(words)
         return consumedWords.joinToString(tokenSeparator)
     }
@@ -26,7 +26,7 @@ class Grammar(private val parser: Parser = Parser()) {
         return consumed.joinToString(logSeparator) + "\n"
     }
 
-    private fun train(words: String?) {
+    fun train(words: String?) {
         parser.createRules(words)
     }
 

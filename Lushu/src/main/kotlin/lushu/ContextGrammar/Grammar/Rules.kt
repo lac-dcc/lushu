@@ -18,7 +18,7 @@ class Rules(private val root: Node = Node()) {
      * Input: word = "example", current = Node(label = "root", children = [Node(label = "host"), Node(label = "example"), Node(label = "ip")])
      * Output: true
      */
-    private fun isEndingPlusCase(word: String, current: Node?): Boolean {
+    fun isEndingPlusCase(word: String, current: Node?): Boolean {
         return word.endsWith(logSeparator) ||
             (current != null && current.getChildren().any { it.match(word) })
     }
@@ -41,7 +41,7 @@ class Rules(private val root: Node = Node()) {
      *        current = Node(label = "Emily", children = [Node(label = "is")])
      * Output: (4, Node(label = "is"))
      */
-    private fun plusCaseMatcher(
+    fun plusCaseMatcher(
         inputTokens: MutableList<String>,
         mutableTokens: MutableList<String>,
         index: Int,
@@ -94,7 +94,7 @@ class Rules(private val root: Node = Node()) {
      * Input: current = Node(label = "root", children = [Node(label = "host"), Node(label = "warning"), Node(label = "ip")]), word = "host"
      * Output: Node(label = "host")
      */
-    private fun matcher(current: Node?, word: String): Node? {
+    fun matcher(current: Node?, word: String): Node? {
         when {
             // not found
             (current == null) -> return null
@@ -126,7 +126,7 @@ class Rules(private val root: Node = Node()) {
      *       current = rootNode
      * Output: 3
      */
-    private fun matchTokensAgainstPatternContext(
+    fun matchTokensAgainstPatternContext(
         inputTokens: MutableList<String>,
         mutableTokens: MutableList<String>,
         index: Int,
@@ -183,7 +183,7 @@ class Rules(private val root: Node = Node()) {
      * Input: ["error", "warning", "exception", "success", "invalid"], ["e.", "s.", "c."]
      * Output: [0, 2, 3]
      */
-    private fun findMatchingIndex(inputTokens: List<String>, regexList: List<String>): List<Int> {
+    fun findMatchingIndex(inputTokens: List<String>, regexList: List<String>): List<Int> {
         val matchingIndex = regexList.flatMap { regex ->
             val pattern = Pattern.compile(regex)
             inputTokens.mapIndexedNotNull { index, word ->
@@ -233,7 +233,7 @@ class Rules(private val root: Node = Node()) {
      * - Example:
      * Input: mutableListOf("This", "<m>is", "an</m>", "<s>example</s>", "sentence.")
      */
-    private fun addContextRule(contextRule: MutableList<String>, current: Node? = root) {
+    fun addContextRule(contextRule: MutableList<String>, current: Node? = root) {
         if (contextRule.isNullOrEmpty()) {
             return
         }
