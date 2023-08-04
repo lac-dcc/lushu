@@ -4,10 +4,10 @@ enum class TagNames(val tagName: String) {
     CONTEXT("c"),
     SENSITIVE("s"),
     STAR("*"),
-    NONMERGEABLE("m")
+    NONMERGEABLE("m"),
 }
 
-class DSL( 
+class DSL(
     val isCase: MutableList<Boolean> = mutableListOf(false, false, false, false),
     val tags: List<String> = TagNames.values().map { it.tagName }.map { "<$it>" },
 ) {

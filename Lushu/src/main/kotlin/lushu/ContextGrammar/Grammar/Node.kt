@@ -1,7 +1,5 @@
 package lushu.ContextGrammar.Grammar
 
-import lushu.Merger.Merger.Token
-
 class Node(
     // private val token: Token = Token()
     private val regex: String = "",
@@ -14,7 +12,7 @@ class Node(
     fun getRegex(): String {
         return this.regex
     }
-    
+
     fun getChildren(): List<Node> {
         return this.children
     }
@@ -98,7 +96,7 @@ class Node(
      */
     private fun mergeChildren(newNode: Node) {
         val mergeablesNodes = filterMergeblesNodes(false)
-        //val res = MergerS.merger().merge(ns1, ns2)
+        // val res = MergerS.merger().merge(ns1, ns2)
         // result <- merge all mergeablesNodes
         // forEach mergeablesNodes find the new regex and add it children
         val nonMergeablesNodes = filterMergeblesNodes(true)
