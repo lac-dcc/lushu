@@ -2,10 +2,9 @@ package lushu.TestApps.StressTest.WithLushu
 
 import lushu.Grammar.Grammar.Grammar
 import lushu.Grammar.Grammar.MergerS
-import lushu.Interceptor.PrintStream.LushuPrintStream
+import lushu.Interceptor.Interceptor
 import lushu.LogGenerator.LogGenerator
 import java.io.File
-import java.io.PrintStream
 import kotlin.system.measureTimeMillis
 
 fun main(args: Array<String>) {
@@ -31,23 +30,29 @@ fun main(args: Array<String>) {
     MergerS.load(configFilePath)
 
     val grammar = Grammar.fromTrainFile(trainFile)
-    System.setOut(LushuPrintStream(System.out, grammar))
-    var time: Long
+    val interceptor = Interceptor(System.out, grammar)
+    var time: Long = 0
     if (logsFile == "") {
         val lg = LogGenerator(logGeneratorBaseDir)
-        time = measureTimeMillis { lg.run(numLogs) }
+        time = measureTimeMillis {
+            interceptor.intercept {
+                lg.run(numLogs)
+            }
+        }
     } else {
         val logs = File(logsFile).readLines()
         time = measureTimeMillis {
-            logs.forEach {
-                println(it)
+            interceptor.intercept {
+                logs.forEach {
+                    println(it)
+                }
             }
         }
     }
+
     val runtime = Runtime.getRuntime()
     runtime.gc()
     val memory = runtime.totalMemory() - runtime.freeMemory()
-    System.setOut(PrintStream(System.out))
 
     System.err.println("$time")
     System.err.println("$memory")

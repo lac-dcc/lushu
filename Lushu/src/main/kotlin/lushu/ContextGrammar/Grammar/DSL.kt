@@ -3,7 +3,7 @@ package lushu.ContextGrammar.Grammar
 enum class TagNames(val tagName: String) {
     CONTEXT("c"),
     SENSITIVE("s"),
-    PLUS("*"),
+    PLUS("+"),
     NONMERGEABLE("m"),
 }
 
@@ -117,12 +117,12 @@ class DSL(
      * @return A pair of lists where the first list represents the presence of opening tags in the word, and the second list represents the presence of closing tags.
      *
      * - Example:
-     * Let tags = mutableListOf("<c>","<s>","<*>","<m>");
+     * Let tags = mutableListOf("<c>","<s>","<+>","<m>");
      * Input: "<s><m>example</s>";
      * Output: Pair([false, true, false, true], [false, true, false, false]).
      *
      * - Explanation:
-     *  The word contains the tags "<s>" and "<*>", but not the tags "<c>" and "<m>", resulting in [false, true, true, false] for the presence of tags.
+     *  The word contains the tags "<s>" and "<+>", but not the tags "<c>" and "<m>", resulting in [false, true, true, false] for the presence of tags.
      *  The next case indicates that the closer tag "</s>" is present, but doesn't have any other closing tags, resulting in [false, true, false, false] for the next case.
 
      */

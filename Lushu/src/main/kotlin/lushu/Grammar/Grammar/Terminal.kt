@@ -11,7 +11,8 @@ class Terminal(
 
     data class Result(
         val consumed: Boolean = false,
-        val obfuscated: String = ""
+        val sensitive: Boolean = false,
+        val word: String = ""
     )
 
     // Consumes the string at the head of the input text list with the tokens in
@@ -28,12 +29,12 @@ class Terminal(
             logger.debug("Word $cleanWord merged! New tokens: ${res.tokens}")
             tokens = res.tokens
             if (tokens.size > 0 && tokens[0].sensitive) {
-                return Result(true, constantMask)
+                return Result(true, true, cleanWord)
             }
-            return Result(true, cleanWord)
+            return Result(true, false, cleanWord)
         }
         logger.debug("Word $cleanWord is not mergeable with $tokens")
-        return Result(false, cleanWord)
+        return Result(false, false, cleanWord)
     }
 
     // print pretty-prints the NonTerminal tree
