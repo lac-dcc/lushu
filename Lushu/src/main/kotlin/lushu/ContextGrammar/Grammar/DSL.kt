@@ -3,7 +3,7 @@ package lushu.ContextGrammar.Grammar
 enum class TagNames(val tagName: String) {
     CONTEXT("c"),
     SENSITIVE("s"),
-    STAR("*"),
+    PLUS("*"),
     NONMERGEABLE("m"),
 }
 
@@ -22,12 +22,12 @@ class DSL(
     }
 
     /**
-     * Checks if the current case is a star case.
+     * Checks if the current case is a plus case.
      *
-     * @return true if the current case is a star case, false otherwise.
+     * @return true if the current case is a plus case, false otherwise.
      */
-    fun isStar(): Boolean {
-        return isCase[TagNames.STAR.ordinal]
+    fun isPlus(): Boolean {
+        return isCase[TagNames.PLUS.ordinal]
     }
 
     /**
@@ -154,8 +154,8 @@ class DSL(
 
     companion object {
         private val sensitiveCase = 1
-        private val starCase = 2
-        private val nonmergeableCase = 3
+        private val plusCase = 2
+        private val nonMergeableCase = 3
         private val contextOpeningTag = "<c>"
         private val contextCloserTag = "</c>"
     }

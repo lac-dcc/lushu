@@ -2,9 +2,9 @@ package lushu.ContextGrammar.Grammar
 
 import java.util.regex.Pattern
 
-class Rules(private val root: Node = Node()) {
+class Rules(private val root: GrammarNode = GrammarNode()) {
 
-    private val terminalNode: Node = Node()
+    private val terminalNode: GrammarNode = GrammarNode()
     private val dsl: DSL = DSL()
 
     /**
@@ -15,10 +15,10 @@ class Rules(private val root: Node = Node()) {
      * @return true if the word ends with the log separator or if there is a matching child node, false otherwise.
      *
      * Example:
-     * Input: word = "example", current = Node(label = "root", children = [Node(label = "host"), Node(label = "example"), Node(label = "ip")])
+     * Input: word = "example", current = GrammarNode(label = "root", children = [GrammarNode(label = "host"), GrammarNode(label = "example"), GrammarNode(label = "ip")])
      * Output: true
      */
-    fun isEndingPlusCase(word: String, current: Node?): Boolean {
+    fun isEndingPlusCase(word: String, current: GrammarNode?): Boolean {
         return word.endsWith(logSeparator) ||
             (current != null && current.getChildren().any { it.match(word) })
     }
@@ -38,15 +38,15 @@ class Rules(private val root: Node = Node()) {
      * Input: inputTokens = mutableListOf("name:", "Emily", "Emily", "Emily", "is", "a", "new", "user")
      *        mutableTokens = mutableListOf("name:", "Emily", "Emily", "Emily", "is", "a", "new", "user")
      *        index = 1
-     *        current = Node(label = "Emily", children = [Node(label = "is")])
-     * Output: (4, Node(label = "is"))
+     *        current = GrammarNode(label = "Emily", children = [GrammarNode(label = "is")])
+     * Output: (4, GrammarNode(label = "is"))
      */
     fun plusCaseMatcher(
         inputTokens: MutableList<String>,
         mutableTokens: MutableList<String>,
         index: Int,
-        current: Node?,
-    ): Pair<Int, Node?> {
+        current: GrammarNode?,
+    ): Pair<Int, GrammarNode?> {
         when {
             // don't match
             (index >= inputTokens.size) -> {
@@ -91,10 +91,10 @@ class Rules(private val root: Node = Node()) {
      * @return The matched node, if found; the terminalNode flag, if the node doesn't have children; otherwise, null.
      *
      * Example:
-     * Input: current = Node(label = "root", children = [Node(label = "host"), Node(label = "warning"), Node(label = "ip")]), word = "host"
-     * Output: Node(label = "host")
+     * Input: current = GrammarNode(label = "root", children = [GrammarNode(label = "host"), GrammarNode(label = "warning"), GrammarNode(label = "ip")]), word = "host"
+     * Output: GrammarNode(label = "host")
      */
-    fun matcher(current: Node?, word: String): Node? {
+    fun matcher(current: GrammarNode?, word: String): GrammarNode? {
         when {
             // not found
             (current == null) -> return null
@@ -130,7 +130,7 @@ class Rules(private val root: Node = Node()) {
         inputTokens: MutableList<String>,
         mutableTokens: MutableList<String>,
         index: Int,
-        current: Node?,
+        current: GrammarNode?,
     ): Int {
         when {
             current == null -> return noMatchFound
@@ -150,8 +150,8 @@ class Rules(private val root: Node = Node()) {
                 return (inputTokens.size - index - 1)
             }
 
-            current.isStar() -> {
-                val (nextIndex: Int, nextNode: Node?) = plusCaseMatcher(inputTokens, mutableTokens, index, current)
+            current.isPlus() -> {
+                val (nextIndex: Int, nextNode: GrammarNode?) = plusCaseMatcher(inputTokens, mutableTokens, index, current)
 
                 if ((nextNode != null) && (nextNode.isSensitive())) {
                     mutableTokens[nextIndex] = asteriskSymbol.repeat(mutableTokens[nextIndex].length)
@@ -233,7 +233,7 @@ class Rules(private val root: Node = Node()) {
      * - Example:
      * Input: mutableListOf("This", "<m>is", "an</m>", "<s>example</s>", "sentence.")
      */
-    fun addContextRule(contextRule: MutableList<String>, current: Node? = root) {
+    fun addContextRule(contextRule: MutableList<String>, current: GrammarNode? = root) {
         if (contextRule.isNullOrEmpty()) {
             return
         }
@@ -248,7 +248,7 @@ class Rules(private val root: Node = Node()) {
         val updatedCurrent = current?.findOrAddChild(
             word,
             dsl.isSensitive(),
-            dsl.isStar(),
+            dsl.isPlus(),
             dsl.isNonMergeable(),
         )
 

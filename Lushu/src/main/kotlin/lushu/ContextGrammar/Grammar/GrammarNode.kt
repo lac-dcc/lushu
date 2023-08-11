@@ -1,47 +1,89 @@
 package lushu.ContextGrammar.Grammar
 
-class Node(
-    // private val token: Token = Token()
-    private val regex: String = "",
-    private val sensitive: Boolean = false,
-    private val star: Boolean = false,
-    private val nonmergeable: Boolean = false,
-    private val children: MutableList<Node> = mutableListOf(),
-) {
+import lushu.ContextGrammar.Grammar.Nodes.NonMergeableNode
+import lushu.ContextGrammar.Grammar.Nodes.PlusNode
+import lushu.ContextGrammar.Grammar.Nodes.RegexNode
+import lushu.ContextGrammar.Grammar.Nodes.SensitiveNode
 
-    fun getRegex(): String {
-        return this.regex
+class GrammarNode(
+    override val regex: String = "",
+    override val sensitive: Boolean = false,
+    override val plus: Boolean = false,
+    override val nonmergeable: Boolean = false,
+
+    private val children: MutableList<GrammarNode> = mutableListOf()
+
+) : RegexNode, SensitiveNode, PlusNode, NonMergeableNode {
+
+    override fun meetRegex(acc: RegexNode, node: RegexNode): RegexNode {
+        if (Regex(acc.getRegex()).matches(node.getRegex())) {
+            return acc
+        } else {
+            // return merger(acc, node)
+            return acc
+        }
     }
 
-    fun getChildren(): List<Node> {
+    override fun getRegex() : String{
+        return regex
+    }
+
+    override fun meetSensitive(acc: SensitiveNode, node: SensitiveNode): SensitiveNode {
+        if (acc.isSensitive()) {
+            return acc
+        }
+        if (node.isSensitive()) {
+            // acc.sensitive = node.isSensitive()
+            return node
+        }
+        return acc
+    }
+
+    override fun isSensitive(): Boolean {
+        return this.sensitive
+    }
+
+    override fun meetPlus(acc: PlusNode, node: PlusNode): PlusNode {
+        if (acc.isPlus()) {
+            return acc
+        }
+        if (node.isPlus()) {
+            // acc.plus = true
+            return node
+        }
+        return acc
+    }
+
+    override fun isPlus(): Boolean {
+        return plus
+    }
+
+    override fun meetNonMergeable(acc: NonMergeableNode, node: NonMergeableNode): NonMergeableNode {
+        return acc
+    }
+
+    override fun isNonMergeable(): Boolean {
+        return nonmergeable
+    }
+
+    /**
+     * Retrieves the list of child GrammarNode elements associated with this node.
+     *
+     * @return A List of GrammarNode objects representing the children of this node.
+     */
+    fun getChildren(): List<GrammarNode> {
         return this.children
     }
 
     /**
-     * Checks if the node is sensitive.
+     * Filters the list of nodes based on their mergeable property.
      *
-     * @return true if the current node is sensitive, false otherwise.
+     * @param mergeable Determines whether to include mergeable or non-mergeable nodes in the result.
+     *                    If 'true', only mergeable nodes will be included; otherwise, only non-mergeable nodes will be included.
+     * @return A new list containing the filtered nodes based on the 'nonMergeable' parameter.
      */
-    fun isSensitive(): Boolean {
-        return this.sensitive
-    }
-
-    /**
-     * Checks if the node is star type.
-     *
-     * @return true if the current node is a star type, false otherwise.
-     */
-    fun isStar(): Boolean {
-        return this.star
-    }
-
-    /**
-     * Checks if the node is nonmergeable.
-     *
-     * @return true if the current node is a nonmergeable, false otherwise.
-     */
-    fun isNonMergeable(): Boolean {
-        return this.nonmergeable
+    fun filterMergeblesNodes(mergeable: Boolean): List<GrammarNode> {
+        return children.filter { it.isNonMergeable() == !mergeable }
     }
 
     /**
@@ -55,28 +97,17 @@ class Node(
     }
 
     /**
-     * Filters the list of nodes based on their mergeable property.
-     *
-     * @param nonMergeable Determines whether to include mergeable or non-mergeable nodes in the result.
-     *                    If 'true', only non-mergeable nodes will be included; otherwise, only mergeable nodes will be included.
-     * @return A new list containing the filtered nodes based on the 'nonMergeable' parameter.
-     */
-    fun filterMergeblesNodes(nonMergeable: Boolean): List<Node> {
-        return children.filter { it.isNonMergeable() == nonMergeable }
-    }
-
-    /**
      * Checks if two Node elements are equivalent.
      *
      * @param node1 The first Node element to compare.
      * @param node2 The second Node element to compare.
      * @return 'true' if the two nodes are equivalent, 'false' otherwise.
      */
-    fun areNodesEquivalent(node1: Node, node2: Node): Boolean {
+    fun areNodesEquivalent(node1: GrammarNode, node2: GrammarNode): Boolean {
         return (node1.match(node2.regex) || node2.match(node1.regex)) &&
-            node1.isSensitive() == node2.isSensitive() &&
-            node1.isStar() == node2.isStar() &&
-            node1.isNonMergeable() == node2.isNonMergeable()
+                node1.isSensitive() == node2.isSensitive() &&
+                node1.isPlus() == node2.isPlus() &&
+                node1.isNonMergeable() == node2.isNonMergeable()
     }
 
     /**
@@ -85,7 +116,7 @@ class Node(
      * @param node The Node for which the equivalent node needs to be found.
      * @return The equivalent Node if found in the children list; otherwise, returns the original node.
      */
-    fun getEquivalentNode(node: Node): Node {
+    fun getEquivalentNode(node: GrammarNode): GrammarNode {
         return getChildren().find { areNodesEquivalent(it, node) } ?: node
     }
 
@@ -94,12 +125,12 @@ class Node(
      *
      * @param newNode The new node that will be merged with the children nodes.
      */
-    private fun mergeChildren(newNode: Node) {
-        val mergeablesNodes = filterMergeblesNodes(false)
+    private fun mergeChildren(newNode: GrammarNode) {
+        val mergeablesNodes = filterMergeblesNodes(true)
         // val res = MergerS.merger().merge(ns1, ns2)
         // result <- merge all mergeablesNodes
         // forEach mergeablesNodes find the new regex and add it children
-        val nonMergeablesNodes = filterMergeblesNodes(true)
+        val nonMergeablesNodes = filterMergeblesNodes(false)
         // include nonMergeable + result to this.children
     }
 
@@ -112,7 +143,7 @@ class Node(
      * @param nonmergeable boolean value indicating if the new node is nonmergeable.
      */
     private fun addChild(r: String, s: Boolean, pc: Boolean, m: Boolean) {
-        val newNode = Node(r, s, pc, m)
+        val newNode = GrammarNode(r, s, pc, m)
         this.children.add(newNode)
     }
 
@@ -120,7 +151,7 @@ class Node(
      * Adds a new child node to the current node's children list.
      * @param newNode The node to be added as a child.
      */
-    private fun addChild(newNode: Node) {
+    private fun addChild(newNode: GrammarNode) {
         children.add(newNode)
     }
 
@@ -135,13 +166,13 @@ class Node(
      * @return The existing child node that matches the criteria, if found. Otherwise, a new node
      *         with the given properties will be added to the 'children' set and returned.
      */
-    fun findOrAddChild(regex: String, sensitive: Boolean, plusCase: Boolean, nonmergeable: Boolean): Node {
+    fun findOrAddChild(regex: String, sensitive: Boolean, plusCase: Boolean, nonmergeable: Boolean): GrammarNode {
         val existingChild = children.find { it.match(regex) }
         if (existingChild != null) {
             return existingChild
         }
 
-        val newNode = Node(regex, sensitive, plusCase, nonmergeable)
+        val newNode = GrammarNode(regex, sensitive, plusCase, nonmergeable)
         addChild(newNode)
 
         if (!newNode.isNonMergeable()) {
