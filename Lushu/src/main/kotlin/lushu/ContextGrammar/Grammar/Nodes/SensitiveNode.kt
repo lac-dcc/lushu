@@ -2,7 +2,7 @@ package lushu.ContextGrammar.Grammar.Nodes
 
 interface SensitiveNode{
 
-    val sensitive: Boolean
+    var sensitive: Boolean
 
     /**
      * Checks whether the data is sensitive.
@@ -18,5 +18,5 @@ interface SensitiveNode{
      * @param node The SensitiveNode to be merged.
      * @return The merged SensitiveNode, with sensitivity prioritized.
      */
-    fun meetSensitive(acc: SensitiveNode, n2: SensitiveNode) : SensitiveNode
+    fun meetSensitive(acc: SensitiveNode, node: SensitiveNode) : SensitiveNode
 }

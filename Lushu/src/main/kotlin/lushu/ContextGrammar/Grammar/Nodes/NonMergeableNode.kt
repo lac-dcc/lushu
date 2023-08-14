@@ -2,7 +2,7 @@ package lushu.ContextGrammar.Grammar.Nodes
 
 interface NonMergeableNode {
 
-    val nonmergeable: Boolean
+    var nonmergeable: Boolean
 
     /**
      * Determines whether the current object is mergeable.
@@ -20,5 +20,5 @@ interface NonMergeableNode {
      * @param node The mergeable node to be merged with the accumulator.
      * @return A new mergeable node resulting from the merge of 'acc' and 'node'.
      */
-    fun meetNonMergeable(acc: NonMergeableNode, n2: NonMergeableNode): NonMergeableNode
+    fun meetNonMergeable(acc: NonMergeableNode, node: NonMergeableNode): NonMergeableNode
 }

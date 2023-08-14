@@ -6,16 +6,28 @@ import lushu.ContextGrammar.Grammar.Nodes.RegexNode
 import lushu.ContextGrammar.Grammar.Nodes.SensitiveNode
 
 class GrammarNode(
-    override val regex: String = "",
-    override val sensitive: Boolean = false,
-    override val plus: Boolean = false,
-    override val nonmergeable: Boolean = false,
+    override var regex: String = "",
+    override var sensitive: Boolean = false,
+    override var plus: Boolean = false,
+    override var nonmergeable: Boolean = false,
 
     private val children: MutableList<GrammarNode> = mutableListOf()
 
 ) : RegexNode, SensitiveNode, PlusNode, NonMergeableNode {
 
+    fun meetGrammarNode(acc: GrammarNode, node: GrammarNode) : GrammarNode{
+        var res: GrammarNode = acc
+        meetRegex(res, node)
+        meetSensitive(res, node)
+        meetPlus(res, node)
+        meetNonMergeable(res, node)
+        return res
+    }
+
     override fun meetRegex(acc: RegexNode, node: RegexNode): RegexNode {
+        if(acc !is GrammarNode || node !is GrammarNode){
+            throw IllegalArgumentException("Incompatible element types")
+        }
         if (Regex(acc.getRegex()).matches(node.getRegex())) {
             return acc
         } else {
@@ -29,12 +41,14 @@ class GrammarNode(
     }
 
     override fun meetSensitive(acc: SensitiveNode, node: SensitiveNode): SensitiveNode {
+        if(acc !is GrammarNode || node !is GrammarNode){
+            throw IllegalArgumentException("Incompatible element types")
+        }
         if (acc.isSensitive()) {
             return acc
         }
         if (node.isSensitive()) {
-            // acc.sensitive = node.isSensitive()
-            return node
+            acc.sensitive = node.isSensitive()
         }
         return acc
     }
@@ -44,12 +58,14 @@ class GrammarNode(
     }
 
     override fun meetPlus(acc: PlusNode, node: PlusNode): PlusNode {
+        if(acc !is GrammarNode || node !is GrammarNode){
+            throw IllegalArgumentException("Incompatible element types")
+        }
         if (acc.isPlus()) {
             return acc
         }
         if (node.isPlus()) {
-            // acc.plus = true
-            return node
+            acc.plus = true
         }
         return acc
     }
@@ -59,6 +75,9 @@ class GrammarNode(
     }
 
     override fun meetNonMergeable(acc: NonMergeableNode, node: NonMergeableNode): NonMergeableNode {
+        if(acc !is GrammarNode || node !is GrammarNode){
+            throw IllegalArgumentException("Incompatible element types")
+        }
         return acc
     }
 

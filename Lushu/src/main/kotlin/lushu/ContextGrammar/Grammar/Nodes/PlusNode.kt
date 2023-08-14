@@ -2,7 +2,7 @@ package lushu.ContextGrammar.Grammar.Nodes
 
 interface PlusNode {
 
-    val plus: Boolean
+    var plus: Boolean
 
     /**
      * Checks if the current instance represents a "plus".
@@ -22,6 +22,6 @@ interface PlusNode {
      * @param node The second PlusNode to be combined.
      * @return A PlusNode representing the combined result.
      */
-    fun meetPlus(acc: PlusNode, n2: PlusNode): PlusNode
+    fun meetPlus(acc: PlusNode, node: PlusNode): PlusNode
 
 }

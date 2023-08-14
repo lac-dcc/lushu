@@ -2,7 +2,7 @@ package lushu.ContextGrammar.Grammar.Nodes
 
 interface RegexNode {
 
-    val regex: String
+    var regex: String
 
     /**
      * Retrieves the regular expression used for pattern matching.
@@ -21,5 +21,5 @@ interface RegexNode {
      * @param node The second RegexNode to be compared against the 'acc' node's regex.
      * @return The resulting RegexNode after applying the merger.
      */
-    fun meetRegex(acc: RegexNode, n2: RegexNode): RegexNode
+    fun meetRegex(acc: RegexNode, node: RegexNode): RegexNode
 }
