@@ -2,7 +2,7 @@ package lushu.Grammar.Grammar
 
 import lushu.Merger.Merger.Merger
 
-// MergerS is a singleton of lushu.Merger.Merger.Merger
+// MergerS is a singleton of the Lushu Merger
 class MergerS private constructor() {
     companion object {
         private var instance: Merger? = null

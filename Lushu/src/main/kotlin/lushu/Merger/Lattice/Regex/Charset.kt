@@ -12,14 +12,10 @@ class Charset(
         return s
     }
 
-    fun union(other: Charset): Charset {
-        return Charset(charset.union(other.charset))
-    }
+    fun union(other: Charset): Charset = Charset(charset.union(other.charset))
 
     companion object {
-        fun stringsToChars(ss: List<String>): List<Char> {
-            return ss.map { it[0] }
-        }
+        fun stringsToChars(ss: List<String>): List<Char> = ss.map { it[0] }
 
         fun fromString(s: String): Charset {
             var cs = mutableSetOf<Char>()
@@ -30,13 +26,9 @@ class Charset(
         }
     }
 
-    override fun hashCode(): Int {
-        return "$charset".hashCode()
-    }
+    override fun hashCode(): Int = "$charset".hashCode()
 
-    override fun toString(): String {
-        return "Charset($charset)"
-    }
+    override fun toString(): String = "Charset($charset)"
 
     override fun equals(other: Any?) = when (other) {
         is Charset -> this.charset == other.charset

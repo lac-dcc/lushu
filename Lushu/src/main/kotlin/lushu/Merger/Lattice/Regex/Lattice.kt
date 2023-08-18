@@ -1,11 +1,11 @@
-package lushu.Merger.Lattice
+package lushu.Merger.Lattice.Regex
 
 import lushu.Merger.Lattice.Node.IntervalNode
 import lushu.Merger.Lattice.Node.Node
 import lushu.Merger.Lattice.Node.PwsetNode
 import org.slf4j.LoggerFactory
 
-class MergerLattice(
+class Lattice(
     private val nf: NodeFactory
 ) : Lattice {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -43,7 +43,6 @@ class MergerLattice(
         is IntervalNode -> n.baseNode
     }
 
-    private fun elevateAndMeetInPowerset(n1: Node, n2: Node): Node {
-        return platt.meet(elevateToPowerset(n1), elevateToPowerset(n2))
-    }
+    private fun elevateAndMeetInPowerset(n1: Node, n2: Node): Node =
+        platt.meet(elevateToPowerset(n1), elevateToPowerset(n2))
 }

@@ -12,13 +12,9 @@ sealed class Node(
     // lattice structure. By default we assume it is not sensitive.
     val sensitive: Boolean = false
 ) {
-    fun joinSensitive(other: Node): Boolean {
-        return sensitive || other.sensitive
-    }
+    fun joinSensitive(other: Node): Boolean = sensitive || other.sensitive
 
-    fun joinCharset(other: Node): Charset {
-        return charset.union(other.charset)
-    }
+    fun joinCharset(other: Node): Charset = charset.union(other.charset)
 
     fun joinInterval(other: Node): Interval {
         var minLeft = this.interval.first
@@ -32,9 +28,8 @@ sealed class Node(
         return Interval(minLeft, maxRight)
     }
 
-    override fun toString(): String {
-        return "Node(charset=$charset interval=$interval sensitive=$sensitive)"
-    }
+    override fun toString(): String =
+        "Node(charset=$charset interval=$interval sensitive=$sensitive)"
 
     override fun equals(other: Any?): Boolean = when (other) {
         is Node -> (
@@ -54,14 +49,11 @@ class IntervalNode(
 ) : Node(charset, interval, sensitive) {
     // isWithinBounds returns true if the node's interval is contained in its
     // respective base node interval.
-    fun isWithinBounds(): Boolean {
-        return interval.isWithinBound(baseNode.interval)
-    }
+    fun isWithinBounds(): Boolean = interval.isWithinBound(baseNode.interval)
 
-    override fun toString(): String {
-        return "IntervalNode(charset=$charset interval=$interval " +
+    override fun toString(): String =
+        "IntervalNode(charset=$charset interval=$interval " +
             "sensitive=$sensitive)"
-    }
 }
 
 // PwsetNode is a node with an identifier. The identifier is necessary because we
@@ -79,16 +71,11 @@ class PwsetNode(
 
     fun blacklist(): Set<Int> = blacklist
 
-    fun blacklists(other: PwsetNode): Boolean {
-        return blacklist.contains(other.id)
-    }
+    fun blacklists(other: PwsetNode): Boolean = blacklist.contains(other.id)
 
-    fun joinBlacklist(other: PwsetNode): Set<Int> {
-        return blacklist.union(other.blacklist)
-    }
+    fun joinBlacklist(other: PwsetNode): Set<Int> = blacklist.union(other.blacklist)
 
-    override fun toString(): String {
-        return "PwsetNode(id=$id blacklist=$blacklist charset=$charset " +
-            "interval=$interval sensitive=$sensitive)"
-    }
+    override fun toString(): String =
+        "PwsetNode(id=$id blacklist=$blacklist charset=$charset " +
+                   "interval=$interval sensitive=$sensitive)"
 }

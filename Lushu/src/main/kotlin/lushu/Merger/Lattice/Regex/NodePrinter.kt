@@ -1,6 +1,7 @@
 package lushu.Merger.Lattice
 
 import lushu.Merger.Lattice.Node.Node
+import lushu.Merger.Lattice.Node.IntervalNode
 import lushu.Merger.Lattice.Node.PwsetNode
 
 class NodePrinter {
@@ -13,10 +14,9 @@ class NodePrinter {
             }
             val cs = n.charset
             val itvl = n.interval
-            if (n is PwsetNode) {
-                return "[${cs.collapse()}]+"
-            } else {
-                return "[${cs.collapse()}]{${itvl.first},${itvl.second}}"
+            when (n) {
+                is PwsetNode -> return "[${cs.collapse()}]+"
+                is IntervalNode -> return "[${cs.collapse()}]{${itvl.first},${itvl.second}}"
             }
         }
 

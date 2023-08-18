@@ -11,22 +11,16 @@ class Grammar(
         val results: List<NonTerminal.Result>
     )
 
-    fun consume(words: List<String>): Result {
-        return Result(listOf(root.consume(words)))
-    }
+    fun consume(words: List<String>): Result = Result(listOf(root.consume(words)))
 
-    fun consume(line: String): Result {
-        return consume(line.split(tokenSeparator))
-    }
+    fun consume(line: String): Result = consume(line.split(tokenSeparator))
 
-    fun consumeLines(lines: String): Result = lines.let {
-        Result(
-            it.split(logSeparator).fold(listOf<NonTerminal.Result>()) {
-                    acc, next ->
+    fun consumeLines(lines: String): Result = Result(
+        lines.split(logSeparator).fold(listOf<NonTerminal.Result>()) {
+            acc, next ->
                 acc + consume(next.split(tokenSeparator)).results
-            }
-        )
-    }
+        }
+    )
 
     fun consumeStdin(firstLine: String? = null): Result {
         var results = listOf<NonTerminal.Result>()
@@ -43,9 +37,7 @@ class Grammar(
     }
 
     // print pretty-prints the grammar
-    fun print(): String {
-        return root.print()
-    }
+    fun print(): String = root.print()
 
     fun statistics(): String {
         val numNonTerminals = root.numNonTerminals()
@@ -56,9 +48,7 @@ class Grammar(
             "numTokens=$numTokens\n"
     }
 
-    override fun toString(): String {
-        return "Grammar(root=$root)"
-    }
+    override fun toString(): String = "Grammar(root=$root)"
 
     companion object {
         val tokenSeparator = " "
@@ -98,12 +88,9 @@ class Grammar(
             return grammar
         }
 
-        fun fromLine(line: String): Grammar {
-            return Grammar(nonTerminalFromLine(line))
-        }
+        fun fromLine(line: String): Grammar = Grammar(nonTerminalFromLine(line))
 
-        private fun nonTerminalFromLine(line: String): NonTerminal {
-            return NonTerminal.new(line.split(tokenSeparator)[0])
-        }
+        private fun nonTerminalFromLine(line: String): NonTerminal =
+            NonTerminal.new(line.split(tokenSeparator)[0])
     }
 }

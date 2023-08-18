@@ -11,7 +11,8 @@ class Reducer(private val lattice: MergerLattice) {
     fun reduce(nodes: List<Node>): List<Node> {
         if (nodes.isEmpty()) {
             return listOf<Node>()
-        } else if (nodes.size == 1) {
+        }
+        if (nodes.size == 1) {
             return nodes
         }
 
