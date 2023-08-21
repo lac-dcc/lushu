@@ -1,0 +1,19 @@
+<html>
+<head>
+    <title>Exemplo</title>
+</head>
+<body>
+    <script>
+        var url1 = "https://www.google.com";
+        var url2 = "https://www.example.com";
+    </script>
+    <p>Este é um exemplo</p>
+       "https://www.youtube.com/"
+    <script>
+        var url3 = "https://www.example.org";
+    </script>
+    <script>
+        "https://www.kotlin.com"
+    </script>
+</body>
+</html>
