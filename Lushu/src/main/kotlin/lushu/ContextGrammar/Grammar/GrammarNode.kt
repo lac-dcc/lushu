@@ -1,90 +1,37 @@
 package lushu.ContextGrammar.Grammar
 
-import lushu.ContextGrammar.Grammar.Nodes.NonMergeableNode
-import lushu.ContextGrammar.Grammar.Nodes.PlusNode
-import lushu.ContextGrammar.Grammar.Nodes.RegexNode
-import lushu.ContextGrammar.Grammar.Nodes.SensitiveNode
+import lushu.Merger.Lattice.Node.Node
+import lushu.Merger.Lattice.Node.Interval
+import lushu.Merger.Lattice.Node.Charset
 
 class GrammarNode(
-    override var regex: String = "",
-    override var sensitive: Boolean = false,
-    override var plus: Boolean = false,
-    override var nonmergeable: Boolean = false,
+    val star: Boolean = false,
+    val nonmergeable: Boolean = false,
+    val terminal: Boolean = false,
+    val parent: GrammarNode? = null,
+    private val children: MutableList<GrammarNode> = mutableListOf(),
 
-    private val children: MutableList<GrammarNode> = mutableListOf()
+    charset: Charset,
+    interval: Interval,
+    sensitive: Boolean = false
 
-) : RegexNode, SensitiveNode, PlusNode, NonMergeableNode {
+) : Node(charset, interval, sensitive) {
 
-    fun meetGrammarNode(acc: GrammarNode, node: GrammarNode) : GrammarNode{
-        var res: GrammarNode = acc
-        meetRegex(res, node)
-        meetSensitive(res, node)
-        meetPlus(res, node)
-        meetNonMergeable(res, node)
-        return res
-    }
-
-    override fun meetRegex(acc: RegexNode, node: RegexNode): RegexNode {
-        if(acc !is GrammarNode || node !is GrammarNode){
-            throw IllegalArgumentException("Incompatible element types")
-        }
-        if (Regex(acc.getRegex()).matches(node.getRegex())) {
-            return acc
-        } else {
-            // return merger(acc, node)
-            return acc
-        }
-    }
-
-    override fun getRegex() : String{
-        return regex
-    }
-
-    override fun meetSensitive(acc: SensitiveNode, node: SensitiveNode): SensitiveNode {
-        if(acc !is GrammarNode || node !is GrammarNode){
-            throw IllegalArgumentException("Incompatible element types")
-        }
-        if (acc.isSensitive()) {
-            return acc
-        }
-        if (node.isSensitive()) {
-            acc.sensitive = node.isSensitive()
-        }
-        return acc
-    }
-
-    override fun isSensitive(): Boolean {
+    fun isSensitive(): Boolean {
         return this.sensitive
     }
 
-    override fun meetPlus(acc: PlusNode, node: PlusNode): PlusNode {
-        if(acc !is GrammarNode || node !is GrammarNode){
-            throw IllegalArgumentException("Incompatible element types")
-        }
-        if (acc.isPlus()) {
-            return acc
-        }
-        if (node.isPlus()) {
-            acc.plus = true
-        }
-        return acc
+    fun isStar(): Boolean {
+        return star
     }
 
-    override fun isPlus(): Boolean {
-        return plus
-    }
-
-    override fun meetNonMergeable(acc: NonMergeableNode, node: NonMergeableNode): NonMergeableNode {
-        if(acc !is GrammarNode || node !is GrammarNode){
-            throw IllegalArgumentException("Incompatible element types")
-        }
-        return acc
-    }
-
-    override fun isNonMergeable(): Boolean {
+    fun isNonMergeable(): Boolean {
         return nonmergeable
     }
 
+    fun isTerminal(): Boolean{
+        return terminal
+    }
     /**
      * Retrieves the list of child GrammarNode elements associated with this node.
      *
@@ -112,7 +59,7 @@ class GrammarNode(
      * @return true if the word matches the regular expression, false otherwise.
      */
     fun match(word: String): Boolean {
-        return Regex(this.getRegex()).matches(word)
+        /* TODO */
     }
 
     /**
@@ -122,11 +69,16 @@ class GrammarNode(
      * @param node2 The second Node element to compare.
      * @return 'true' if the two nodes are equivalent, 'false' otherwise.
      */
-    fun areNodesEquivalent(node1: GrammarNode, node2: GrammarNode): Boolean {
-        return (node1.match(node2.regex) || node2.match(node1.regex)) &&
-                node1.isSensitive() == node2.isSensitive() &&
-                node1.isPlus() == node2.isPlus() &&
-                node1.isNonMergeable() == node2.isNonMergeable()
+    override fun equals(other: Any?): Boolean = when (other) {
+        is GrammarNode -> (
+                this.charset == other.charset &&
+                this.interval == other.interval &&
+                this.sensitive == other.sensitive &&
+                this.star == other.star &&
+                this.nonmergeable == other.nonmergeable &&
+                this.terminal == other.terminal
+            )
+        else -> false
     }
 
     /**
@@ -136,7 +88,7 @@ class GrammarNode(
      * @return The equivalent Node if found in the children list; otherwise, returns the original node.
      */
     fun getEquivalentNode(node: GrammarNode): GrammarNode {
-        return getChildren().find { areNodesEquivalent(it, node) } ?: node
+        return getChildren().find { it.equals(node) } ?: node
     }
 
     /**
@@ -158,12 +110,13 @@ class GrammarNode(
      *
      * @param regex The node regular expression.
      * @param sensitive A boolean value indicating if the new node is sensitive.
-     * @param plusCase A boolean value indicating if the new node is a plus case.
+     * @param starCase A boolean value indicating if the new node is a star case.
      * @param nonmergeable boolean value indicating if the new node is nonmergeable.
      */
-    private fun addChild(r: String, s: Boolean, pc: Boolean, m: Boolean) {
-        val newNode = GrammarNode(r, s, pc, m)
-        this.children.add(newNode)
+    private fun addChild(star: Boolean, nonmergeable: Boolean, terminal: Boolean, children: MutableList<GrammarNode>,
+                         charset: Charset, interval: Interval, sensitive: Boolean ) {
+        val newNode = GrammarNode(star, nonmergeable, terminal, this, children, charset, interval, sensitive)
+        addChild(newNode)
     }
 
     /**
@@ -171,7 +124,12 @@ class GrammarNode(
      * @param newNode The node to be added as a child.
      */
     private fun addChild(newNode: GrammarNode) {
-        children.add(newNode)
+        if(newNode.isNonMergeable()){
+            children.add(firstIndex, newNode)
+        }
+        else{
+            children.add(newNode)
+        }
     }
 
     /**
@@ -180,19 +138,22 @@ class GrammarNode(
      *
      * @param regex The node regular expression.
      * @param sensitive A boolean value indicating if the new node is sensitive.
-     * @param plusCase A boolean value indicating if the new node is a plus case.
+     * @param starCase A boolean value indicating if the new node is a star case.
      * @param nonmergeable A boolean value indicating if the new node is nonmergeable.
      * @return The existing child node that matches the criteria, if found. Otherwise, a new node
      *         with the given properties will be added to the 'children' set and returned.
      */
-    fun findOrAddChild(regex: String, sensitive: Boolean, plusCase: Boolean, nonmergeable: Boolean): GrammarNode {
+    fun findOrAddChild(star: Boolean, nonmergeable: Boolean, terminal: Boolean, charset: Charset, interval: Interval, sensitive: Boolean): GrammarNode {
         val existingChild = children.find { it.match(regex) }
         if (existingChild != null) {
             return existingChild
         }
 
-        val newNode = GrammarNode(regex, sensitive, plusCase, nonmergeable)
+        val newNode = GrammarNode(star, nonmergeable, terminal, this, mutableListOf(), charset, interval, sensitive)
         addChild(newNode)
+        if(this.isStar()){
+            this.parent?.addChild(newNode)
+        }
 
         if (!newNode.isNonMergeable()) {
             mergeChildren(newNode)
@@ -200,5 +161,8 @@ class GrammarNode(
         }
 
         return newNode
+    }
+    companion object {
+        private val firstIndex = 0
     }
 }

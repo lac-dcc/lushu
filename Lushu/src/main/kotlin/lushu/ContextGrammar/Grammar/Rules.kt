@@ -18,13 +18,14 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
      * Input: word = "example", current = GrammarNode(label = "root", children = [GrammarNode(label = "host"), GrammarNode(label = "example"), GrammarNode(label = "ip")])
      * Output: true
      */
-    fun isEndingPlusCase(word: String, current: GrammarNode?): Boolean {
+    fun isEndingStarCase(word: String, current: GrammarNode?): Boolean {
         return word.endsWith(logSeparator) ||
-            (current != null && current.getChildren().any { it.match(word) })
+               (current != null && current.getChildren().any { it.match(word) }) ||
+               (current != null && current.isTerminal())
     }
 
     /**
-     * Matches the plus case in a list of input tokens, starting from a given index,
+     * Matches the star case in a list of input tokens, starting from a given index,
      * using a mutable copy of the tokens and a current node in a tree structure.
      *
      * @param inputTokens The list of input tokens.
@@ -41,7 +42,7 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
      *        current = GrammarNode(label = "Emily", children = [GrammarNode(label = "is")])
      * Output: (4, GrammarNode(label = "is"))
      */
-    fun plusCaseMatcher(
+    fun starCaseMatcher(
         inputTokens: MutableList<String>,
         mutableTokens: MutableList<String>,
         index: Int,
@@ -58,22 +59,22 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
                 return Pair(noMatchFound, null)
             }
 
-            // if the current word is the end of the match.
-            isEndingPlusCase(mutableTokens[index], current) -> {
-                inputTokens.clear()
-                inputTokens.addAll(mutableTokens)
-                val endPlusCaseNode = matcher(current, inputTokens[index])
-
-                return Pair(index, endPlusCaseNode)
-            }
-
             // recursive match
             current.match(mutableTokens[index]) -> {
                 if (current.isSensitive()) {
                     mutableTokens[index] = asteriskSymbol.repeat(mutableTokens[index].length)
                 }
 
-                return plusCaseMatcher(inputTokens, mutableTokens, index + 1, current)
+                return starCaseMatcher(inputTokens, mutableTokens, index + 1, current)
+            }
+
+            // if the current word is the end of the match.
+            isEndingStarCase(mutableTokens[index], current) -> {
+                inputTokens.clear()
+                inputTokens.addAll(mutableTokens)
+                val endStarCaseNode = matcher(current, inputTokens[index])
+
+                return Pair(index, endStarCaseNode)
             }
 
             // fail match
@@ -150,8 +151,8 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
                 return (inputTokens.size - index - 1)
             }
 
-            current.isPlus() -> {
-                val (nextIndex: Int, nextNode: GrammarNode?) = plusCaseMatcher(inputTokens, mutableTokens, index, current)
+            current.isStar() -> {
+                val (nextIndex: Int, nextNode: GrammarNode?) = starCaseMatcher(inputTokens, mutableTokens, index, current)
 
                 if ((nextNode != null) && (nextNode.isSensitive())) {
                     mutableTokens[nextIndex] = asteriskSymbol.repeat(mutableTokens[nextIndex].length)
@@ -239,24 +240,29 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
         }
         val firstWord = 0
 
-        val (isCase, nextCase) = dsl.hasTags(contextRule[firstWord])
+        val (isCases, nextCases) = dsl.hasTags(contextRule[firstWord])
 
         val word = dsl.removeAllTagsFromWord(contextRule[firstWord])
 
-        dsl.setIsCase(isCase)
+        dsl.setIsCase(isCases)
+
+        // true if it's the last word in the context
+        val endOfContext: Boolean = (contextRule.size == 1)
 
         val updatedCurrent = current?.findOrAddChild(
-            word,
-            dsl.isSensitive(),
-            dsl.isPlus(),
+            dsl.isStar(),
             dsl.isNonMergeable(),
+            endOfContext,
+            // Charset,
+            // Interval,
+            dsl.isSensitive()
         )
 
-        dsl.setIsCase(nextCase)
+        dsl.setIsCase(nextCases)
 
         contextRule.removeAt(firstWord)
 
-        if (nextCase[addContextsFromWords]) {
+        if (nextCases[starCase]) {
             addContextRule(contextRule, current)
         } else {
             addContextRule(contextRule, updatedCurrent)
@@ -279,7 +285,7 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
     companion object {
         private val logSeparator = "\n"
         private val asteriskSymbol = "*"
-        private val addContextsFromWords = 2
+        private val starCase = 2
         private val noMatchFound = 1
         private val defaultMinimalIndex = -1
     }
