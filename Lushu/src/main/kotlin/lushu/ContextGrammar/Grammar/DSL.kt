@@ -8,7 +8,7 @@ enum class TagNames(val tagName: String) {
 }
 
 class DSL(
-    val isCase: MutableList<Boolean> = mutableListOf(false, false, false, false),
+    val isCase: MutableList<Boolean> = TagNames.values().map { false }.toMutableList(),
     val tags: List<String> = TagNames.values().map { it.tagName }.map { "<$it>" },
 ) {
 

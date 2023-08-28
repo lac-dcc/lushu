@@ -6,6 +6,7 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
 
     private val terminalNode: GrammarNode = GrammarNode()
     private val dsl: DSL = DSL()
+    private val script: Script = Script()
 
     /**
      * Checks if the word ends with the log separator or if there is a matching child node in the current node's children.
@@ -20,8 +21,8 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
      */
     fun isEndingStarCase(word: String, current: GrammarNode?): Boolean {
         return word.endsWith(logSeparator) ||
-               (current != null && current.getChildren().any { it.match(word) }) ||
-               (current != null && current.isTerminal())
+            (current != null && current.getChildren().any { it.match(word) }) ||
+            (current != null && current.isTerminal())
     }
 
     /**
@@ -104,8 +105,18 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
             (current.getChildren().isNullOrEmpty()) -> return terminalNode
 
             // searching for the respective child
-            else -> return current.getChildren()?.find { child ->
-                child.match(word)
+            else -> {
+                val childMatch = current.getChildren()?.find { child ->
+                    child.match(word)
+                }
+
+                if (childMatch != null) {
+                    return childMatch
+                } else if (current.isTerminal()) {
+                    return terminalNode
+                } else {
+                    return null
+                }
             }
         }
     }
@@ -152,7 +163,12 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
             }
 
             current.isStar() -> {
-                val (nextIndex: Int, nextNode: GrammarNode?) = starCaseMatcher(inputTokens, mutableTokens, index, current)
+                val (nextIndex: Int, nextNode: GrammarNode?) = starCaseMatcher(
+                    inputTokens,
+                    mutableTokens,
+                    index,
+                    current,
+                )
 
                 if ((nextNode != null) && (nextNode.isSensitive())) {
                     mutableTokens[nextIndex] = asteriskSymbol.repeat(mutableTokens[nextIndex].length)
@@ -209,7 +225,7 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
      * Output: ["server", "host", "ip:",  "***************", "is", "online"]
      */
     fun tokens2CipherTokens(inputTokens: List<String>): List<String> {
-        val regexList: List<String> = root.getChildren().map { child -> child.getRegex() }
+        val regexList: List<String> = root.getChildren().map { child -> child.regex }
         val matchingIndex: List<Int> = findMatchingIndex(inputTokens, regexList)
 
         var i = defaultMinimalIndex
@@ -220,6 +236,11 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
             if (i <= index) {
                 i = matchTokensAgainstPatternContext(cipherTokens, cipherTokens.toMutableList(), index, root)
             }
+        }
+
+        val scriptIndex: List<Int> = script.findMatchingIndex(inputTokens)
+        scriptIndex.forEach{ index ->
+            script.searching(inputTokens[index])
         }
 
         return cipherTokens
@@ -253,9 +274,8 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
             dsl.isStar(),
             dsl.isNonMergeable(),
             endOfContext,
-            // Charset,
-            // Interval,
-            dsl.isSensitive()
+            word,
+            dsl.isSensitive(),
         )
 
         dsl.setIsCase(nextCases)
