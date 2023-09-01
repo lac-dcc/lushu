@@ -4,7 +4,8 @@ enum class TagNames(val tagName: String) {
     CONTEXT("c"),
     SENSITIVE("s"),
     STAR("*"),
-    NONMERGEABLE("m")
+    NONMERGEABLE("t")
+    //GENERICTOKEN("**")
 }
 
 class DSL(

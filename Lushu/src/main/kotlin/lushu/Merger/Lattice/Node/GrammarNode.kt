@@ -1,13 +1,16 @@
-package lushu.ContextGrammar.Grammar
+package lushu.Merger.Lattice.Node
+
+import lushu.Merger.Merger.Token
+import lushu.Merger.Merger.Merger
 
 class GrammarNode(
+    var tokens: List<Node>,
+    val sensitive: Boolean = false
     val star: Boolean = false,
     val nonmergeable: Boolean = false,
     val terminal: Boolean = false,
     val parent: GrammarNode? = null,
-    private val children: MutableList<GrammarNode> = mutableListOf(),
-    val regex: String = "",
-    val sensitive: Boolean = false,
+    private val children: MutableList<GrammarNode> = mutableListOf()
 
 ) {
 
@@ -16,15 +19,15 @@ class GrammarNode(
     }
 
     fun isStar(): Boolean {
-        return star
+        return this.star
     }
 
     fun isNonMergeable(): Boolean {
-        return nonmergeable
+        return this.nonmergeable
     }
 
     fun isTerminal(): Boolean {
-        return terminal
+        return this.terminal
     }
 
     /**
@@ -32,8 +35,72 @@ class GrammarNode(
      *
      * @return A List of GrammarNode objects representing the children of this node.
      */
-    fun getChildren(): List<GrammarNode> {
+    fun getChildren(): MutableList<GrammarNode> {
         return this.children
+    }
+
+    /**
+     * Determines if the given word matches the regular expression defined by the current instance.
+     *
+     * @param word to be matched against the regular expression.
+     * @return true if the word matches the regular expression, false otherwise.
+     */
+    fun match(word: String): Boolean {
+        return tryMatch { MergeS.merger().merge(tokens, word) }
+    }
+
+    fun match(tokens: List<Node>): Boolean {
+        return tryMatch { MergeS.merger().merge(this.tokens, tokens) }
+    }
+
+    private inline fun tryMatch(matchFunction: () -> MergeResult): Boolean {
+        val res = matchFunction()
+        if (res.success && !this.isNonMergeable()) {
+            tokens = res.tokens
+        }
+        return res.success
+    }
+
+    /**
+     * Checks if two Node elements are equivalent.
+     *
+     * @param node1 The first Node element to compare.
+     * @param node2 The second Node element to compare.
+     * @return 'true' if the two nodes are equivalent, 'false' otherwise.
+     */
+    fun isEquals(other: Any?): Boolean = when (other) {
+        is GrammarNode -> (
+                    this.match(other.tokens) &&
+                        this.sensitive == other.sensitive &&
+                        this.star == other.star &&
+                        this.nonmergeable == other.nonmergeable &&
+                        this.terminal == other.terminal
+                )
+
+        else -> false
+    }
+
+    /* TODO */
+    /* While the updater only modifies tokens and children */
+    fun update(element: GrammarNode) {
+        if (element.tokens.isNotEmpty()) {
+            this.tokens = element.tokens
+        }
+        if (element.children.isNotEmpty()) {
+            this.children.clear()
+            this.children.addAll(element.children)
+        }
+    }
+
+
+    /**
+     * Finds the equivalent Node from the children list or returns the original node if not found.
+     *
+     * @param node The Node for which the equivalent node needs to be found.
+     * @return The equivalent Node if found in the children list; otherwise, returns the original node.
+     */
+    fun getEquivalentNode(node: GrammarNode): GrammarNode {
+        return getChildren().find { it.isEquals(node) } ?: node
     }
 
     /**
@@ -48,56 +115,16 @@ class GrammarNode(
     }
 
     /**
-     * Determines if the given word matches the regular expression defined by the current instance.
-     *
-     * @param word to be matched against the regular expression.
-     * @return true if the word matches the regular expression, false otherwise.
-     */
-    fun match(word: String): Boolean {
-        val r = Regex(this.regex)
-        return r.matches(word)
-    }
-
-    /**
-     * Checks if two Node elements are equivalent.
-     *
-     * @param node1 The first Node element to compare.
-     * @param node2 The second Node element to compare.
-     * @return 'true' if the two nodes are equivalent, 'false' otherwise.
-     */
-    fun isEquals(other: Any?): Boolean = when (other) {
-        is GrammarNode -> (
-            this.match(other.regex) &&
-                this.sensitive == other.sensitive &&
-                this.star == other.star &&
-                this.nonmergeable == other.nonmergeable &&
-                this.terminal == other.terminal
-            )
-        else -> false
-    }
-
-    /**
-     * Finds the equivalent Node from the children list or returns the original node if not found.
-     *
-     * @param node The Node for which the equivalent node needs to be found.
-     * @return The equivalent Node if found in the children list; otherwise, returns the original node.
-     */
-    fun getEquivalentNode(node: GrammarNode): GrammarNode {
-        return getChildren().find { it.isEquals(node) } ?: node
-    }
-
-    /**
      * Merges the children nodes of the new node.
      *
      * @param newNode The new node that will be merged with the children nodes.
      */
     private fun mergeChildren(newNode: GrammarNode) {
         val mergeablesNodes = filterMergeblesNodes(true)
-        // val res = MergerS.merger().merge(ns1, ns2)
-        // result <- merge all mergeablesNodes
-        // forEach mergeablesNodes find the new regex and add it children
+        val mergeableNodes = MergerS.merger().mergeGrammarNodes(children, listOf<GrammarNode>(newNode))
         val nonMergeablesNodes = filterMergeblesNodes(false)
-        // include nonMergeable + result to this.children
+        children.clear()
+        children.addAll(nonMergeablesNodes, mergeableNodes)
     }
 
     /**
@@ -109,14 +136,14 @@ class GrammarNode(
      * @param nonmergeable boolean value indicating if the new node is nonmergeable.
      */
     private fun addChild(
+        tokens: List<Node>, ,
+        sensitive: Boolean,
         star: Boolean,
         nonmergeable: Boolean,
         terminal: Boolean,
-        children: MutableList<GrammarNode>,
-        regex: String,
-        sensitive: Boolean,
+        children: MutableList<GrammarNode>
     ) {
-        val newNode = GrammarNode(star, nonmergeable, terminal, this, children, regex, sensitive)
+        val newNode = GrammarNode(tokens, sensitive, star, nonmergeable, terminal, this, children)
         addChild(newNode)
     }
 
@@ -128,7 +155,7 @@ class GrammarNode(
         if (newNode.isNonMergeable()) {
             children.add(firstIndex, newNode)
         } else {
-            children.add(newNode)
+            mergeChildren(newNode)
         }
     }
 
@@ -143,25 +170,47 @@ class GrammarNode(
      * @return The existing child node that matches the criteria, if found. Otherwise, a new node
      *         with the given properties will be added to the 'children' set and returned.
      */
-    fun findOrAddChild(star: Boolean, nonmergeable: Boolean, terminal: Boolean, regex: String, sensitive: Boolean): GrammarNode {
-        val newNode = GrammarNode(star, nonmergeable, terminal, this, mutableListOf(), regex, sensitive)
+    fun findOrAddChild(
+        tokens: List<Node>,
+        sensitive: Boolean,
+        star: Boolean,
+        nonmergeable: Boolean,
+        terminal: Boolean
+    ): GrammarNode {
+        val newNode = GrammarNode(tokens, sensitive, star, nonmergeable, terminal, this, mutableListOf())
+
         val existingChild = children.find { it.equals(newNode) }
         if (existingChild != null) {
             return existingChild
         }
 
         addChild(newNode)
+        val resNode = getEquivalentNode(newNode)
+
         if (this.isStar()) {
-            this.parent?.addChild(newNode)
+            this.parent?.addChild(resNode)
         }
 
-        if (!newNode.isNonMergeable()) {
-            mergeChildren(newNode)
-            return getEquivalentNode(newNode)
-        }
-
-        return newNode
+        return resNode
     }
+
+    fun treeToStringPreorder(current: GrammarNode, level: Int = 0): String {
+        val indentation = "-".repeat(level)
+        val result = StringBuilder()
+
+        result.append("$indentation${current.tokens}\n")
+        
+        current.children.forEach{ child ->
+            result.append(treeToStringPreorder(child, level + 1))
+        }
+
+        return result.toString()
+    }
+
+    override fun toString(): String {
+        return treeToStringPreorder(this)
+    }
+
     companion object {
         private val firstIndex = 0
     }

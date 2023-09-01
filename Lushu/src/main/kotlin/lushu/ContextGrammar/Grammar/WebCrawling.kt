@@ -32,7 +32,7 @@ class Script(
         found = found != res
     }
 
-    fun searching(word: String) {
+    fun searchingScriptPattern(word: String) {
         if (found && match(word, this.urls)) {
             printURL(word)
         } else{

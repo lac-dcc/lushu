@@ -1,12 +1,12 @@
 package lushu.ContextGrammar.Grammar
 
 import java.util.regex.Pattern
+import lushu.Merger.Lattice.Node.GrammarNode
 
 class Rules(private val root: GrammarNode = GrammarNode()) {
 
     private val terminalNode: GrammarNode = GrammarNode()
     private val dsl: DSL = DSL()
-    private val script: Script = Script()
 
     /**
      * Checks if the word ends with the log separator or if there is a matching child node in the current node's children.
@@ -102,7 +102,12 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
             (current == null) -> return null
 
             // end of the context
-            (current.getChildren().isNullOrEmpty()) -> return terminalNode
+            (current.getChildren().isNullOrEmpty()) -> {
+                if(current.isTerminal())
+                    return terminalNode
+                else
+                    return null
+            }
 
             // searching for the respective child
             else -> {
@@ -238,11 +243,6 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
             }
         }
 
-        val scriptIndex: List<Int> = script.findMatchingIndex(inputTokens)
-        scriptIndex.forEach{ index ->
-            script.searching(inputTokens[index])
-        }
-
         return cipherTokens
     }
 
@@ -300,6 +300,10 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
     fun addContextsFromWords(words: String?) {
         val contexts = dsl.extractContext(words ?: "")
         contexts.forEach { context -> addContextRule(context.split(" ").toMutableList()) }
+    }
+
+    fun contextToString(): String{
+        return root.toString()
     }
 
     companion object {
