@@ -37,17 +37,6 @@ class Merger(
         val ns1 = tokensFromString(s1)
         return merge(ns1, s2)
     }
-
-    private fun mergeGrammarNodesParents(n1: GrammarNode?, n2: GrammarNode?): GrammarNode?{
-        if(n1 != null){
-            return n1
-        } 
-        if(n2 != null){
-            return n2
-        }
-        return null
-    }
-
     fun mergeGrammarNodes(n1: GrammarNode, n2: GrammarNode): GrammarNode {
         if (n1.isNonMergeable() || n2.isNonMergeable()) {
             return null

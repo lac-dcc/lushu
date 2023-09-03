@@ -2,6 +2,7 @@ package lushu.ContextGrammar.Grammar
 
 import java.util.regex.Pattern
 import lushu.Merger.Lattice.Node.GrammarNode
+import lushu.Merger.Merger.Token
 
 class Rules(private val root: GrammarNode = GrammarNode()) {
 
@@ -198,19 +199,18 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
      * Finds the matching indices of tokens in the input list based on a list of regular expressions.
      *
      * @param inputTokens The list of tokens to search for matches.
-     * @param regexList The list of regular expressions to match against the tokens.
+     * @param tokensList The list of regular expressions to match against the tokens.
      * @return A list of unique and sorted indices of the matching tokens.
      *
      * Example:
      * Input: ["error", "warning", "exception", "success", "invalid"], ["e.", "s.", "c."]
      * Output: [0, 2, 3]
      */
-    fun findMatchingIndex(inputTokens: List<String>, regexList: List<String>): List<Int> {
-        val matchingIndex = regexList.flatMap { regex ->
-            val pattern = Pattern.compile(regex)
+    fun findMatchingIndex(inputTokens: List<String>, tokensList: List<GrammarNode>): List<Int> {
+        val matchingIndex = tokensList.flatMap { grammarNode ->
             inputTokens.mapIndexedNotNull { index, word ->
-                val matcher = pattern.matcher(word)
-                if (matcher.find()) index else null
+                val matcher = grammarNode.match(word)
+                if (matcher) index else null
             }
         }
         return matchingIndex.distinct().sorted()
@@ -230,8 +230,8 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
      * Output: ["server", "host", "ip:",  "***************", "is", "online"]
      */
     fun tokens2CipherTokens(inputTokens: List<String>): List<String> {
-        val regexList: List<String> = root.getChildren().map { child -> child.regex }
-        val matchingIndex: List<Int> = findMatchingIndex(inputTokens, regexList)
+        val tokensList: List<GrammarNode> = root.getChildren()
+        val matchingIndex: List<Int> = findMatchingIndex(inputTokens, tokensList)
 
         var i = defaultMinimalIndex
 
@@ -271,11 +271,11 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
         val endOfContext: Boolean = (contextRule.size == 1)
 
         val updatedCurrent = current?.findOrAddChild(
-            dsl.isStar(),
-            dsl.isNonMergeable(),
-            endOfContext,
             word,
             dsl.isSensitive(),
+            dsl.isStar(),
+            dsl.isNonMergeable(),
+            endOfContext
         )
 
         dsl.setIsCase(nextCases)

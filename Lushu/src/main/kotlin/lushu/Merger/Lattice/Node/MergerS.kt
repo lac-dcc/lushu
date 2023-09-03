@@ -1,4 +1,4 @@
-package lushu.Grammar.Grammar
+package lushu.Merger.Lattice.Node
 
 import lushu.Merger.Merger.Merger
 
