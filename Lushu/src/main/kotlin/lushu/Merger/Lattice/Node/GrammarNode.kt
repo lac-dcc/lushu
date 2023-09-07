@@ -85,6 +85,7 @@ class GrammarNode(
         if (element.tokens.isNotEmpty()) {
             this.tokens = element.tokens
         }
+        // add sensitive case
         if (element.children.isNotEmpty()) {
             this.children.clear()
             this.children.addAll(element.children)
@@ -200,10 +201,11 @@ class GrammarNode(
 
         result.append("$indentation${current.tokens}\n")
         
-        current.children.forEach{ child ->
-            result.append(treeToStringPreorder(child, level + 1))
+        if(!current.children.isNullOrEmpty()){
+            current.children.forEach{ child ->
+                result.append(treeToStringPreorder(child, level + 1))
+            }
         }
-
         return result.toString()
     }
 

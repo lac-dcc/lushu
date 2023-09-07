@@ -2,11 +2,11 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 plugins {
-    kotlin("jvm") version "1.8.22"
+    kotlin("jvm") version "1.8.10"
 
     // Apply the application plugin to add support for building a CLI
     // application.

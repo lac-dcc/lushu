@@ -37,24 +37,30 @@ class Merger(
         val ns1 = tokensFromString(s1)
         return merge(ns1, s2)
     }
-    fun mergeGrammarNodes(n1: GrammarNode, n2: GrammarNode): GrammarNode {
+
+    data class ResultGrammarMerger(
+        val success: Boolean,
+        val grammarNode: GrammarNode
+    )
+
+    fun mergeGrammarNodes(n1: GrammarNode, n2: GrammarNode): ResultGrammarMerger {
         if (n1.isNonMergeable() || n2.isNonMergeable()) {
-            return null
+            return ResultGrammarMerger(false, n1)
         }
     
-        val (newLatticeNodes, success) = merge(n1.latticeNodes, n2.latticeNodes)
+        val (success, newTokens) = merge(n1.tokens, n2.tokens)
         if (!success) {
-            return null
+            return ResultGrammarMerger(false, n1)
         }
     
         val newSensitive = n1.isSensitive() || n2.isSensitive()
         val newStar = n1.isStar() || n2.isStar()
         val newNonMergeable = n1.isNonMergeable() || n2.isNonMergeable()
         val newTerminal = n1.isTerminal() || n2.isTerminal()
-        val newParent = mergeGrammarNodesParents(n1, n2)
+        val newParent = n1.parent
         val newChildren = recursiveMergeGrammarNodes(n1.getChildren(), n2.getChildren()).toMutableList()
 
-        return GrammarNode(newLatticeNodes, newSensitive, newStar, newNonMergeable, newTerminal, newParent, newChildren)
+        return ResultGrammarMerger(success, GrammarNode(newTokens, newSensitive, newStar, newNonMergeable, newTerminal, newParent, newChildren))
     }
 
     fun recursiveMergeGrammarNodes(ln1: List<GrammarNode>, ln2: List<GrammarNode>): List<GrammarNode> {
@@ -65,17 +71,22 @@ class Merger(
         if(ln2.isNullOrEmpty()){
             return ln1
         }
-
         val (mergedNodes, nonMergedNodes) = ln1.mapNotNull { n1 ->
-            ln2.find { n2 -> n1 == n2 }
-                ?.let { n2 ->
-                    val newNode = mergeGrammarNodes(n1, n2)
+        ln2.find { n2 -> n1 == n2 }
+            ?.let { n2 ->
+                val (success, newNode) = mergeGrammarNodes(n1, n2)
+                if (success) {
                     n1.update(newNode)
-                    n2
                 }
-        }.partition { it in ln1 }
+                Pair(success, n2)
+            } ?: Pair(false, n1)
+        }.partition { it.first }
 
-        return nonMergedNodes + ln2.filter { it !in mergedNodes }
+        val remainingNodesInLn2 = ln2.filter { node2 ->
+            node2 !in mergedNodes.map { it.second } && node2 !in nonMergedNodes.map { it.second }
+        }
+
+        return mergedNodes.map { it.second } + nonMergedNodes.map { it.second }
     }
 
     fun tokensFromString(s: String, sensitive: Boolean = false): List<Token> {

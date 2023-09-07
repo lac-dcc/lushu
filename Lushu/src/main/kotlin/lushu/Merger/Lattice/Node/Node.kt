@@ -4,7 +4,7 @@ package lushu.Merger.Lattice.Node
 //
 // A Node with charset of {a, b}, and interval of [1, 10] corresponds, in
 // regex notation, to [ab]{1,10}
-class Node(
+sealed class Node(
     val charset: Charset,
     val interval: Interval,
     // sensitive indicates whether or not the lattice node (token) is considered
