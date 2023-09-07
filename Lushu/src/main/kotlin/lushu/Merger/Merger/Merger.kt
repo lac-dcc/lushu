@@ -40,19 +40,19 @@ class Merger(
 
     data class ResultGrammarMerger(
         val success: Boolean,
-        val grammarNode: GrammarNode
+        val grammarNode: GrammarNode,
     )
 
     fun mergeGrammarNodes(n1: GrammarNode, n2: GrammarNode): ResultGrammarMerger {
         if (n1.isNonMergeable() || n2.isNonMergeable()) {
             return ResultGrammarMerger(false, n1)
         }
-    
+
         val (success, newTokens) = merge(n1.tokens, n2.tokens)
         if (!success) {
             return ResultGrammarMerger(false, n1)
         }
-    
+
         val newSensitive = n1.isSensitive() || n2.isSensitive()
         val newStar = n1.isStar() || n2.isStar()
         val newNonMergeable = n1.isNonMergeable() || n2.isNonMergeable()
@@ -60,33 +60,33 @@ class Merger(
         val newParent = n1.parent
         val newChildren = recursiveMergeGrammarNodes(n1.getChildren(), n2.getChildren()).toMutableList()
 
-        return ResultGrammarMerger(success, GrammarNode(newTokens, newSensitive, newStar, newNonMergeable, newTerminal, newParent, newChildren))
+        return ResultGrammarMerger(
+            success,
+            GrammarNode(newTokens, newSensitive, newStar, newNonMergeable, newTerminal, newParent, newChildren),
+        )
     }
 
     fun recursiveMergeGrammarNodes(ln1: List<GrammarNode>, ln2: List<GrammarNode>): List<GrammarNode> {
-        if(ln1.isNullOrEmpty()){
+        if (ln1.isNullOrEmpty()) {
             return ln2
         }
 
-        if(ln2.isNullOrEmpty()){
+        if (ln2.isNullOrEmpty()) {
             return ln1
         }
-        val (mergedNodes, nonMergedNodes) = ln1.mapNotNull { n1 ->
-        ln2.find { n2 -> n1 == n2 }
-            ?.let { n2 ->
+        val nonMergedNodes = ln2.toMutableList()
+
+        ln1.forEach { n1 ->
+            nonMergedNodes.find { n2 -> n1 == n2 }?.let { n2 ->
                 val (success, newNode) = mergeGrammarNodes(n1, n2)
                 if (success) {
                     n1.update(newNode)
+                    nonMergedNodes.remove(n2)
                 }
-                Pair(success, n2)
-            } ?: Pair(false, n1)
-        }.partition { it.first }
-
-        val remainingNodesInLn2 = ln2.filter { node2 ->
-            node2 !in mergedNodes.map { it.second } && node2 !in nonMergedNodes.map { it.second }
+            }
         }
 
-        return mergedNodes.map { it.second } + nonMergedNodes.map { it.second }
+        return ln1 + nonMergedNodes
     }
 
     fun tokensFromString(s: String, sensitive: Boolean = false): List<Token> {

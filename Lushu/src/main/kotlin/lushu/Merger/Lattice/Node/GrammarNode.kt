@@ -1,8 +1,6 @@
 package lushu.Merger.Lattice.Node
 
-import lushu.Merger.Merger.Token
 import lushu.Merger.Merger.Merger
-import lushu.Merger.Lattice.NodeFactory
 
 class GrammarNode(
     var tokens: List<Node> = listOf(),
@@ -11,7 +9,7 @@ class GrammarNode(
     val nonmergeable: Boolean = false,
     val terminal: Boolean = false,
     val parent: GrammarNode? = null,
-    private val children: MutableList<GrammarNode> = mutableListOf()
+    private val children: MutableList<GrammarNode> = mutableListOf(),
 
 ) {
 
@@ -39,6 +37,7 @@ class GrammarNode(
     fun getChildren(): MutableList<GrammarNode> {
         return this.children
     }
+
     /**
      * Determines if the given word matches the regular expression defined by the current instance.
      *
@@ -46,20 +45,23 @@ class GrammarNode(
      * @return true if the word matches the regular expression, false otherwise.
      */
     fun match(word: String): Boolean {
-        val res = MergerS.merger().merge(this.tokens, word)
-        if(res.success && !this.isNonMergeable()){
-            this.tokens
-        }
-        return res.success
+        val tokens = MergerS.merger().tokensFromString(word)
+        return match(tokens)
     }
 
     fun match(tokens: List<Node>): Boolean {
         val res = MergerS.merger().merge(this.tokens, tokens)
-        if(res.success && !this.isNonMergeable()){
+
+        if (this.isNonMergeable()) {
+            return this.tokens == tokens
+        }
+
+        if (res.success && !this.isNonMergeable()) {
             this.tokens = res.tokens
         }
         return res.success
     }
+
     /**
      * Checks if two Node elements are equivalent.
      *
@@ -67,14 +69,14 @@ class GrammarNode(
      * @param node2 The second Node element to compare.
      * @return 'true' if the two nodes are equivalent, 'false' otherwise.
      */
-    fun isEquals(other: Any?): Boolean = when (other) {
+    override fun equals(other: Any?): Boolean = when (other) {
         is GrammarNode -> (
-                    this.match(other.tokens) &&
-                        this.sensitive == other.sensitive &&
-                        this.star == other.star &&
-                        this.nonmergeable == other.nonmergeable &&
-                        this.terminal == other.terminal
-                )
+            this.match(other.tokens) &&
+                this.sensitive == other.sensitive &&
+                this.star == other.star &&
+                this.nonmergeable == other.nonmergeable &&
+                this.terminal == other.terminal
+            )
 
         else -> false
     }
@@ -92,7 +94,6 @@ class GrammarNode(
         }
     }
 
-
     /**
      * Finds the equivalent Node from the children list or returns the original node if not found.
      *
@@ -100,7 +101,7 @@ class GrammarNode(
      * @return The equivalent Node if found in the children list; otherwise, returns the original node.
      */
     fun getEquivalentNode(node: GrammarNode): GrammarNode {
-        return getChildren().find { it.isEquals(node) } ?: node
+        return getChildren().find { it.equals(node) } ?: node
     }
 
     /**
@@ -115,16 +116,17 @@ class GrammarNode(
     }
 
     /**
-     * Merges the children nodes of the new node.
+     * Merges the children nodes with the new node.
      *
      * @param newNode The new node that will be merged with the children nodes.
      */
     private fun mergeChildren(newNode: GrammarNode) {
-        val mergeablesNodes = filterMergeblesNodes(true)
-        val mergeableNodes = MergerS.merger().recursiveMergeGrammarNodes(children, listOf<GrammarNode>(newNode))
+        val mergeablesChildren = filterMergeblesNodes(true)
+        val mergeablesNodes =
+            MergerS.merger().recursiveMergeGrammarNodes(mergeablesChildren, listOf<GrammarNode>(newNode))
         val nonMergeablesNodes = filterMergeblesNodes(false)
         children.clear()
-        children.addAll(nonMergeablesNodes + mergeableNodes)
+        children.addAll(nonMergeablesNodes + mergeablesNodes)
     }
 
     /**
@@ -141,7 +143,7 @@ class GrammarNode(
         star: Boolean,
         nonmergeable: Boolean,
         terminal: Boolean,
-        children: MutableList<GrammarNode>
+        children: MutableList<GrammarNode>,
     ) {
         val newNode = GrammarNode(tokens, sensitive, star, nonmergeable, terminal, this, children)
         addChild(newNode)
@@ -175,7 +177,7 @@ class GrammarNode(
         sensitive: Boolean,
         star: Boolean,
         nonmergeable: Boolean,
-        terminal: Boolean
+        terminal: Boolean,
     ): GrammarNode {
         val token = MergerS.merger().tokensFromString(word)
         val newNode = GrammarNode(token, sensitive, star, nonmergeable, terminal, this, mutableListOf())
@@ -184,7 +186,6 @@ class GrammarNode(
         if (existingChild != null) {
             return existingChild
         }
-
         addChild(newNode)
         val resNode = getEquivalentNode(newNode)
 
@@ -200,9 +201,9 @@ class GrammarNode(
         val result = StringBuilder()
 
         result.append("$indentation${current.tokens}\n")
-        
-        if(!current.children.isNullOrEmpty()){
-            current.children.forEach{ child ->
+
+        if (!current.children.isNullOrEmpty()) {
+            current.children.forEach { child ->
                 result.append(treeToStringPreorder(child, level + 1))
             }
         }

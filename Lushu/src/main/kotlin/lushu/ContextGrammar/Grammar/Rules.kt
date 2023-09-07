@@ -1,8 +1,6 @@
 package lushu.ContextGrammar.Grammar
 
-import java.util.regex.Pattern
 import lushu.Merger.Lattice.Node.GrammarNode
-import lushu.Merger.Merger.Token
 
 class Rules(private val root: GrammarNode = GrammarNode()) {
 
@@ -104,10 +102,11 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
 
             // end of the context
             (current.getChildren().isNullOrEmpty()) -> {
-                if(current.isTerminal())
+                if (current.isTerminal()) {
                     return terminalNode
-                else
+                } else {
                     return null
+                }
             }
 
             // searching for the respective child
@@ -275,7 +274,7 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
             dsl.isSensitive(),
             dsl.isStar(),
             dsl.isNonMergeable(),
-            endOfContext
+            endOfContext,
         )
 
         dsl.setIsCase(nextCases)
@@ -302,7 +301,7 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
         contexts.forEach { context -> addContextRule(context.split(" ").toMutableList()) }
     }
 
-    fun contextToString(): String{
+    fun contextToString(): String {
         return root.toString()
     }
 
