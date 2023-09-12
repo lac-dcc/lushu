@@ -1,10 +1,10 @@
 package lushu.ContextGrammar.Grammar
 
-import java.util.regex.Pattern
+import lushu.Merger.Lattice.Node.GrammarNode
 
-class Rules(private val root: Node = Node()) {
+class Rules(private val root: GrammarNode = GrammarNode()) {
 
-    private val terminalNode: Node = Node()
+    private val terminalNode: GrammarNode = GrammarNode()
     private val dsl: DSL = DSL()
 
     /**
@@ -15,16 +15,17 @@ class Rules(private val root: Node = Node()) {
      * @return true if the word ends with the log separator or if there is a matching child node, false otherwise.
      *
      * Example:
-     * Input: word = "example", current = Node(label = "root", children = [Node(label = "host"), Node(label = "example"), Node(label = "ip")])
+     * Input: word = "example", current = GrammarNode(label = "root", children = [GrammarNode(label = "host"), GrammarNode(label = "example"), GrammarNode(label = "ip")])
      * Output: true
      */
-    private fun isEndingPlusCase(word: String, current: Node?): Boolean {
+    fun isEndingStarCase(word: String, current: GrammarNode?): Boolean {
         return word.endsWith(logSeparator) ||
-            (current != null && current.getChildren().any { it.match(word) })
+            (current != null && current.getChildren().any { it.match(word) }) ||
+            (current != null && current.isTerminal())
     }
 
     /**
-     * Matches the plus case in a list of input tokens, starting from a given index,
+     * Matches the star case in a list of input tokens, starting from a given index,
      * using a mutable copy of the tokens and a current node in a tree structure.
      *
      * @param inputTokens The list of input tokens.
@@ -38,15 +39,15 @@ class Rules(private val root: Node = Node()) {
      * Input: inputTokens = mutableListOf("name:", "Emily", "Emily", "Emily", "is", "a", "new", "user")
      *        mutableTokens = mutableListOf("name:", "Emily", "Emily", "Emily", "is", "a", "new", "user")
      *        index = 1
-     *        current = Node(label = "Emily", children = [Node(label = "is")])
-     * Output: (4, Node(label = "is"))
+     *        current = GrammarNode(label = "Emily", children = [GrammarNode(label = "is")])
+     * Output: (4, GrammarNode(label = "is"))
      */
-    private fun plusCaseMatcher(
+    fun starCaseMatcher(
         inputTokens: MutableList<String>,
         mutableTokens: MutableList<String>,
         index: Int,
-        current: Node?,
-    ): Pair<Int, Node?> {
+        current: GrammarNode?,
+    ): Pair<Int, GrammarNode?> {
         when {
             // don't match
             (index >= inputTokens.size) -> {
@@ -58,22 +59,22 @@ class Rules(private val root: Node = Node()) {
                 return Pair(noMatchFound, null)
             }
 
-            // if the current word is the end of the match.
-            isEndingPlusCase(mutableTokens[index], current) -> {
-                inputTokens.clear()
-                inputTokens.addAll(mutableTokens)
-                val endPlusCaseNode = matcher(current, inputTokens[index])
-
-                return Pair(index, endPlusCaseNode)
-            }
-
             // recursive match
             current.match(mutableTokens[index]) -> {
                 if (current.isSensitive()) {
                     mutableTokens[index] = asteriskSymbol.repeat(mutableTokens[index].length)
                 }
 
-                return plusCaseMatcher(inputTokens, mutableTokens, index + 1, current)
+                return starCaseMatcher(inputTokens, mutableTokens, index + 1, current)
+            }
+
+            // if the current word is the end of the match.
+            isEndingStarCase(mutableTokens[index], current) -> {
+                inputTokens.clear()
+                inputTokens.addAll(mutableTokens)
+                val endStarCaseNode = matcher(current, inputTokens[index])
+
+                return Pair(index, endStarCaseNode)
             }
 
             // fail match
@@ -91,20 +92,36 @@ class Rules(private val root: Node = Node()) {
      * @return The matched node, if found; the terminalNode flag, if the node doesn't have children; otherwise, null.
      *
      * Example:
-     * Input: current = Node(label = "root", children = [Node(label = "host"), Node(label = "warning"), Node(label = "ip")]), word = "host"
-     * Output: Node(label = "host")
+     * Input: current = GrammarNode(label = "root", children = [GrammarNode(label = "host"), GrammarNode(label = "warning"), GrammarNode(label = "ip")]), word = "host"
+     * Output: GrammarNode(label = "host")
      */
-    private fun matcher(current: Node?, word: String): Node? {
+    fun matcher(current: GrammarNode?, word: String): GrammarNode? {
         when {
             // not found
             (current == null) -> return null
 
             // end of the context
-            (current.getChildren().isNullOrEmpty()) -> return terminalNode
+            (current.getChildren().isNullOrEmpty()) -> {
+                if (current.isTerminal()) {
+                    return terminalNode
+                } else {
+                    return null
+                }
+            }
 
             // searching for the respective child
-            else -> return current.getChildren()?.find { child ->
-                child.match(word)
+            else -> {
+                val childMatch = current.getChildren()?.find { child ->
+                    child.match(word)
+                }
+
+                if (childMatch != null) {
+                    return childMatch
+                } else if (current.isTerminal()) {
+                    return terminalNode
+                } else {
+                    return null
+                }
             }
         }
     }
@@ -126,11 +143,11 @@ class Rules(private val root: Node = Node()) {
      *       current = rootNode
      * Output: 3
      */
-    private fun matchTokensAgainstPatternContext(
+    fun matchTokensAgainstPatternContext(
         inputTokens: MutableList<String>,
         mutableTokens: MutableList<String>,
         index: Int,
-        current: Node?,
+        current: GrammarNode?,
     ): Int {
         when {
             current == null -> return noMatchFound
@@ -151,7 +168,12 @@ class Rules(private val root: Node = Node()) {
             }
 
             current.isStar() -> {
-                val (nextIndex: Int, nextNode: Node?) = plusCaseMatcher(inputTokens, mutableTokens, index, current)
+                val (nextIndex: Int, nextNode: GrammarNode?) = starCaseMatcher(
+                    inputTokens,
+                    mutableTokens,
+                    index,
+                    current,
+                )
 
                 if ((nextNode != null) && (nextNode.isSensitive())) {
                     mutableTokens[nextIndex] = asteriskSymbol.repeat(mutableTokens[nextIndex].length)
@@ -176,19 +198,18 @@ class Rules(private val root: Node = Node()) {
      * Finds the matching indices of tokens in the input list based on a list of regular expressions.
      *
      * @param inputTokens The list of tokens to search for matches.
-     * @param regexList The list of regular expressions to match against the tokens.
+     * @param tokensList The list of regular expressions to match against the tokens.
      * @return A list of unique and sorted indices of the matching tokens.
      *
      * Example:
      * Input: ["error", "warning", "exception", "success", "invalid"], ["e.", "s.", "c."]
      * Output: [0, 2, 3]
      */
-    private fun findMatchingIndex(inputTokens: List<String>, regexList: List<String>): List<Int> {
-        val matchingIndex = regexList.flatMap { regex ->
-            val pattern = Pattern.compile(regex)
+    fun findMatchingIndex(inputTokens: List<String>, tokensList: List<GrammarNode>): List<Int> {
+        val matchingIndex = tokensList.flatMap { grammarNode ->
             inputTokens.mapIndexedNotNull { index, word ->
-                val matcher = pattern.matcher(word)
-                if (matcher.find()) index else null
+                val matcher = grammarNode.match(word)
+                if (matcher) index else null
             }
         }
         return matchingIndex.distinct().sorted()
@@ -208,8 +229,8 @@ class Rules(private val root: Node = Node()) {
      * Output: ["server", "host", "ip:",  "***************", "is", "online"]
      */
     fun tokens2CipherTokens(inputTokens: List<String>): List<String> {
-        val regexList: List<String> = root.getChildren().map { child -> child.getRegex() }
-        val matchingIndex: List<Int> = findMatchingIndex(inputTokens, regexList)
+        val tokensList: List<GrammarNode> = root.getChildren()
+        val matchingIndex: List<Int> = findMatchingIndex(inputTokens, tokensList)
 
         var i = defaultMinimalIndex
 
@@ -233,30 +254,34 @@ class Rules(private val root: Node = Node()) {
      * - Example:
      * Input: mutableListOf("This", "<m>is", "an</m>", "<s>example</s>", "sentence.")
      */
-    private fun addContextRule(contextRule: MutableList<String>, current: Node? = root) {
+    fun addContextRule(contextRule: MutableList<String>, current: GrammarNode? = root) {
         if (contextRule.isNullOrEmpty()) {
             return
         }
         val firstWord = 0
 
-        val (isCase, nextCase) = dsl.hasTags(contextRule[firstWord])
+        val (isCases, nextCases) = dsl.hasTags(contextRule[firstWord])
 
         val word = dsl.removeAllTagsFromWord(contextRule[firstWord])
 
-        dsl.setIsCase(isCase)
+        dsl.setIsCase(isCases)
+
+        // true if it's the last word in the context
+        val endOfContext: Boolean = (contextRule.size == 1)
 
         val updatedCurrent = current?.findOrAddChild(
             word,
             dsl.isSensitive(),
             dsl.isStar(),
             dsl.isNonMergeable(),
+            endOfContext,
         )
 
-        dsl.setIsCase(nextCase)
+        dsl.setIsCase(nextCases)
 
         contextRule.removeAt(firstWord)
 
-        if (nextCase[addContextsFromWords]) {
+        if (nextCases[starCase]) {
             addContextRule(contextRule, current)
         } else {
             addContextRule(contextRule, updatedCurrent)
@@ -276,10 +301,14 @@ class Rules(private val root: Node = Node()) {
         contexts.forEach { context -> addContextRule(context.split(" ").toMutableList()) }
     }
 
+    fun contextToString(): String {
+        return root.toString()
+    }
+
     companion object {
         private val logSeparator = "\n"
         private val asteriskSymbol = "*"
-        private val addContextsFromWords = 2
+        private val starCase = 2
         private val noMatchFound = 1
         private val defaultMinimalIndex = -1
     }

@@ -4,11 +4,12 @@ enum class TagNames(val tagName: String) {
     CONTEXT("c"),
     SENSITIVE("s"),
     STAR("*"),
-    NONMERGEABLE("m")
+    NONMERGEABLE("t")
+    //GENERICTOKEN("**")
 }
 
-class DSL( 
-    val isCase: MutableList<Boolean> = mutableListOf(false, false, false, false),
+class DSL(
+    val isCase: MutableList<Boolean> = TagNames.values().map { false }.toMutableList(),
     val tags: List<String> = TagNames.values().map { it.tagName }.map { "<$it>" },
 ) {
 
@@ -117,12 +118,12 @@ class DSL(
      * @return A pair of lists where the first list represents the presence of opening tags in the word, and the second list represents the presence of closing tags.
      *
      * - Example:
-     * Let tags = mutableListOf("<c>","<s>","<*>","<m>");
+     * Let tags = mutableListOf("<c>","<s>","<+>","<m>");
      * Input: "<s><m>example</s>";
      * Output: Pair([false, true, false, true], [false, true, false, false]).
      *
      * - Explanation:
-     *  The word contains the tags "<s>" and "<*>", but not the tags "<c>" and "<m>", resulting in [false, true, true, false] for the presence of tags.
+     *  The word contains the tags "<s>" and "<+>", but not the tags "<c>" and "<m>", resulting in [false, true, true, false] for the presence of tags.
      *  The next case indicates that the closer tag "</s>" is present, but doesn't have any other closing tags, resulting in [false, true, false, false] for the next case.
 
      */
@@ -155,7 +156,7 @@ class DSL(
     companion object {
         private val sensitiveCase = 1
         private val starCase = 2
-        private val nonmergeableCase = 3
+        private val nonMergeableCase = 3
         private val contextOpeningTag = "<c>"
         private val contextCloserTag = "</c>"
     }

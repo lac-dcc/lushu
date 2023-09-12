@@ -1,4 +1,4 @@
-package lushu.ContextGrammar.Grammar
+package lushu.Merger.Lattice.Node
 
 import lushu.Merger.Merger.Merger
 
@@ -13,10 +13,8 @@ class MergerS private constructor() {
 
         fun merger(): Merger {
             if (instance == null) {
-                throw Exception(
-                    "Unable to get instance: Merger has not been " +
-                        "initialized"
-                )
+                val file = "src/test/fixtures/config/configBasic.yaml" 
+                load(file) 
             }
             return instance!!
         }
