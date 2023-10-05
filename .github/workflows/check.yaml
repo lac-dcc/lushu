@@ -13,11 +13,13 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: oracle
-          java-version: 20
+          java-version: 17
           cache: gradle
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: '7.5.1'
 
       - name: Check
         run: gradle test
