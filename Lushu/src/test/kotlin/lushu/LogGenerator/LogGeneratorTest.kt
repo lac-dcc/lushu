@@ -14,7 +14,7 @@ class LogGeneratorTest {
     @Test
     fun testLogGeneration() {
         val grammar = Grammar.fromTrainFile(
-            Utils.logFullPath("train/user-is-sensitive.log")
+            Utils.logFullPath("train/user-is-sensitive.txt")
         )
         println("Using grammar:\n${grammar.print()}")
         val interceptor = Interceptor(System.out, grammar)

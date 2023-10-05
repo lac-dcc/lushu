@@ -177,7 +177,7 @@ class GrammarTest {
         testCases.forEach {
             println("Starting test ${it.desc}")
             val grammar = Grammar.fromTrainFile(
-                Utils.logFullPath("train/ip-is-sensitive.log")
+                Utils.logFullPath("train/ip-is-sensitive.txt")
             )
             val actual = grammar.consume(it.line)
             if (it.expected != actual) {
