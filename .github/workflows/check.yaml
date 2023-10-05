@@ -26,5 +26,5 @@ jobs:
       - name: Check
         run: |
           pwd
-          cd lushu
+          cd Lushu
           gradle test
