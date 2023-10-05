@@ -24,7 +24,4 @@ jobs:
           gradle-version: '7.5.1'
 
       - name: Check
-        run: |
-          pwd
-          cd Lushu
-          gradle test
+        run: gradle test
