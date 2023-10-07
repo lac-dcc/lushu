@@ -25,7 +25,7 @@ def main():
 
     # Read the content of the HTML file
     file_path = sys.argv[1]
-    input_html = open(file_path, 'r', encoding='utf-8').read()
+    input_html = open(file_path).read()
 
     urls = extract_script_urls(input_html)
 
