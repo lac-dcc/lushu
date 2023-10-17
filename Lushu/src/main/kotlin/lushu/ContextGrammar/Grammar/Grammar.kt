@@ -1,12 +1,37 @@
 package lushu.ContextGrammar.Grammar
-
 import java.io.File
 
-class Grammar(private val parser: Parser = Parser()) {
+class Grammar(private val contextAnalyzer: ContextAnalyzer = ContextAnalyzer()) {
     fun consume(words: MutableList<String>): String {
-        val consumedWords = parser.parsing(words)
+        val consumedWords = contextAnalyzer.parsing(words)
         return consumedWords.joinToString(tokenSeparator)
     }
+
+    fun doParserFromFile(path: String): String{
+        val reader = File(path).bufferedReader()
+
+        val text = reader.readText()
+
+        reader.close()
+
+        val res = DescendentParser().parse(text)
+        return res
+    }
+    fun doParserFromHTMLGenerator(){
+        var i = 0
+        val result_file = File("result.txt")
+        result_file.delete()
+        result_file.createNewFile()
+        val parser = DescendentParser()
+        while(i < 20){
+            val randomHTML = HTMLGenerator().generateRandomHtml()
+            result_file.appendText(randomHTML)
+            parser.parse(randomHTML)
+            Thread.sleep(1000)
+            i++
+        }
+    }
+
 
     fun consumeText(text: String): String {
         val words = text.split(" ").toMutableList()
@@ -27,11 +52,11 @@ class Grammar(private val parser: Parser = Parser()) {
     }
 
     fun train(words: String?) {
-        parser.createRules(words)
+        contextAnalyzer.createRules(words)
     }
 
     private fun trainText(text: String) {
-        parser.createRules(text)
+        contextAnalyzer.createRules(text)
     }
 
     fun trainStdin(firstLine: String? = null) {

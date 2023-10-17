@@ -1,0 +1,22 @@
+START
+	START
+		djondoug@outlook.com
+	FINISH
+	johndoe@example.com
+	janedoe@example.com
+	bardo@google.com
+FINISH
+email@domain.com
+https://www.orkut.com
+BEGIN
+	START
+		https://www.site.com
+		student@ufmg.com
+	FINISH	
+	google@gmail.com
+	https://www.google.com
+	https://www.facebook.com
+	https://www.twitter.com
+END
+https://www.gmail.com
+finish@gmail.com

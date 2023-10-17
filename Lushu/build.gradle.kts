@@ -50,6 +50,25 @@ val fatJar = task("fatJar", type = Jar::class) {
     with(tasks.jar.get())
 }
 
+val parserJar = task("parserJar", type = Jar::class) {
+    manifest {
+        attributes(
+            mapOf(
+                "Implementation-Title" to "Lushu",
+                "Implementation-Version" to "0.1",
+                "Main-Class" to "lushu.ParserAppKt"
+            )
+        )
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    val dependencies = configurations
+        .runtimeClasspath
+        .get()
+        .map(::zipTree)
+    from(dependencies)
+    with(tasks.jar.get())
+}
+
 val grammarJar = task("grammarJar", type = Jar::class) {
     archiveBaseName.set("Grammar")
     manifest {
