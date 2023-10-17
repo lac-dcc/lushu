@@ -4,4 +4,5 @@
 
 file=$1
 [ -z "$file" ] && echo "Please provide a file to process" && exit 1
-comby -count -match-only "$(cat count-for.txt)" '' "$file"
+comby 'for (:[args]) { :[body] }' ':[body]' main.c -stdout | \
+  comby -count -stdin -match-only 'for (:[args]) {:[body]}' '' -rule 'where nested' -matcher .c
