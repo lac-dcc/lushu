@@ -16,7 +16,7 @@ class MergeableToken(
         return match(tokens)
     }
 
-    fun match(tokens: List<Node>): Boolean {
+    override fun match(tokens: List<Node>): Boolean {
         val res = MergerS.merger().merge(this.tokens, tokens)
         if (res.success) {
             this.tokens = res.tokens

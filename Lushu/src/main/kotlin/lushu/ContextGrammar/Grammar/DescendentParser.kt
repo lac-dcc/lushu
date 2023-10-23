@@ -9,6 +9,7 @@ class DescendentParser {
     private val end_script: NonMergeableToken = NonMergeableToken("</script>")
     private val start_body: NonMergeableToken = NonMergeableToken("<body")
     private val end_body: NonMergeableToken = NonMergeableToken("</body>")
+    //add more urls examples
     private val URL: MergeableToken = MergeableToken("https://gVrNzsD/r/d/N/EanH46=Dan3nvNeRq")
     private val EMAIL: MergeableToken = MergeableToken("email1@domainname.com")
     private val TOKEN: Regex = """.+""".toRegex()
@@ -62,7 +63,7 @@ class DescendentParser {
                 setIterator(previous_i)
             }
         }
-        if (TOKEN.matches(look_ahead())) {
+        if (look_ahead().isEmpty()) {
             next()
             R0()
         }

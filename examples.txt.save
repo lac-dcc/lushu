@@ -1,0 +1,4 @@
+<script> <*>url</*> </script>     -> A
+<body> <*>email</*> </body>	  -> B
+<script><body>		          -> C
+

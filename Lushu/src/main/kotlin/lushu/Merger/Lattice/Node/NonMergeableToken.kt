@@ -17,9 +17,10 @@ class NonMergeableToken(
         return match(tokens)
     }
 
-    fun match(tokens: List<Node>): Boolean {
+    override fun match(tokens: List<Node>): Boolean {
         return this.tokens == tokens
     }
+
     override fun toString(): String {
         return "${this.tokens}"
     }
