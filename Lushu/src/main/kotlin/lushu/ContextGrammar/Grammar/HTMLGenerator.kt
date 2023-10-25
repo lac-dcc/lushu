@@ -1,21 +1,38 @@
 package lushu.ContextGrammar.Grammar
+
+import java.io.FileWriter
+
 class HTMLGenerator {
+    var tokens = 0
+    fun startGenerator(numTokens: Int = 100): String {
+        this.tokens = numTokens
+        return generateRandomHtml()
+    }
+
+    val tags = listOf(
+        "h1", "h2", "h3", "h4", "h5", "h6",
+        "p", "ul", "ol", "li", "table", "tr", "td", "th",
+        "img", "a", "input", "form", "script", "style", "body",
+        "script", "style", "body",
+    )
+
+    fun generateRandomTag(): String {
+        this.tokens -= 2
+        return tags.random()
+    }
+
     fun generateRandomHtml(): String {
-        val tags = listOf(
-            "h1", "h2", "h3", "h4", "h5", "h6",
-            "p", "ul", "ol", "li", "table", "tr", "td", "th",
-            "img", "a", "input", "form", "script", "style", "body",
-            "script", "style", "body"
-        )
-        val tag = tags.random()
+        if (tokens <= 1) {
+            return generateRandomString(20)
+        }
+        val tag = generateRandomTag()
         val attributes = generateRandomAttributes()
         val content = generateRandomContent()
-        val cond = ((0..1000).random())
-        if (cond == 1) {
-            return ""
+        if (tokens <= 1) {
+            return "<$tag $attributes>\n$content\n</$tag>"
         }
-        val comp = generateRandomContent() + "\n"
-        return "<$tag $attributes> $content\n$comp</$tag>"
+        val comp = generateRandomHtml()
+        return "<$tag $attributes>\n$content\n$comp\n</$tag>"
     }
 
     fun generateRandomAttributes(): String {
@@ -25,6 +42,7 @@ class HTMLGenerator {
             val value = generateRandomString(10)
             attributes.add("$key=\"$value\"")
         }
+        this.tokens -= attributes.size
         return attributes.joinToString(" ")
     }
 
@@ -35,6 +53,7 @@ class HTMLGenerator {
             2 -> generateRandomUrl()
             else -> generateRandomString(100)
         }
+        this.tokens -= 1
         return content
     }
 

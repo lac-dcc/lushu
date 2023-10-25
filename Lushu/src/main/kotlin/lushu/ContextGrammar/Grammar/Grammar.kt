@@ -1,48 +1,24 @@
 package lushu.ContextGrammar.Grammar
 
+import lushu.ContextGrammar.MapGrammar.MapGrammar
 import java.io.File
 
-class Grammar(private val contextAnalyzer: ContextAnalyzer = ContextAnalyzer(),
-              private val mapGrammar: MapGrammar = MapGrammar()
+class Grammar(
+    private val contextAnalyzer: ContextAnalyzer = ContextAnalyzer(),
+    private val mapGrammar: MapGrammar = MapGrammar(),
 ) {
     fun consume(words: MutableList<String>): String {
         val consumedWords = contextAnalyzer.parsing(words)
         return consumedWords.joinToString(tokenSeparator)
     }
 
-    fun doParserFromFile(path: String): String {
-        val reader = File(path).bufferedReader()
-
-        val text = reader.readText()
-
-        reader.close()
-
-        val res = DescendentParser().parse(text)
-        return res
-    }
-
-    fun doParserFromHTMLGenerator() {
-        var i = 0
-        val result_file = File("result.txt")
-        result_file.delete()
-        result_file.createNewFile()
-        val parser = DescendentParser()
-        while (i < 20) {
-            val randomHTML = HTMLGenerator().generateRandomHtml()
-            result_file.appendText(randomHTML)
-            parser.parse(randomHTML)
-            Thread.sleep(1000)
-            i++
-        }
-    }
-
-    fun doParserMapFromHTMLGenerator() {
+    fun consumeHTML() {
         var i = 0
         val result_file = File("result.txt")
         result_file.delete()
         result_file.createNewFile()
         while (i < 20) {
-            val randomHTML = HTMLGenerator().generateRandomHtml()
+            val randomHTML = HTMLGenerator().startGenerator()
             result_file.appendText(randomHTML)
             mapGrammar.consume(randomHTML)
             Thread.sleep(1000)
@@ -51,14 +27,9 @@ class Grammar(private val contextAnalyzer: ContextAnalyzer = ContextAnalyzer(),
         }
     }
 
-    fun doParserMapFromFile(path: String) {
-        val reader = File(path).bufferedReader()
-
-        val text = reader.readText()
-
-        reader.close()
-
-        val res = mapGrammar.consume(text)
+    fun consumeFILE(filePath: String) {
+        val file = File(filePath)
+        mapGrammar.consume(file)
     }
 
     private fun trainMap(string: String?) {
@@ -79,12 +50,12 @@ class Grammar(private val contextAnalyzer: ContextAnalyzer = ContextAnalyzer(),
 
     fun testMapHTML() {
         trainMapFromStdin()
-        doParserMapFromHTMLGenerator()
+        consumeHTML()
     }
 
     fun testMapFile(path: String) {
         trainMapFromStdin()
-        doParserMapFromFile(path)
+        consumeFILE(path)
     }
 
     fun consumeText(text: String): String {

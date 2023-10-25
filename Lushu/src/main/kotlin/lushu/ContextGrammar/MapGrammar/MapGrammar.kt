@@ -1,18 +1,13 @@
-package lushu.ContextGrammar.Grammar
+package lushu.ContextGrammar.MapGrammar
 
 import lushu.Merger.Lattice.Node.MergeableToken
 import lushu.Merger.Lattice.Node.NonMergeableToken
 import lushu.Merger.Lattice.Node.Token
-
-enum class Tags(val tagName: String) {
-    CONTEXT("c"),
-    LATTICE("l"),
-    KLEENE("*"),
-    ACTION("a"),
-}
+import java.io.File
+import java.io.FileReader
 
 class MapGrammar(
-    val tags: List<String> = Tags.values().map { it.tagName }.map { "<$it>" },
+    val dsl: DSL = DSL(),
 ) {
     data class PivotData(
         val opening_reference: Token,
@@ -29,30 +24,9 @@ class MapGrammar(
         return wo_newline.split(" ")
     }
 
-    private fun isMergeable(string: String): Boolean {
-        return string.contains("<l>") || string.contains("</l>")
-    }
-
-    private fun opening2CloserTag(openingTag: String): String {
-        val tagName = openingTag.removeSurrounding("<", ">")
-        return "</$tagName>"
-    }
-
-    private fun removeTags(word: String, tagSet: List<String>): String {
-        return tagSet.fold(word) { acc, tag -> acc.replace(tag, "") }
-    }
-
-    private fun openingTags2ClosingTags(tags: List<String>): List<String> {
-        return tags.map { opening2CloserTag(it) }.toList()
-    }
-
-    private fun removeAllTags(word: String): String {
-        return removeTags(removeTags(word, tags.toList()), openingTags2ClosingTags(tags))
-    }
-
     private fun toToken(word: String): Token {
-        val isMergeable = isMergeable(word)
-        val wo_tags = removeAllTags(word)
+        val isMergeable = dsl.isMergeable(word)
+        val wo_tags = dsl.removeAllTags(word)
 
         if (isMergeable) {
             return MergeableToken(wo_tags)
@@ -118,6 +92,16 @@ class MapGrammar(
         streamString(input)
     }
 
+    fun consume(file: File) {
+        FileReader(file).use { reader ->
+            var i = 0
+            reader.forEachLine {
+                println("$i - $it")
+                consume(it)
+            i++}
+        }
+    }
+
     private fun extractContext(input: String): List<String> {
         val regex = Regex("<c>(.*?)</c>")
         val matcher = regex.findAll(input)
@@ -151,6 +135,15 @@ class MapGrammar(
         }
     }
 
+    private inline fun <reified V> findEquivalent(map: MutableMap<Token, V>, token: Token): Pair<Token, Boolean> {
+        map.forEach { element ->
+            if (element.key == token) {
+                return Pair(element.key, true)
+            }
+        }
+        return Pair(token, false)
+    }
+
     private fun insertContext(context: String) {
         val contextTokens = string2list(context)
 
@@ -159,8 +152,12 @@ class MapGrammar(
             return
         }
 
-        val openingToken = toToken(contextTokens.first())
-        insert(opening_map, openingToken, no_occurrences)
+        val token = toToken(contextTokens.first())
+        val res = findEquivalent(opening_map, token)
+        val openingToken = res.first
+        if (!res.second) {
+            insert(opening_map, openingToken, no_occurrences)
+        }
         insert(closing_map, contextTokens.last(), openingToken)
         insertPivot(contextTokens.subList(1, contextTokens.size - 1), openingToken)
     }

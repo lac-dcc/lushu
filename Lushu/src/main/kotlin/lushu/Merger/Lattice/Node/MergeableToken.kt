@@ -26,4 +26,9 @@ class MergeableToken(
     override fun toString(): String {
         return "${this.tokens}"
     }
+
+    override fun equals(other: Any?): Boolean = when (other) {
+        is MergeableToken -> this.tokens == other.tokens
+        else -> false
+    }
 }
