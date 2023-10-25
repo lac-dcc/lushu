@@ -94,11 +94,9 @@ class MapGrammar(
 
     fun consume(file: File) {
         FileReader(file).use { reader ->
-            var i = 0
             reader.forEachLine {
-                println("$i - $it")
                 consume(it)
-            i++}
+            }
         }
     }
 

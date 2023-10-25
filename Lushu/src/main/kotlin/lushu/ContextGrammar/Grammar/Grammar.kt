@@ -2,6 +2,7 @@ package lushu.ContextGrammar.Grammar
 
 import lushu.ContextGrammar.MapGrammar.MapGrammar
 import java.io.File
+import java.io.FileReader
 
 class Grammar(
     private val contextAnalyzer: ContextAnalyzer = ContextAnalyzer(),
@@ -19,8 +20,6 @@ class Grammar(
         result_file.createNewFile()
         while (i < 20) {
             val randomHTML = HTMLGenerator().startGenerator()
-            result_file.appendText(randomHTML)
-            mapGrammar.consume(randomHTML)
             Thread.sleep(1000)
             i++
             println("Success")
@@ -48,14 +47,22 @@ class Grammar(
         trainMap(line)
     }
 
-    fun testMapHTML() {
+    private fun trainMap(file: File) {
+        FileReader(file).use { reader ->
+            reader.forEachLine {
+                trainMap(it)
+            }
+        }
+    }
+
+    fun testMap() {
         trainMapFromStdin()
         consumeHTML()
     }
 
-    fun testMapFile(path: String) {
-        trainMapFromStdin()
-        consumeFILE(path)
+    fun testMap(trainFile: String, filePath: String) {
+        trainMap(File(trainFile))
+        consumeFILE(filePath)
     }
 
     fun consumeText(text: String): String {

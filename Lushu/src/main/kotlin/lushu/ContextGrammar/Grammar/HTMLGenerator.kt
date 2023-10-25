@@ -1,12 +1,24 @@
 package lushu.ContextGrammar.Grammar
 
-import java.io.FileWriter
+import java.io.BufferedWriter
+import java.io.File
 
 class HTMLGenerator {
     var tokens = 0
-    fun startGenerator(numTokens: Int = 100): String {
-        this.tokens = numTokens
-        return generateRandomHtml()
+    var fileW: BufferedWriter = File("result.txt").bufferedWriter()
+
+    fun startGenerator(numTokens: Int = 100, filePath: String = "result.txt") {
+        var max_tokens = numTokens
+        this.fileW = File(filePath).bufferedWriter()
+        var tokens = 0
+        while (max_tokens > 0) {
+            tokens = (300..1000).random()
+            this.tokens = max_tokens.coerceAtMost(tokens)
+            max_tokens -= this.tokens
+            this.fileW.write(generateRandomHtml())
+        }
+
+        fileW.close()
     }
 
     val tags = listOf(
@@ -22,7 +34,8 @@ class HTMLGenerator {
     }
 
     fun generateRandomHtml(): String {
-        if (tokens <= 1) {
+        val finish = (1..10).random()
+        if (tokens <= 1 || finish == 1) {
             return generateRandomString(20)
         }
         val tag = generateRandomTag()
@@ -31,8 +44,9 @@ class HTMLGenerator {
         if (tokens <= 1) {
             return "<$tag $attributes>\n$content\n</$tag>"
         }
-        val comp = generateRandomHtml()
-        return "<$tag $attributes>\n$content\n$comp\n</$tag>"
+        val comp1 = generateRandomHtml()
+        val comp2 = generateRandomHtml()
+        return "<$tag $attributes>\n$content\n$comp1\n</$tag>\n$comp2"
     }
 
     fun generateRandomAttributes(): String {
@@ -69,7 +83,7 @@ class HTMLGenerator {
     }
 
     fun generateRandomUrl(): String {
-        val protocols = listOf("http", "https", "ftp")
+        val protocols = listOf("http", "https")
         val protocol = protocols.random()
 
         val domainLength = (5..10).random()
@@ -78,17 +92,12 @@ class HTMLGenerator {
             .map { allowedChars.random() }
             .joinToString("")
 
-        val pathLength = (1..5).random()
+        val pathLength = (1..20).random()
         val path = (1..pathLength)
             .map { allowedChars.random() }
-            .joinToString("/")
+            .joinToString("")
 
-        val paramCount = (1..3).random()
-        val params = (1..paramCount)
-            .map { generateRandomString(5) to generateRandomString(10) }
-            .joinToString("") { (key, value) -> "$key=$value" }
-
-        return "$protocol://$domain/$path$params"
+        return "$protocol://$domain.com/$path"
     }
 
     fun generateRandomString(length: Int): String {

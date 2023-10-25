@@ -9,10 +9,9 @@ def extract_script_urls(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
 
     script_tags = soup.find_all('script')
-    print(script_tags)
     for script_tag in script_tags:
-        if script_tag.string:
-            urls.extend(re.findall(r'"(http[s]?://.*?)"', script_tag.string))
+        urls.extend(re.findall(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z]+", str(script_tag)))
+    
 
     return urls
 
