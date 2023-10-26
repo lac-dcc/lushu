@@ -11,7 +11,7 @@ output_dir="$5"
 htmlfile="$6"
 
 # Prepare
-jar_prefix='StressTestWithLushu'
+jar_prefix='stressTestMapWithLushu'
 mkdir -p "$output_dir"
 gradle "${jar_prefix}Jar"
 
@@ -19,14 +19,15 @@ tmpfile="$(mktemp)"
 
 num_tokens="$min_tokens"
 while [ "$num_tokens" -le "$max_tokens" ]; do
-    head -$num_tokens "$logfile" > "$tmpfile"
+    head -$num_tokens "$htmlfile" > "$tmpfile"
     simul_num=0
     while [ "$simul_num" -lt "$num_simuls_each" ]; do
-        echo "$simul_num running with $num_tokens logs"
+        echo "$simul_num running with $num_tokens tokens"
         java -jar "./Lushu/build/libs/${jar_prefix}.jar" \
 	           example/config.yaml \
-	           example/html/train/patterns.txt \
-               example/html/htmls_files/${num_tokens}.txt
+               example/html/htmls_files/${num_tokens}.txt \
+               example/html/train/patterns.txt \
+               test/context_tests/compare_to_beautifulsoup/emails/Lushu/${num_tokens}.txt \
              "$num_tokens" \
              "$tmpfile" \
              1> /dev/null \

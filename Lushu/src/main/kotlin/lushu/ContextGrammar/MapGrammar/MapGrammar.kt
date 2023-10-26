@@ -8,6 +8,7 @@ import java.io.FileReader
 
 class MapGrammar(
     val dsl: DSL = DSL(),
+    val emails: MutableList<String> = mutableListOf()
 ) {
     data class PivotData(
         val opening_reference: Token,
@@ -55,7 +56,6 @@ class MapGrammar(
         val openingFound = inMap(opening_map, token)
         if (openingFound != null) {
             addAccMap(openingFound, 1)
-            println("match opening $word")
         }
 
         val closingFound = inMap(closing_map, token)
@@ -64,7 +64,6 @@ class MapGrammar(
             if (openingToken != null) {
                 addAccMap(openingToken, -1)
             }
-            println("match closing $word")
         }
 
         map_pivot.forEach { pivot ->
@@ -72,8 +71,7 @@ class MapGrammar(
                 val openingReference = pivot.component2().opening_reference
                 val value = opening_map[openingReference]
                 if (value != null && value >= 1) {
-                    println("match $word")
-                    println("acc ${opening_map[openingReference]}")
+                    emails.add(word)
                 }
             }
         }
@@ -92,12 +90,13 @@ class MapGrammar(
         streamString(input)
     }
 
-    fun consume(file: File) {
+    fun consume(file: File): List<String> {
         FileReader(file).use { reader ->
             reader.forEachLine {
                 consume(it)
             }
         }
+        return emails.toList()
     }
 
     private fun extractContext(input: String): List<String> {

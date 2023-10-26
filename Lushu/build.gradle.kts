@@ -69,24 +69,26 @@ val HTMLJar = task("HTMLJar", type = Jar::class) {
     with(tasks.jar.get())
 }
 
-val mapJar = task("mapJar", type = Jar::class) {
-    manifest {
-        attributes(
-            mapOf(
-                "Implementation-Title" to "Lushu",
-                "Implementation-Version" to "0.1",
-                "Main-Class" to "lushu.MapAppKt"
+val stressTestMapWithLushuJar =
+    task("stressTestMapWithLushuJar", type = Jar::class) {
+        archiveBaseName.set("stressTestMapWithLushu")
+        manifest {
+            attributes(
+                mapOf(
+                    "Implementation-Title" to "stressTestMapWithLushu",
+                    "Implementation-Version" to "0.1",
+                    "Main-Class" to "lushu.TestApps.StressTest.Context.WithLushu.AppKt"
+                )
             )
-        )
+        }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        val dependencies = configurations
+            .runtimeClasspath
+            .get()
+            .map(::zipTree)
+        from(dependencies)
+        with(tasks.jar.get())
     }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    val dependencies = configurations
-        .runtimeClasspath
-        .get()
-        .map(::zipTree)
-    from(dependencies)
-    with(tasks.jar.get())
-}
 
 val grammarJar = task("grammarJar", type = Jar::class) {
     archiveBaseName.set("Grammar")
