@@ -1,23 +1,36 @@
 package lushu.ContextGrammar.MapGrammar
 
-import lushu.Merger.Lattice.Node.MergeableToken
-import lushu.Merger.Lattice.Node.NonMergeableToken
-import lushu.Merger.Lattice.Node.Token
+import lushu.Merger.Lattice.Node.*
+import java.io.BufferedWriter
 import java.io.File
 import java.io.FileReader
 
 class MapGrammar(
     val dsl: DSL = DSL(),
-    val emails: MutableList<String> = mutableListOf()
 ) {
     data class PivotData(
         val opening_reference: Token,
         val lambda_funcion: String,
     )
 
+    private lateinit var outfile: BufferedWriter
+
     private val opening_map: MutableMap<Token, Int> = mutableMapOf()
     private val closing_map: MutableMap<Token, Token> = mutableMapOf()
     private val map_pivot: MutableMap<Token, PivotData> = mutableMapOf()
+
+    private fun initializeFile(pathFile: String) {
+        outfile = File(pathFile).bufferedWriter()
+    }
+
+    private fun write(word: String) {
+        outfile.write(word)
+        outfile.write("\n")
+    }
+
+    private fun closeFile() {
+        outfile.close()
+    }
 
     private fun string2list(string: String): List<String> {
         val lines = string.split("\n")
@@ -45,20 +58,33 @@ class MapGrammar(
         return null
     }
 
+    private inline fun <reified V> inMap(map: MutableMap<Token, V>, word: List<Node>): Token? {
+        for (key in map.keys) {
+            if (key.match(word)) {
+                return key
+            }
+        }
+        return null
+    }
+
+    private inline fun <reified V> inMap(map: MutableMap<Token, V>, word: String): Token? {
+        val tk = MergerS.merger().tokensFromString(word)
+        return inMap(map, tk)
+    }
+
     private fun addAccMap(token: Token, value: Int) {
         val oldValue = opening_map[token] ?: 0
         this.opening_map[token] = oldValue + value
     }
 
     private fun match(word: String) {
-        val token = toToken(word)
-
-        val openingFound = inMap(opening_map, token)
+        val inToken = MergerS.merger().tokensFromString(word)
+        val openingFound = inMap(opening_map, inToken)
         if (openingFound != null) {
             addAccMap(openingFound, 1)
         }
 
-        val closingFound = inMap(closing_map, token)
+        val closingFound = inMap(closing_map, inToken)
         if (closingFound != null) {
             val openingToken = closing_map[closingFound]
             if (openingToken != null) {
@@ -67,11 +93,11 @@ class MapGrammar(
         }
 
         map_pivot.forEach { pivot ->
-            if (pivot.component1().match(token.tokens)) {
+            if (pivot.component1().match(inToken)) {
                 val openingReference = pivot.component2().opening_reference
                 val value = opening_map[openingReference]
                 if (value != null && value >= 1) {
-                    emails.add(word)
+                    write(word)
                 }
             }
         }
@@ -90,13 +116,14 @@ class MapGrammar(
         streamString(input)
     }
 
-    fun consume(file: File): List<String> {
+    fun consume(file: File, outfile: String) {
+        initializeFile(outfile)
         FileReader(file).use { reader ->
             reader.forEachLine {
                 consume(it)
             }
         }
-        return emails.toList()
+        closeFile()
     }
 
     private fun extractContext(input: String): List<String> {

@@ -28,23 +28,13 @@ fun main(args: Array<String>) {
     }
     var time: Long = 0
 
-    var emails: List<String>
     time = measureTimeMillis {
-        emails = grammar.testMap(htmlfiletest)
+        grammar.testMap(htmlfiletest, emailsFile)
     }
 
     val runtime = Runtime.getRuntime()
     runtime.gc()
-    val memory = runtime.totalMemory() - runtime.freeMemory()
-
-    val outfile = File(emailsFile).bufferedWriter()
-    if (!emailsFile.isNullOrBlank()) {
-        for (email in emails) {
-            outfile.write(email)
-            outfile.newLine()
-        }
-        outfile.close()
-    }
+    val memory = (runtime.totalMemory() - runtime.freeMemory()) / 1048576.0
 
     System.err.println("$time")
     System.err.println("$memory")

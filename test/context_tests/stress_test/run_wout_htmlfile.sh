@@ -23,12 +23,11 @@ while [ "$num_tokens" -le "$max_tokens" ]; do
     while [ "$simul_num" -lt "$num_simuls_each" ]; do
         echo "$simul_num running with $num_tokens tokens"
         python3 $python_file_path \
-               example/html/htmls_files/${num_tokens}.txt \
-               compare_to_beautifulsoup/emails/BeautifulSoup/${num_tokens}.txt \
+               example/html/html_files/${num_tokens}.txt \
+               test/context_tests/compare_to_beautifulsoup/emails/BeautifulSoup/${num_tokens}.txt \
              "$num_tokens" \
              "$tmpfile" \
-             1> /dev/null \
-             2> "$output_dir/${num_tokens}-${simul_num}"
+             1> "$output_dir/${num_tokens}-${simul_num}"
         simul_num=$(( simul_num + 1 ))
     done
     num_tokens=$(( num_tokens * step ))

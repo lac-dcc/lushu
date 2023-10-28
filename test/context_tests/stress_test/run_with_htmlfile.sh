@@ -25,7 +25,7 @@ while [ "$num_tokens" -le "$max_tokens" ]; do
         echo "$simul_num running with $num_tokens tokens"
         java -jar "./Lushu/build/libs/${jar_prefix}.jar" \
 	           example/config.yaml \
-               example/html/htmls_files/${num_tokens}.txt \
+               example/html/html_files/${num_tokens}.txt \
                example/html/train/patterns.txt \
                test/context_tests/compare_to_beautifulsoup/emails/Lushu/${num_tokens}.txt \
              "$num_tokens" \

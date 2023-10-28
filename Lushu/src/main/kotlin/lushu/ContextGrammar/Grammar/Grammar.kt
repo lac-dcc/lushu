@@ -26,9 +26,9 @@ class Grammar(
         }
     }
 
-    fun consumeFILE(filePath: String): List<String> {
-        val file = File(filePath)
-        return mapGrammar.consume(file)
+    fun consumeFILE(inFile: String, outFile: String) {
+        val file = File(inFile)
+        mapGrammar.consume(file, outFile)
     }
 
     private fun trainMap(string: String?) {
@@ -61,8 +61,8 @@ class Grammar(
         consumeHTML()
     }
 
-    fun testMap(filePath: String): List<String> {
-        return consumeFILE(filePath)
+    fun testMap(inFile: String, outFile: String){
+        consumeFILE(inFile, outFile)
     }
 
     fun consumeText(text: String): String {

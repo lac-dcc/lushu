@@ -1,1 +1,1 @@
-<c><script <*><l>ZpdYqFuaH@example.com</l></*> </script></c>
+<c><div <*><l>ZpdYqFuaH@example.com</l></*> </div></c>
