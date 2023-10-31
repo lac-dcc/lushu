@@ -23,13 +23,13 @@ while [ "$num_tokens" -le "$max_tokens" ]; do
     simul_num=0
     while [ "$simul_num" -lt "$num_simuls_each" ]; do
         echo "$simul_num running with $num_tokens tokens"
+        /usr/bin/time -v  \
         java -jar "./Lushu/build/libs/${jar_prefix}.jar" \
 	           example/config.yaml \
                example/html/html_files/${num_tokens}.txt \
                example/html/train/patterns.txt \
                test/context_tests/compare_to_beautifulsoup/emails/Lushu/${num_tokens}.txt \
-             "$num_tokens" \
-             "$tmpfile" \
+                grep maximum \
              1> /dev/null \
              2> "$output_dir/${num_tokens}-${simul_num}"
         simul_num=$(( simul_num + 1 ))

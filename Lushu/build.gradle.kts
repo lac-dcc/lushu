@@ -50,13 +50,14 @@ val fatJar = task("fatJar", type = Jar::class) {
     with(tasks.jar.get())
 }
 
-val HTMLJar = task("mapGrammarJar", type = Jar::class) {
+val GenerateHTMLJar = task("GeneratorJar", type = Jar::class) {
+    archiveBaseName.set("GeneratorJar")
     manifest {
         attributes(
             mapOf(
                 "Implementation-Title" to "Lushu",
                 "Implementation-Version" to "0.1",
-                "Main-Class" to "lushu.MapAppKt"
+                "Main-Class" to "lushu.ContextGrammar.GeneratorAppKt"
             )
         )
     }

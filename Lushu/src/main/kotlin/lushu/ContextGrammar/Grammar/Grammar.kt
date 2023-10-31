@@ -28,7 +28,10 @@ class Grammar(
 
     fun consumeFILE(inFile: String, outFile: String) {
         val file = File(inFile)
-        mapGrammar.consume(file, outFile)
+        val max = mapGrammar.consume(file, outFile)
+        val outfile = File(outFile).bufferedWriter()
+        outfile.write(max.toString())
+        outfile.close()
     }
 
     private fun trainMap(string: String?) {

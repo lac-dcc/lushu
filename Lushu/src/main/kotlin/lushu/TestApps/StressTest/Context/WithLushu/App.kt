@@ -3,7 +3,6 @@ package lushu.TestApps.StressTest.Context.WithLushu
 import lushu.ContextGrammar.Grammar.Grammar
 import lushu.Merger.Lattice.Node.MergerS
 import java.io.File
-import kotlin.system.measureTimeMillis
 
 fun main(args: Array<String>) {
     if (args.size < 3) {
@@ -26,16 +25,6 @@ fun main(args: Array<String>) {
         var file = File(filePatterns)
         grammar.trainMap(file)
     }
-    var time: Long = 0
+    grammar.testMap(htmlfiletest, emailsFile)
 
-    time = measureTimeMillis {
-        grammar.testMap(htmlfiletest, emailsFile)
-    }
-
-    val runtime = Runtime.getRuntime()
-    runtime.gc()
-    val memory = (runtime.totalMemory() - runtime.freeMemory()) / 1048576.0
-
-    System.err.println("$time")
-    System.err.println("$memory")
 }

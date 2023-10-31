@@ -1,12 +1,14 @@
 package lushu.ContextGrammar.MapGrammar
 
 import lushu.Merger.Lattice.Node.*
+
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileReader
 
 class MapGrammar(
     val dsl: DSL = DSL(),
+    var max_blocks: Int = 0,
 ) {
     data class PivotData(
         val opening_reference: Token,
@@ -18,19 +20,6 @@ class MapGrammar(
     private val opening_map: MutableMap<Token, Int> = mutableMapOf()
     private val closing_map: MutableMap<Token, Token> = mutableMapOf()
     private val map_pivot: MutableMap<Token, PivotData> = mutableMapOf()
-
-    private fun initializeFile(pathFile: String) {
-        outfile = File(pathFile).bufferedWriter()
-    }
-
-    private fun write(word: String) {
-        outfile.write(word)
-        outfile.write("\n")
-    }
-
-    private fun closeFile() {
-        outfile.close()
-    }
 
     private fun string2list(string: String): List<String> {
         val lines = string.split("\n")
@@ -96,8 +85,8 @@ class MapGrammar(
             if (pivot.component1().match(inToken)) {
                 val openingReference = pivot.component2().opening_reference
                 val value = opening_map[openingReference]
-                if (value != null && value >= 1) {
-                    write(word)
+                if (value != null && value > 1) {
+                    max_blocks += 1
                 }
             }
         }
@@ -116,14 +105,13 @@ class MapGrammar(
         streamString(input)
     }
 
-    fun consume(file: File, outfile: String) {
-        initializeFile(outfile)
+    fun consume(file: File, outfile: String): Int {
         FileReader(file).use { reader ->
             reader.forEachLine {
                 consume(it)
             }
         }
-        closeFile()
+        return max_blocks
     }
 
     private fun extractContext(input: String): List<String> {

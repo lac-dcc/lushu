@@ -24,9 +24,11 @@
 
 # Directory
 Lushu/src/main/kotlin/lushu/ContextGrammar/out
-example/html/htmls_files
+example/html/html_files
+example/C/C_files
 test/context_tests/compare_to_beautifulsoup/emails
 test/context_tests/compare_to_beautifulsoup/results
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
