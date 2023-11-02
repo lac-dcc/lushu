@@ -5,14 +5,13 @@ import lushu.Merger.Lattice.Node.MergerS
 import lushu.Merger.Lattice.Node.Node
 import lushu.Merger.Lattice.Node.NonMergeableToken
 import lushu.Merger.Lattice.Node.Token
-import java.io.BufferedWriter
 import java.io.File
 import java.io.FileReader
 
-class MapGrammar(
-    val dsl: DSL = DSL(),
-    var maxBlocks: Int = 0
-) {
+class MapGrammar() {
+    private val dsl: DSL = DSL()
+    private var maxBlocks: Int = 0
+
     data class PivotData(
         val openingRef: Token,
         val func: String
@@ -20,27 +19,48 @@ class MapGrammar(
 
     private val merger = MergerS.merger()
 
-    private lateinit var outfile: BufferedWriter
-
+    // openingMap contains the first tags of contexts. For instance, in '<c>
+    // BEGIN <*>bla</*> END </c>', BEGIN is an opening token.
     private val openingMap: MutableMap<Token, Int> = mutableMapOf()
+
+    // closingMap contains the last tags of contexts. For instance, in '<c> BEGIN
+    // <*>bla</*> END </c>', END is an closing token.
     private val closingMap: MutableMap<Token, Token> = mutableMapOf()
-    private val mapPivot: MutableMap<Token, PivotData> = mutableMapOf()
+
+    // pivotMap stores the string we are searching for. For instance, in '<c> BEGIN
+    // <*>bla</*> END </c>', 'bla' is a pivot token.
+    private val pivotMap: MutableMap<Token, PivotData> = mutableMapOf()
+
+    fun consume(file: File) {
+        FileReader(file).use { reader ->
+            reader.forEachLine {
+                consume(it)
+            }
+        }
+    }
+
+    fun consume(input: String) = streamString(input)
+
+    // TODO: remove once we support customizable actions from the user side
+    // -aholmquist 2023-11-02
+    fun getMaxBlocks(): Int = maxBlocks
+
+    private fun streamString(input: String) =
+        input.split(spaceDelim).forEach { word -> match(word) }
 
     private fun string2list(string: String): List<String> {
-        val lines = string.split("\n")
-        val wo_newline = lines.joinToString(" ")
-        return wo_newline.split(" ")
+        val lines = string.split(newlineDelim)
+        val woNewline = lines.joinToString(spaceDelim)
+        return woNewline.split(spaceDelim)
     }
 
     private fun toToken(word: String): Token {
         val isMergeable = dsl.isMergeable(word)
-        val wo_tags = dsl.removeAllTags(word)
-
+        val woTags = dsl.removeAllTags(word)
         if (isMergeable) {
-            return MergeableToken(wo_tags)
-        } else {
-            return NonMergeableToken(wo_tags)
+            return MergeableToken(woTags)
         }
+        return NonMergeableToken(woTags)
     }
 
     private inline fun <reified V> inMap(map: MutableMap<Token, V>, token: Token): Token? {
@@ -86,32 +106,15 @@ class MapGrammar(
             }
         }
 
-        mapPivot.forEach { pivot ->
+        pivotMap.forEach { pivot ->
             if (pivot.component1().match(inToken)) {
                 val openingReference = pivot.component2().openingRef
                 val value = openingMap[openingReference]
                 if (value != null && value > 1) {
-                    maxBlocks += 1
+                    maxBlocks++
                 }
             }
         }
-    }
-
-    private fun streamString(input: String) {
-        input.split(spaceDelim).forEach { word -> match(word) }
-    }
-
-    fun consume(input: String) {
-        streamString(input)
-    }
-
-    fun consume(file: File, outfile: String): Int {
-        FileReader(file).use { reader ->
-            reader.forEachLine {
-                consume(it)
-            }
-        }
-        return maxBlocks
     }
 
     private fun extractContext(input: String): List<String> {
@@ -142,7 +145,7 @@ class MapGrammar(
     private fun insertPivot(pivots: List<String>, openingToken: Token) {
         pivots.forEach { pivot ->
             val func = getLambdaFunction(pivot)
-            insert(mapPivot, pivot, PivotData(openingToken, func))
+            insert(pivotMap, pivot, PivotData(openingToken, func))
         }
     }
 

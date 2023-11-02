@@ -28,44 +28,11 @@ class Grammar(
 
     fun consumeFILE(inFile: String, outFile: String) {
         val file = File(inFile)
-        val max = mapGrammar.consume(file, outFile)
+        mapGrammar.consume(file)
+        val max = mapGrammar.getMaxBlocks()
         val outfile = File(outFile).bufferedWriter()
         outfile.write(max.toString())
         outfile.close()
-    }
-
-    private fun trainMap(string: String?) {
-        mapGrammar.addContext(string)
-    }
-
-    private fun trainMapFromStdin() {
-        var line: String? = null
-        if (line == null) {
-            line = readLine()
-        }
-        while (!line.isNullOrEmpty()) {
-            trainMap(line)
-            line = readLine()
-        }
-        trainMap(line)
-    }
-
-    fun trainMap(file: File): Grammar {
-        FileReader(file).use { reader ->
-            reader.forEachLine {
-                trainMap(it)
-            }
-        }
-        return this
-    }
-
-    fun testMap() {
-        trainMapFromStdin()
-        consumeHTML()
-    }
-
-    fun testMap(inFile: String, outFile: String) {
-        consumeFILE(inFile, outFile)
     }
 
     fun consumeText(text: String): String {
@@ -84,6 +51,15 @@ class Grammar(
             line = readLine()
         }
         return consumed.joinToString(logSeparator) + "\n"
+    }
+
+    fun testMap() {
+        trainMapFromStdin()
+        consumeHTML()
+    }
+
+    fun testMap(inFile: String, outFile: String) {
+        consumeFILE(inFile, outFile)
     }
 
     fun train(words: String?) {
@@ -110,6 +86,31 @@ class Grammar(
         val file = File(filePath)
         val text = file.readText()
         trainText(text)
+    }
+
+    private fun trainMap(string: String?) {
+        mapGrammar.addContext(string)
+    }
+
+    private fun trainMapFromStdin() {
+        var line: String? = null
+        if (line == null) {
+            line = readLine()
+        }
+        while (!line.isNullOrEmpty()) {
+            trainMap(line)
+            line = readLine()
+        }
+        trainMap(line)
+    }
+
+    fun trainMap(file: File): Grammar {
+        FileReader(file).use { reader ->
+            reader.forEachLine {
+                trainMap(it)
+            }
+        }
+        return this
     }
 
     companion object {
