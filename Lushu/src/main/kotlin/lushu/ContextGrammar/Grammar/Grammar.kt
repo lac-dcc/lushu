@@ -6,7 +6,7 @@ import java.io.FileReader
 
 class Grammar(
     private val contextAnalyzer: ContextAnalyzer = ContextAnalyzer(),
-    private val mapGrammar: MapGrammar = MapGrammar(),
+    private val mapGrammar: MapGrammar = MapGrammar()
 ) {
     fun consume(words: MutableList<String>): String {
         val consumedWords = contextAnalyzer.parsing(words)
@@ -64,7 +64,7 @@ class Grammar(
         consumeHTML()
     }
 
-    fun testMap(inFile: String, outFile: String){
+    fun testMap(inFile: String, outFile: String) {
         consumeFILE(inFile, outFile)
     }
 

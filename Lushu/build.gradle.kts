@@ -253,9 +253,9 @@ tasks.test {
                 logger.lifecycle("Test result: ${result.resultType}")
                 logger.lifecycle(
                     "Test summary: ${result.testCount} tests, " +
-                            "${result.successfulTestCount} succeeded, " +
-                            "${result.failedTestCount} failed, " +
-                            "${result.skippedTestCount} skipped"
+                        "${result.successfulTestCount} succeeded, " +
+                        "${result.failedTestCount} failed, " +
+                        "${result.skippedTestCount} skipped"
                 )
                 failedTests.takeIf { it.isNotEmpty() }?.prefixedSummary("\tFailed Tests")
                 skippedTests.takeIf { it.isNotEmpty() }?.prefixedSummary("\tSkipped Tests:")

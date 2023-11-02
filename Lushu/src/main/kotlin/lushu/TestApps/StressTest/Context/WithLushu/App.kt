@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
     if (args.size < 3) {
         println(
             "Usage: cat <input-file> | <this-program> <merger-config-file>\n" +
-                "\t<html-file> <pattern-file-train> <emails-result-file>",
+                "\t<html-file> <pattern-file-train> <emails-result-file>"
         )
         return
     }
@@ -26,5 +26,4 @@ fun main(args: Array<String>) {
         grammar.trainMap(file)
     }
     grammar.testMap(htmlfiletest, emailsFile)
-
 }

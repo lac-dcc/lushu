@@ -1,18 +1,21 @@
 package lushu.ContextGrammar.MapGrammar
 
-import lushu.Merger.Lattice.Node.*
-
+import lushu.Merger.Lattice.Node.MergeableToken
+import lushu.Merger.Lattice.Node.MergerS
+import lushu.Merger.Lattice.Node.Node
+import lushu.Merger.Lattice.Node.NonMergeableToken
+import lushu.Merger.Lattice.Node.Token
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileReader
 
 class MapGrammar(
     val dsl: DSL = DSL(),
-    var maxBlocks: Int = 0,
+    var maxBlocks: Int = 0
 ) {
     data class PivotData(
         val openingRef: Token,
-        val func: String,
+        val func: String
     )
 
     private val merger = MergerS.merger()

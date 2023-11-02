@@ -6,7 +6,7 @@ import lushu.Merger.Lattice.Node.GrammarNode
 import lushu.Merger.Lattice.NodeFactory
 
 class Merger(
-    private val nf: NodeFactory,
+    private val nf: NodeFactory
 ) {
     private val lattice = MergerLattice(nf)
 
@@ -15,7 +15,7 @@ class Merger(
 
     data class Result(
         val success: Boolean,
-        val tokens: List<Token>,
+        val tokens: List<Token>
     )
 
     fun merge(ns1: List<Token>, ns2: List<Token>): Result {
@@ -40,7 +40,7 @@ class Merger(
 
     data class ResultGrammarMerger(
         val success: Boolean,
-        val grammarNode: GrammarNode,
+        val grammarNode: GrammarNode
     )
 
     fun mergeGrammarNodes(n1: GrammarNode, n2: GrammarNode): ResultGrammarMerger {
@@ -62,7 +62,7 @@ class Merger(
 
         return ResultGrammarMerger(
             success,
-            GrammarNode(newTokens, newSensitive, newStar, newNonMergeable, newTerminal, newParent, newChildren),
+            GrammarNode(newTokens, newSensitive, newStar, newNonMergeable, newTerminal, newParent, newChildren)
         )
     }
 

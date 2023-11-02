@@ -1,6 +1,5 @@
 package lushu.ContextGrammar.Grammar
 
-
 import lushu.Merger.Lattice.Node.MergeableToken
 import lushu.Merger.Lattice.Node.NonMergeableToken
 
@@ -9,7 +8,8 @@ class DescendentParser {
     private val end_script: NonMergeableToken = NonMergeableToken("</script>")
     private val start_body: NonMergeableToken = NonMergeableToken("<body")
     private val end_body: NonMergeableToken = NonMergeableToken("</body>")
-    //add more urls examples
+
+    // add more urls examples
     private val URL: MergeableToken = MergeableToken("https://gVrNzsD/r/d/N/EanH46=Dan3nvNeRq")
     private val EMAIL: MergeableToken = MergeableToken("email1@domainname.com")
     private val TOKEN: Regex = """.+""".toRegex()
@@ -33,10 +33,10 @@ class DescendentParser {
     }
 
     private fun ERROR(erro_type: Int = DEFAULT) {
-        when(erro_type){
+        when (erro_type) {
             DEFAULT -> println("ERROR")
-            //DONT_MATCH_CASE -> println("String does not match")
-            //HTML_SYNTAX_ERROR -> println("HTML document is not well-formed")
+            // DONT_MATCH_CASE -> println("String does not match")
+            // HTML_SYNTAX_ERROR -> println("HTML document is not well-formed")
         }
     }
 
@@ -199,7 +199,6 @@ class DescendentParser {
             R3()
         }
         if (EMPTY.matches(look_ahead())) {
-
             return
         }
         ERROR(HTML_SYNTAX_ERROR)

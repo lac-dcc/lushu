@@ -1,16 +1,14 @@
 package lushu.ContextGrammar.MapGrammar
 
-import lushu.ContextGrammar.Grammar.TagNames
-
 enum class Tags(val tagName: String) {
     CONTEXT("c"),
     LATTICE("l"),
     KLEENE("*"),
-    ACTION("a"),
+    ACTION("a")
 }
 
 class DSL(
-    val tags: List<String> = Tags.values().map { it.tagName }.map { "<$it>" },
+    val tags: List<String> = Tags.values().map { it.tagName }.map { "<$it>" }
 ) {
     fun isMergeable(string: String): Boolean {
         return string.contains("<l>") || string.contains("</l>")
