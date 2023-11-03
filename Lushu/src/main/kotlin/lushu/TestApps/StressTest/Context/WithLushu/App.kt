@@ -5,7 +5,7 @@ import lushu.Merger.Lattice.Node.MergerS
 import java.io.File
 
 fun main(args: Array<String>) {
-    if (args.size < 3) {
+    if (args.size < 4) {
         println(
             "Usage: cat <input-file> | <this-program> <merger-config-file>\n" +
                 "\t<html-file> <pattern-file-train> <emails-result-file>"
@@ -20,6 +20,17 @@ fun main(args: Array<String>) {
 
     MergerS.load(configFilePath)
     var grammar: Grammar = Grammar()
+
+    if (!filePatterns.isNullOrBlank()) {
+        var file = File(filePatterns)
+        grammar.trainMap(file)
+    }
+    grammar.testMap(htmlfiletest, emailsFile)
+
+    val runtime = Runtime.getRuntime()
+    runtime.gc()
+    val memory = (runtime.totalMemory() - runtime.freeMemory())
+    println("Memory: " + memory)
 
     if (!filePatterns.isNullOrBlank()) {
         var file = File(filePatterns)

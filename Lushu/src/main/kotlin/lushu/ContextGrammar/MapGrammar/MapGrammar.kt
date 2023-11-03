@@ -5,19 +5,24 @@ import lushu.Merger.Lattice.Node.MergerS
 import lushu.Merger.Lattice.Node.Node
 import lushu.Merger.Lattice.Node.NonMergeableToken
 import lushu.Merger.Lattice.Node.Token
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileReader
 
 class MapGrammar() {
-    private val dsl: DSL = DSL()
-    private var maxBlocks: Int = 0
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     data class PivotData(
         val openingRef: Token,
         val func: String
     )
 
+    private val dsl: DSL = DSL()
     private val merger = MergerS.merger()
+
+    // TODO: remove once we support customizable actions from the user side
+    // -aholmquist 2023-11-03
+    private var maxBlocks: Int = 0
 
     // openingMap contains the first tags of contexts. For instance, in '<c>
     // BEGIN <*>bla</*> END </c>', BEGIN is an opening token.
@@ -31,11 +36,9 @@ class MapGrammar() {
     // <*>bla</*> END </c>', 'bla' is a pivot token.
     private val pivotMap: MutableMap<Token, PivotData> = mutableMapOf()
 
-    fun consume(file: File) {
-        FileReader(file).use { reader ->
-            reader.forEachLine {
-                consume(it)
-            }
+    fun consume(file: File) = FileReader(file).use { reader ->
+        reader.forEachLine {
+            consume(it)
         }
     }
 
@@ -45,8 +48,17 @@ class MapGrammar() {
     // -aholmquist 2023-11-02
     fun getMaxBlocks(): Int = maxBlocks
 
+    fun addContext(contextInput: String?) {
+        if (contextInput.isNullOrBlank()) {
+            return
+        }
+        val contexts = extractContext(contextInput)
+        contexts.forEach { insertContext(it) }
+        logger.debug("Maps after adding context:\n$openingMap\n$closingMap\n$pivotMap")
+    }
+
     private fun streamString(input: String) =
-        input.split(spaceDelim).forEach { word -> match(word) }
+        blankRegex.findAll(input).forEach { matchResult -> match(matchResult.value) }
 
     private fun string2list(string: String): List<String> {
         val lines = string.split(newlineDelim)
@@ -161,6 +173,8 @@ class MapGrammar() {
     private fun insertContext(context: String) {
         val contextTokens = string2list(context)
 
+        logger.debug("Found $contextTokens in '$context'")
+
         if (contextTokens.size < minElems) {
             println("Warning: Insufficient number of elements provided.")
             return
@@ -176,14 +190,6 @@ class MapGrammar() {
         insertPivot(contextTokens.subList(1, contextTokens.size - 1), openingToken)
     }
 
-    fun addContext(contextInput: String?) {
-        if (contextInput.isNullOrBlank()) {
-            return
-        }
-        val contexts = extractContext(contextInput)
-        contexts.forEach { insertContext(it) }
-    }
-
     companion object {
         val minElems = 3
         val noOccurrences = 0
@@ -191,6 +197,6 @@ class MapGrammar() {
         val newlineDelim = "\n"
 
         val contextRegex = Regex("""<c>(.*?)</c>""")
-        val wordRegex = Regex("""\S+""")
+        val blankRegex = Regex("""\S+""")
     }
 }
