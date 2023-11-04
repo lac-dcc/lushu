@@ -35,15 +35,15 @@ dependencies {
 fun newJarTask(name: String, desc: String, packagePath: String): Task {
     return task(name, type = Jar::class) {
         description = desc
-            manifest {
-                attributes(
-                    mapOf(
-                        "Implementation-Title" to "Lushu",
-                        "Implementation-Version" to "0.1",
-                        "Main-Class" to packagePath
-                    )
+        manifest {
+            attributes(
+                mapOf(
+                    "Implementation-Title" to "Lushu",
+                    "Implementation-Version" to "0.1",
+                    "Main-Class" to packagePath
                 )
-            }
+            )
+        }
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         val dependencies = configurations
             .runtimeClasspath
