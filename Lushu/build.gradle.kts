@@ -29,20 +29,20 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api")
 }
 
-// TODO: refactor the jar tasks below, it's very repetitive -aholmquist
-// 2023-11-03
-
-fun newJarTask(name: String, desc: String, packagePath: String): Task {
+fun newJarTask(
+    name: String,
+    desc: String,
+    packagePath: String,
+    manifestAttributes: Map<String, String> = mapOf(
+        "Implementation-Title" to "Lushu",
+        "Implementation-Version" to "0.1",
+        "Main-Class" to packagePath
+    )
+): Task {
     return task(name, type = Jar::class) {
         description = desc
         manifest {
-            attributes(
-                mapOf(
-                    "Implementation-Title" to "Lushu",
-                    "Implementation-Version" to "0.1",
-                    "Main-Class" to packagePath
-                )
-            )
+            attributes(manifestAttributes)
         }
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         val dependencies = configurations
