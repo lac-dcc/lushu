@@ -32,62 +32,18 @@ dependencies {
 // TODO: refactor the jar tasks below, it's very repetitive -aholmquist
 // 2023-11-03
 
-// fun registerJarTask(name: String, description: String, packagePath: String) {
-
-// }
-
-val fatJar = task("fatJar", type = Jar::class) {
-    description = "Creates a self-contained fat JAR of the application."
-    manifest {
-        attributes(
-            mapOf(
-                "Implementation-Title" to "Lushu",
-                "Implementation-Version" to "0.1",
-                "Main-Class" to "lushu.AppKt"
-            )
-        )
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    val dependencies = configurations
-        .runtimeClasspath
-        .get()
-        .map(::zipTree)
-    from(dependencies)
-    with(tasks.jar.get())
-}
-
-val GenerateHTMLJar = task("GeneratorJar", type = Jar::class) {
-    archiveBaseName.set("GeneratorJar")
-    manifest {
-        attributes(
-            mapOf(
-                "Implementation-Title" to "Lushu",
-                "Implementation-Version" to "0.1",
-                "Main-Class" to "lushu.ContextGrammar.GeneratorAppKt"
-            )
-        )
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    val dependencies = configurations
-        .runtimeClasspath
-        .get()
-        .map(::zipTree)
-    from(dependencies)
-    with(tasks.jar.get())
-}
-
-val stressTestMapWithLushuJar =
-    task("stressTestMapWithLushuJar", type = Jar::class) {
-        archiveBaseName.set("stressTestMapWithLushu")
-        manifest {
-            attributes(
-                mapOf(
-                    "Implementation-Title" to "stressTestMapWithLushu",
-                    "Implementation-Version" to "0.1",
-                    "Main-Class" to "lushu.TestApps.StressTest.Context.WithLushu.AppKt"
+fun newJarTask(name: String, desc: String, packagePath: String): Task {
+    return task(name, type = Jar::class) {
+        description = desc
+            manifest {
+                attributes(
+                    mapOf(
+                        "Implementation-Title" to "Lushu",
+                        "Implementation-Version" to "0.1",
+                        "Main-Class" to packagePath
+                    )
                 )
-            )
-        }
+            }
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         val dependencies = configurations
             .runtimeClasspath
@@ -96,109 +52,55 @@ val stressTestMapWithLushuJar =
         from(dependencies)
         with(tasks.jar.get())
     }
-
-val grammarJar = task("grammarJar", type = Jar::class) {
-    archiveBaseName.set("Grammar")
-    manifest {
-        attributes(
-            mapOf(
-                "Implementation-Title" to "Grammar",
-                "Implementation-Version" to "0.1",
-                "Main-Class" to "lushu.Grammar.AppKt"
-            )
-        )
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    val dependencies = configurations
-        .runtimeClasspath
-        .get()
-        .map(::zipTree)
-    from(dependencies)
-    with(tasks.jar.get())
 }
 
-val mergerJar = task("mergerJar", type = Jar::class) {
-    archiveBaseName.set("Merger")
-    manifest {
-        attributes(
-            mapOf(
-                "Implementation-Title" to "Merger",
-                "Implementation-Version" to "0.1",
-                "Main-Class" to "lushu.Merger.AppKt"
-            )
-        )
-    }
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    val dependencies = configurations
-        .runtimeClasspath
-        .get()
-        .map(::zipTree)
-    from(dependencies)
-    with(tasks.jar.get())
-}
+val fatJar = newJarTask(
+    "fatJar",
+    "Creates a self-contained fat JAR of the application.",
+    "lushu.Appkt"
+)
 
-val stressTestWithLushuJar =
-    task("stressTestWithLushuJar", type = Jar::class) {
-        archiveBaseName.set("StressTestWithLushu")
-        manifest {
-            attributes(
-                mapOf(
-                    "Implementation-Title" to "StressTestWithLushu",
-                    "Implementation-Version" to "0.1",
-                    "Main-Class" to "lushu.TestApps.StressTest.WithLushu.AppKt"
-                )
-            )
-        }
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        val dependencies = configurations
-            .runtimeClasspath
-            .get()
-            .map(::zipTree)
-        from(dependencies)
-        with(tasks.jar.get())
-    }
+newJarTask(
+    "grammarJar",
+    "Application to play with Lushu Grammar.",
+    "lushu.Grammar.AppKt"
+)
 
-val stressTestWoutLushuJar =
-    task("stressTestWoutLushuJar", type = Jar::class) {
-        archiveBaseName.set("StressTestWoutLushu")
-        manifest {
-            attributes(
-                mapOf(
-                    "Implementation-Title" to "StressTestWoutLushu",
-                    "Implementation-Version" to "0.1",
-                    "Main-Class" to "lushu.TestApps.StressTest.WoutLushu.AppKt"
-                )
-            )
-        }
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        val dependencies = configurations
-            .runtimeClasspath
-            .get()
-            .map(::zipTree)
-        from(dependencies)
-        with(tasks.jar.get())
-    }
+newJarTask(
+    "mergerJar",
+    "Application to play with Lushu Merger.",
+    "lushu.Merger.AppKt"
+)
 
-val stressTestGrammarStatisticsJar =
-    task("stressTestGrammarStatisticsJar", type = Jar::class) {
-        archiveBaseName.set("StressTestGrammarStatistics")
-        manifest {
-            attributes(
-                mapOf(
-                    "Implementation-Title" to "StressTestGrammarStatistics",
-                    "Implementation-Version" to "0.1",
-                    "Main-Class" to "lushu.TestApps.StressTest.GrammarStatistics.AppKt"
-                )
-            )
-        }
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        val dependencies = configurations
-            .runtimeClasspath
-            .get()
-            .map(::zipTree)
-        from(dependencies)
-        with(tasks.jar.get())
-    }
+newJarTask(
+    "generatorJar",
+    "Application to generate test files",
+    "lushu.ContextGrammar.GeneratorAppKt"
+)
+
+newJarTask(
+    "stressTestMapWithLushuJar",
+    "Application to test Lushu Map Grammar implementation.",
+    "lushu.TestApps.StressTest.Context.WithLushu.AppKt"
+)
+
+newJarTask(
+    "stressTestWithLushuJar",
+    "Application to test stable Lushu implementation.",
+    "lushu.TestApps.StressTest.WithLushu.AppKt"
+)
+
+newJarTask(
+    "stressTestWoutLushuJar",
+    "Application to test base case (program running without Lushu interception) against Lushu.",
+    "lushu.TestApps.StressTest.WoutLushu.AppKt"
+)
+
+newJarTask(
+    "stressTestGrammarStatisticsJar",
+    "Application to get some statistics about the Lushu Grammar after running against some benchmark.",
+    "lushu.TestApps.StressTest.GrammarStatistics.AppKt"
+)
 
 tasks {
     "build" {
