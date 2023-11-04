@@ -7,34 +7,19 @@ import java.io.File
 fun main(args: Array<String>) {
     if (args.size < 4) {
         println(
-            "Usage: cat <input-file> | <this-program> <merger-config-file>\n" +
-                "\t<html-file> <pattern-file-train> <emails-result-file>"
+            "Usage: <this-program> <merger-config-file>\n" +
+                "\t<input-file> <patterns-file> <output-file>"
         )
         return
     }
 
     val configFilePath = args[0]
-    val htmlfiletest = args[1]
-    val filePatterns = args[2]
-    val emailsFile = args[3]
+    val testFilePath = args[1]
+    val patternsFilePath = args[2]
+    val outputFilePath = args[3]
 
     MergerS.load(configFilePath)
     var grammar: Grammar = Grammar()
-
-    if (!filePatterns.isNullOrBlank()) {
-        var file = File(filePatterns)
-        grammar.trainMap(file)
-    }
-    grammar.testMap(htmlfiletest, emailsFile)
-
-    val runtime = Runtime.getRuntime()
-    runtime.gc()
-    val memory = (runtime.totalMemory() - runtime.freeMemory())
-    println("Memory: " + memory)
-
-    if (!filePatterns.isNullOrBlank()) {
-        var file = File(filePatterns)
-        grammar.trainMap(file)
-    }
-    grammar.testMap(htmlfiletest, emailsFile)
+    grammar.trainMap(File(patternsFilePath))
+    grammar.testMap(testFilePath, outputFilePath)
 }

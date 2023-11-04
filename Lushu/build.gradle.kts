@@ -8,11 +8,10 @@ repositories {
 plugins {
     kotlin("jvm") version "1.8.22"
 
-    // Apply the application plugin to add support for building a CLI
-    // application.
+    // The application plugin enables building a CLI application.
     application
 
-    // This pluging allows greater flexibility in customizing test builds.
+    // This plugin allows greater flexibility in customizing test builds.
     id("org.unbroken-dome.test-sets") version "4.0.0"
 }
 
@@ -29,6 +28,13 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
 }
+
+// TODO: refactor the jar tasks below, it's very repetitive -aholmquist
+// 2023-11-03
+
+// fun registerJarTask(name: String, description: String, packagePath: String) {
+
+// }
 
 val fatJar = task("fatJar", type = Jar::class) {
     description = "Creates a self-contained fat JAR of the application."

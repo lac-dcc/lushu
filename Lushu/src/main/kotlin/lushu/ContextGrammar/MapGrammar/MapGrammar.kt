@@ -20,10 +20,6 @@ class MapGrammar() {
     private val dsl: DSL = DSL()
     private val merger = MergerS.merger()
 
-    // TODO: remove once we support customizable actions from the user side
-    // -aholmquist 2023-11-03
-    private var maxBlocks: Int = 0
-
     // openingMap contains the first tags of contexts. For instance, in '<c>
     // BEGIN <*>bla</*> END </c>', BEGIN is an opening token.
     private val openingMap: MutableMap<Token, Int> = mutableMapOf()
@@ -36,6 +32,14 @@ class MapGrammar() {
     // <*>bla</*> END </c>', 'bla' is a pivot token.
     private val pivotMap: MutableMap<Token, PivotData> = mutableMapOf()
 
+    // TODO: remove once we support customizable actions from the user side
+    // -aholmquist 2023-11-03
+    private var maxBlocks: Int = 0
+
+    // TODO: remove maxBlocks once we support customizable actions from the user
+    // side -aholmquist 2023-11-02
+    fun getMaxBlocks(): Int = maxBlocks
+
     fun consume(file: File) = FileReader(file).use { reader ->
         reader.forEachLine {
             consume(it)
@@ -44,9 +48,8 @@ class MapGrammar() {
 
     fun consume(input: String) = streamString(input)
 
-    // TODO: remove once we support customizable actions from the user side
-    // -aholmquist 2023-11-02
-    fun getMaxBlocks(): Int = maxBlocks
+    private fun streamString(input: String) =
+        blankRegex.findAll(input).forEach { matchResult -> match(matchResult.value) }
 
     fun addContext(contextInput: String?) {
         if (contextInput.isNullOrBlank()) {
@@ -57,12 +60,8 @@ class MapGrammar() {
         logger.debug("Maps after adding context:\n$openingMap\n$closingMap\n$pivotMap")
     }
 
-    private fun streamString(input: String) =
-        blankRegex.findAll(input).forEach { matchResult -> match(matchResult.value) }
-
     private fun string2list(string: String): List<String> {
-        val lines = string.split(newlineDelim)
-        val woNewline = lines.joinToString(spaceDelim)
+        val woNewline = string.split(newlineDelim).joinToString(spaceDelim)
         return woNewline.split(spaceDelim)
     }
 
@@ -104,13 +103,14 @@ class MapGrammar() {
     }
 
     private fun match(word: String) {
-        val inToken = merger.tokensFromString(word)
-        val openingFound = inMap(openingMap, inToken)
+        val wordTokens = merger.tokensFromString(word)
+
+        val openingFound = inMap(openingMap, wordTokens)
         if (openingFound != null) {
             addAccMap(openingFound, 1)
         }
 
-        val closingFound = inMap(closingMap, inToken)
+        val closingFound = inMap(closingMap, wordTokens)
         if (closingFound != null) {
             val openingToken = closingMap[closingFound]
             if (openingToken != null) {
@@ -119,7 +119,7 @@ class MapGrammar() {
         }
 
         pivotMap.forEach { pivot ->
-            if (pivot.component1().match(inToken)) {
+            if (pivot.component1().match(wordTokens)) {
                 val openingReference = pivot.component2().openingRef
                 val value = openingMap[openingReference]
                 if (value != null && value > 1) {
@@ -172,8 +172,6 @@ class MapGrammar() {
 
     private fun insertContext(context: String) {
         val contextTokens = string2list(context)
-
-        logger.debug("Found $contextTokens in '$context'")
 
         if (contextTokens.size < minElems) {
             println("Warning: Insufficient number of elements provided.")
