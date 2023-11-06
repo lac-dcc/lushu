@@ -4,11 +4,26 @@
 
 # Lushu
 
-_Lushu_ (short for the Chinese 记录树, 录树), is a system that recognizes
-infinite languages and redacts sensitive strings embedded into sentences of this
-language. It is particularly useful to adjust running systems to data protection
-laws, because it is capable of redacting sensitive information right at their
-source.
+_Lushu_ (short for the Chinese 记录树, 录树), is a system that detects and
+reacts to user-defined string events in a never-ending stream of text, in real
+time. The idea is to have pugglable reactions (JVM functions) be triggered
+whenever the string event occurs. That reaction can be obfuscation of the
+string, counting occurrences, sending an alert email, etc.
+
+**Known issues**
+
+- The context-sensitive implementation described in some of our postings is not
+  entirely ready. The reaction to string events is currently hardcoded to be the
+  "count" action.
+
+- The following documentation refers to the implementation that can generates a
+  regular grammar for the text under analysis. Regular grammars are equivalent
+  in power to a regular expression. It cannot, for instance, count balanced
+  parenthesis pairs.
+
+- The regular grammar representation which the `gradle grammarJar` bytecode
+  produces is incorrect, as described in
+  [issues#17](https://github.com/lac-dcc/lushu/issues/17).
 
 ## Running
 
