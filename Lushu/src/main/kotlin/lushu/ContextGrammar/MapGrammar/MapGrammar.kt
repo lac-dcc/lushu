@@ -48,9 +48,6 @@ class MapGrammar() {
 
     fun consume(input: String) = streamString(input)
 
-    private fun streamString(input: String) =
-        blankRegex.findAll(input).forEach { matchResult -> match(matchResult.value) }
-
     fun addContext(contextInput: String?) {
         if (contextInput.isNullOrBlank()) {
             return
@@ -59,6 +56,9 @@ class MapGrammar() {
         contexts.forEach { insertContext(it) }
         logger.debug("Maps after adding context:\n$openingMap\n$closingMap\n$pivotMap")
     }
+
+    private fun streamString(input: String) =
+        blankRegex.findAll(input).forEach { matchResult -> match(matchResult.value) }
 
     private fun string2list(string: String): List<String> {
         val woNewline = string.split(newlineDelim).joinToString(spaceDelim)
