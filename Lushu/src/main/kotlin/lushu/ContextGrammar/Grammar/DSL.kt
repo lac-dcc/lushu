@@ -5,12 +5,11 @@ enum class TagNames(val tagName: String) {
     SENSITIVE("s"),
     STAR("*"),
     NONMERGEABLE("t")
-    //GENERICTOKEN("**")
 }
 
 class DSL(
     val isCase: MutableList<Boolean> = TagNames.values().map { false }.toMutableList(),
-    val tags: List<String> = TagNames.values().map { it.tagName }.map { "<$it>" },
+    val tags: List<String> = TagNames.values().map { it.tagName }.map { "<$it>" }
 ) {
 
     /**

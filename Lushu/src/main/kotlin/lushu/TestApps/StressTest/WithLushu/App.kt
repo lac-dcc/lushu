@@ -52,7 +52,7 @@ fun main(args: Array<String>) {
 
     val runtime = Runtime.getRuntime()
     runtime.gc()
-    val memory = runtime.totalMemory() - runtime.freeMemory()
+    val memory = (runtime.totalMemory() - runtime.freeMemory())
 
     System.err.println("$time")
     System.err.println("$memory")

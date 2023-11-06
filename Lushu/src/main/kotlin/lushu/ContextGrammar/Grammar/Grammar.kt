@@ -1,11 +1,38 @@
 package lushu.ContextGrammar.Grammar
 
+import lushu.ContextGrammar.MapGrammar.MapGrammar
 import java.io.File
+import java.io.FileReader
 
-class Grammar(private val parser: Parser = Parser()) {
+class Grammar(
+    private val contextAnalyzer: ContextAnalyzer = ContextAnalyzer(),
+    private val mapGrammar: MapGrammar = MapGrammar()
+) {
     fun consume(words: MutableList<String>): String {
-        val consumedWords = parser.parsing(words)
+        val consumedWords = contextAnalyzer.parsing(words)
         return consumedWords.joinToString(tokenSeparator)
+    }
+
+    fun consumeHTML() {
+        var i = 0
+        val result_file = File("result.txt")
+        result_file.delete()
+        result_file.createNewFile()
+        while (i < 20) {
+            val randomHTML = HTMLGenerator().startGenerator()
+            Thread.sleep(1000)
+            i++
+            println("Success")
+        }
+    }
+
+    fun consumeFILE(inFile: String, outFile: String) {
+        val file = File(inFile)
+        mapGrammar.consume(file)
+        val max = mapGrammar.getMaxBlocks()
+        val outfile = File(outFile).bufferedWriter()
+        outfile.write(max.toString())
+        outfile.close()
     }
 
     fun consumeText(text: String): String {
@@ -26,12 +53,21 @@ class Grammar(private val parser: Parser = Parser()) {
         return consumed.joinToString(logSeparator) + "\n"
     }
 
+    fun testMap() {
+        trainMapFromStdin()
+        consumeHTML()
+    }
+
+    fun testMap(inFile: String, outFile: String) {
+        consumeFILE(inFile, outFile)
+    }
+
     fun train(words: String?) {
-        parser.createRules(words)
+        contextAnalyzer.createRules(words)
     }
 
     private fun trainText(text: String) {
-        parser.createRules(text)
+        contextAnalyzer.createRules(text)
     }
 
     fun trainStdin(firstLine: String? = null) {
@@ -50,6 +86,31 @@ class Grammar(private val parser: Parser = Parser()) {
         val file = File(filePath)
         val text = file.readText()
         trainText(text)
+    }
+
+    private fun trainMap(string: String?) {
+        mapGrammar.addContext(string)
+    }
+
+    private fun trainMapFromStdin() {
+        var line: String? = null
+        if (line == null) {
+            line = readLine()
+        }
+        while (!line.isNullOrEmpty()) {
+            trainMap(line)
+            line = readLine()
+        }
+        trainMap(line)
+    }
+
+    fun trainMap(file: File): Grammar {
+        FileReader(file).use { reader ->
+            reader.forEachLine {
+                trainMap(it)
+            }
+        }
+        return this
     }
 
     companion object {
