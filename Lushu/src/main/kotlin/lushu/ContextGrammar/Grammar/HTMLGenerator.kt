@@ -24,7 +24,7 @@ class HTMLGenerator {
     val tags = listOf(
         "h1", "h2", "h3", "h4", "h5", "h6",
         "p", "ul", "ol", "li", "table", "tr", "td", "th",
-        "div", "div", "div",
+        "div", "div", "div"
     )
 
     fun generateRandomTag(): String {

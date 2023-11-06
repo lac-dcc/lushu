@@ -13,8 +13,8 @@ class MergerS private constructor() {
 
         fun merger(): Merger {
             if (instance == null) {
-                val file = "src/test/fixtures/config/configBasic.yaml" 
-                load(file) 
+                val file = "src/test/fixtures/config/configBasic.yaml"
+                load(file)
             }
             return instance!!
         }

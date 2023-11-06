@@ -9,7 +9,7 @@ class GrammarNode(
     val nonmergeable: Boolean = false,
     val terminal: Boolean = false,
     val parent: GrammarNode? = null,
-    private val children: MutableList<GrammarNode> = mutableListOf(),
+    private val children: MutableList<GrammarNode> = mutableListOf()
 
 ) {
 
@@ -143,7 +143,7 @@ class GrammarNode(
         star: Boolean,
         nonmergeable: Boolean,
         terminal: Boolean,
-        children: MutableList<GrammarNode>,
+        children: MutableList<GrammarNode>
     ) {
         val newNode = GrammarNode(tokens, sensitive, star, nonmergeable, terminal, this, children)
         addChild(newNode)
@@ -177,7 +177,7 @@ class GrammarNode(
         sensitive: Boolean,
         star: Boolean,
         nonmergeable: Boolean,
-        terminal: Boolean,
+        terminal: Boolean
     ): GrammarNode {
         val token = MergerS.merger().tokensFromString(word)
         val newNode = GrammarNode(token, sensitive, star, nonmergeable, terminal, this, mutableListOf())

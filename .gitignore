@@ -36,6 +36,9 @@ hs_err_pid*
 *#*
 **~
 
+# VSCode
+.vscode
+
 .gradle
 .idea
 

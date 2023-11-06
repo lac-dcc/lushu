@@ -19,14 +19,14 @@ tmpfile="$(mktemp)"
 
 num_tokens="$min_tokens"
 while [ "$num_tokens" -le "$max_tokens" ]; do
-    head -$num_tokens "$htmlfile" > "$tmpfile"
+    #head -$num_tokens "$htmlfile" > "$tmpfile"
     simul_num=0
     while [ "$simul_num" -lt "$num_simuls_each" ]; do
         echo "$simul_num running with $num_tokens tokens"
         /usr/bin/time -v  \
         java -jar "./Lushu/build/libs/${jar_prefix}.jar" \
 	           example/config.yaml \
-               example/html/html_files/${num_tokens}.txt \
+               example/html/html_files/${num_tokens}.html \
                example/html/train/patterns.txt \
                test/context_tests/compare_to_beautifulsoup/emails/Lushu/${num_tokens}.txt \
                 grep maximum \

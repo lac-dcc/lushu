@@ -44,7 +44,7 @@ class CGenerator {
         "keyword",
         "comment",
         "preprocessor symbol",
-        "other",
+        "other"
     )
 
     fun generateRandomType(): String {
@@ -94,5 +94,4 @@ class CGenerator {
             .map { allowedChars.random() }
             .joinToString("")
     }
-
 }

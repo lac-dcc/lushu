@@ -8,7 +8,7 @@ val C_OPT = 1
 fun main(args: Array<String>) {
     if (args.size < 3) {
         println(
-            "Usage: <this-program> <generator-type> <output-file> <number-of-tokens>",
+            "Usage: <this-program> <generator-type> <output-file> <number-of-tokens>"
         )
         return
     }
@@ -22,7 +22,7 @@ fun main(args: Array<String>) {
         CGenerator().startGenerator(numTokens, file)
     } else {
         println(
-            "options:\nHTML = 0\nC = 1\n",
+            "options:\nHTML = 0\nC = 1\n"
         )
         return
     }

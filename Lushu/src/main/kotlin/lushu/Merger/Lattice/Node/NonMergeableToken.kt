@@ -1,7 +1,7 @@
 package lushu.Merger.Lattice.Node
 
 class NonMergeableToken(
-    pattern: String = "",
+    pattern: String = ""
 ) : Token {
 
     override var tokens: List<Node> = listOf()
