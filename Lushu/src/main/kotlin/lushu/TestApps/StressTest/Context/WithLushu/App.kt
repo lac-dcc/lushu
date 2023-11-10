@@ -6,6 +6,8 @@ import java.io.File
 import kotlin.system.measureTimeMillis
 
 fun main(args: Array<String>) {
+    val runtime = Runtime.getRuntime()
+
     if (args.size < 4) {
         println(
             "Usage: <this-program> <merger-config-file>\n" +
@@ -26,13 +28,14 @@ fun main(args: Array<String>) {
         var file = File(patternsFilePath)
         grammar.trainMap(file)
     }
+
     var time: Long = 0
     time = measureTimeMillis {
+    
         grammar.testMap(testFilePath, outputFilePath)
     }
-    val runtime = Runtime.getRuntime()
-    val memory = (runtime.totalMemory() - runtime.freeMemory())
-
+    val totalMemory = runtime.totalMemory()
+    val usedMemory = totalMemory - runtime.freeMemory()
     System.err.println("$time")
-    System.err.println("$memory")
+    System.err.println("$usedMemory")
 }
