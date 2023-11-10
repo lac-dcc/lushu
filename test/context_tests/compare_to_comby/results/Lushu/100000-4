@@ -1,23 +1,2 @@
-	Command being timed: "java -jar ./Lushu/build/libs/stressTestMapWithLushu.jar example/config.yaml example/C/C_files/100000.c example/C/train/patterns.txt test/context_tests/compare_to_comby/max_blocks/Lushu/100000.txt grep maximum"
-	User time (seconds): 2.99
-	System time (seconds): 0.07
-	Percent of CPU this job got: 158%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.93
-	Average shared text size (kbytes): 0
-	Average unshared data size (kbytes): 0
-	Average stack size (kbytes): 0
-	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 219616
-	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 8
-	Minor (reclaiming a frame) page faults: 57074
-	Voluntary context switches: 1584
-	Involuntary context switches: 23
-	Swaps: 0
-	File system inputs: 0
-	File system outputs: 72
-	Socket messages sent: 0
-	Socket messages received: 0
-	Signals delivered: 0
-	Page size (bytes): 4096
-	Exit status: 0
+1473
+4506800

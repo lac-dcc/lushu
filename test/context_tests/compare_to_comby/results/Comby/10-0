@@ -1,18 +1,18 @@
 	Command being timed: "bash test/context_tests/compare_to_comby/comby.sh 10 test/context_tests/compare_to_comby/max_blocks/Comby/10.txt 1000 grep maximum"
-	User time (seconds): 0.09
+	User time (seconds): 0.10
 	System time (seconds): 0.02
-	Percent of CPU this job got: 88%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.13
+	Percent of CPU this job got: 85%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.14
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 49672
+	Maximum resident set size (kbytes): 49772
 	Average resident set size (kbytes): 0
-	Major (requiring I/O) page faults: 131
-	Minor (reclaiming a frame) page faults: 16440
-	Voluntary context switches: 94
-	Involuntary context switches: 1
+	Major (requiring I/O) page faults: 113
+	Minor (reclaiming a frame) page faults: 16420
+	Voluntary context switches: 78
+	Involuntary context switches: 3
 	Swaps: 0
 	File system inputs: 0
 	File system outputs: 32
