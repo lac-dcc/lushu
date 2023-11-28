@@ -110,6 +110,12 @@ Here are some more examples of words you can input:
 Also, try specifying different YAML configuration files. You may find it easier
 to edit the example file in `./example/config.yaml`.
 
+### Video Tutorial
+
+This page describes the basic steps to run Lushu. For a more detailed description of the process,
+take a look into this
+[Lushu Tutorial](https://youtu.be/s17i2BhI_Eo)
+
 ## Testing
 
 To test, run `gradle test`. Find all source code for the tests under
