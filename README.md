@@ -1,5 +1,5 @@
 <div align="center">
-  <span><img src="docs/images/LushuLogo.png" alt="Lushu Logo" width="100" height="100">
+  <span><img src="docs/images/lushu-logo.png" alt="Lushu Logo" width="100" height="100">
 </div>
 
 # Lushu
@@ -26,6 +26,11 @@ string, counting occurrences, sending an alert email, etc.
   [issues#17](https://github.com/lac-dcc/lushu/issues/17).
 
 ## Running
+
+### Video Tutorial
+
+Check out this [3-minute Lushu Tutorial](https://youtu.be/s17i2BhI_Eo) on
+YouTube.
 
 ### Simulate Lushu
 
