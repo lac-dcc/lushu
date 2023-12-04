@@ -11,21 +11,6 @@ whenever the string event occurs. That reaction can be obfuscation of the
 string, counting occurrences, sending an alert email, etc.
 To know more about Lushu, read its companion [paper](https://homepages.dcc.ufmg.br/~fernando/publications/papers/Lushu23.pdf) or watch its [video tutorial](https://youtu.be/s17i2BhI_Eo).
 
-**Known issues**
-
-- The context-sensitive implementation described in some of our postings is not
-  entirely ready. The reaction to string events is currently hardcoded to be the
-  "count" action.
-
-- The following documentation refers to the implementation that can generates a
-  regular grammar for the text under analysis. Regular grammars are equivalent
-  in power to a regular expression. It cannot, for instance, count balanced
-  parenthesis pairs.
-
-- The regular grammar representation which the `gradle grammarJar` bytecode
-  produces is incorrect, as described in
-  [issues#17](https://github.com/lac-dcc/lushu/issues/17).
-
 ## Running
 
 ### Video Tutorial
