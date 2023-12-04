@@ -9,6 +9,7 @@ reacts to user-defined string events in a never-ending stream of text, in real
 time. The idea is to have pugglable reactions (JVM functions) be triggered
 whenever the string event occurs. That reaction can be obfuscation of the
 string, counting occurrences, sending an alert email, etc.
+To know more about Lushu, read its companion [paper](https://homepages.dcc.ufmg.br/~fernando/publications/papers/Lushu23.pdf) or watch its [video tutorial](https://youtu.be/s17i2BhI_Eo).
 
 **Known issues**
 
