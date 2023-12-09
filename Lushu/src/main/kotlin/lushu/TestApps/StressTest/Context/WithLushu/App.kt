@@ -3,8 +3,11 @@ package lushu.TestApps.StressTest.Context.WithLushu
 import lushu.ContextGrammar.Grammar.Grammar
 import lushu.Merger.Lattice.Node.MergerS
 import java.io.File
+import kotlin.system.measureTimeMillis
 
 fun main(args: Array<String>) {
+    val runtime = Runtime.getRuntime()
+
     if (args.size < 4) {
         println(
             "Usage: <this-program> <merger-config-file>\n" +
@@ -20,6 +23,19 @@ fun main(args: Array<String>) {
 
     MergerS.load(configFilePath)
     var grammar: Grammar = Grammar()
-    grammar.trainMap(File(patternsFilePath))
-    grammar.testMap(testFilePath, outputFilePath)
+
+    if (!patternsFilePath.isNullOrBlank()) {
+        var file = File(patternsFilePath)
+        grammar.trainMap(file)
+    }
+
+    var time: Long = 0
+    time = measureTimeMillis {
+    
+        grammar.testMap(testFilePath, outputFilePath)
+    }
+    val totalMemory = runtime.totalMemory()
+    val usedMemory = totalMemory - runtime.freeMemory()
+    System.err.println("$time")
+    System.err.println("$usedMemory")
 }

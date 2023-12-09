@@ -41,6 +41,7 @@ fun newJarTask(
 ): Task {
     return task(name, type = Jar::class) {
         description = desc
+        archiveBaseName.set(name.substring(0, name.length - 3))
         manifest {
             attributes(manifestAttributes)
         }
