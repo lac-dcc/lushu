@@ -1,12 +1,12 @@
 package lushu.ContextGrammar.Grammar
 
-import lushu.ContextGrammar.MapGrammar.MapGrammar
+import lushu.ContextGrammar.MapGrammar.Grammar
 import java.io.File
 import java.io.FileReader
 
 class Grammar(
     private val contextAnalyzer: ContextAnalyzer = ContextAnalyzer(),
-    private val mapGrammar: MapGrammar = MapGrammar()
+    private val mapGrammar: Grammar = Grammar()
 ) {
     fun consume(words: MutableList<String>): String {
         val consumedWords = contextAnalyzer.parsing(words)
