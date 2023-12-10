@@ -46,7 +46,7 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
         inputTokens: MutableList<String>,
         mutableTokens: MutableList<String>,
         index: Int,
-        current: GrammarNode?
+        current: GrammarNode?,
     ): Pair<Int, GrammarNode?> {
         when {
             // don't match
@@ -147,7 +147,7 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
         inputTokens: MutableList<String>,
         mutableTokens: MutableList<String>,
         index: Int,
-        current: GrammarNode?
+        current: GrammarNode?,
     ): Int {
         when {
             current == null -> return noMatchFound
@@ -172,7 +172,7 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
                     inputTokens,
                     mutableTokens,
                     index,
-                    current
+                    current,
                 )
 
                 if ((nextNode != null) && (nextNode.isSensitive())) {
@@ -274,7 +274,7 @@ class Rules(private val root: GrammarNode = GrammarNode()) {
             dsl.isSensitive(),
             dsl.isStar(),
             dsl.isNonMergeable(),
-            endOfContext
+            endOfContext,
         )
 
         dsl.setIsCase(nextCases)

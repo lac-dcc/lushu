@@ -1,24 +1,17 @@
 package lushu.ContextGrammar.MapGrammar
 
-import lushu.Merger.Lattice.Node.MergeableToken
+import lushu.Merger.Lattice.Node.*
 import lushu.Merger.Lattice.Node.MergerS
-import lushu.Merger.Lattice.Node.Node
-import lushu.Merger.Lattice.Node.NonMergeableToken
-import lushu.Merger.Lattice.Node.Token
-import org.slf4j.LoggerFactory
-import java.io.File
-import java.io.FileReader
+import lushu.Merger.Merger.Merger
 
-class MapGrammar() {
-    private val logger = LoggerFactory.getLogger(this::class.java)
-
+class ContextMap(
+    val dsl: DSL = DSL(),
+    val merger: Merger,
+) {
     data class PivotData(
         val openingRef: Token,
-        val func: String
+        val func: String,
     )
-
-    private val dsl: DSL = DSL()
-    private val merger = MergerS.merger()
 
     // openingMap contains the first tags of contexts. For instance, in '<c>
     // BEGIN <*>bla</*> END </c>', BEGIN is an opening token.
@@ -30,48 +23,10 @@ class MapGrammar() {
 
     // pivotMap stores the string we are searching for. For instance, in '<c> BEGIN
     // <*>bla</*> END </c>', 'bla' is a pivot token.
-    private val pivotMap: MutableMap<Token, PivotData> = mutableMapOf()
+    private val pivotMap: MutableMap<Token, ContextMap.PivotData> = mutableMapOf()
 
-    // TODO: remove once we support customizable actions from the user side
-    // -aholmquist 2023-11-03
-    private var maxBlocks: Int = 0
-
-    // TODO: remove maxBlocks once we support customizable actions from the user
-    // side -aholmquist 2023-11-02
-    fun getMaxBlocks(): Int = maxBlocks
-
-    fun consume(file: File) = FileReader(file).use { reader ->
-        reader.forEachLine {
-            consume(it)
-        }
-    }
-
-    fun consume(input: String) = streamString(input)
-
-    fun addContext(contextInput: String?) {
-        if (contextInput.isNullOrBlank()) {
-            return
-        }
-        val contexts = extractContext(contextInput)
-        contexts.forEach { insertContext(it) }
-        logger.debug("Maps after adding context:\n$openingMap\n$closingMap\n$pivotMap")
-    }
-
-    private fun streamString(input: String) =
-        blankRegex.findAll(input).forEach { matchResult -> match(matchResult.value) }
-
-    private fun string2list(string: String): List<String> {
-        val woNewline = string.split(newlineDelim).joinToString(spaceDelim)
-        return woNewline.split(spaceDelim)
-    }
-
-    private fun toToken(word: String): Token {
-        val isMergeable = dsl.isMergeable(word)
-        val woTags = dsl.removeAllTags(word)
-        if (isMergeable) {
-            return MergeableToken(woTags)
-        }
-        return NonMergeableToken(woTags)
+    private inline fun <reified V> insert(map: MutableMap<Token, V>, key: Token, value: V) {
+        map[key] = value
     }
 
     private inline fun <reified V> inMap(map: MutableMap<Token, V>, token: Token): Token? {
@@ -102,7 +57,7 @@ class MapGrammar() {
         this.openingMap[token] = oldValue + value
     }
 
-    private fun match(word: String) {
+    fun match(word: String) {
         val wordTokens = merger.tokensFromString(word)
 
         val openingFound = inMap(openingMap, wordTokens)
@@ -122,32 +77,10 @@ class MapGrammar() {
             if (pivot.component1().match(wordTokens)) {
                 val openingReference = pivot.component2().openingRef
                 val value = openingMap[openingReference]
-                if (value != null && value > 1) {
-                    maxBlocks++
+                if (value != null && value >= 1) {
                 }
             }
         }
-    }
-
-    private fun extractContext(input: String): List<String> {
-        val matcher = contextRegex.findAll(input)
-        val substrings = matcher.map { it.groupValues[1] }.toList()
-        return substrings
-    }
-
-    private fun getLambdaFunction(input: String): String {
-        val regex = Regex(".*<a (\\w+)>.+</a>.*")
-        val matchResult = regex.find(input)
-
-        val res = matchResult?.groups?.get(1)?.value
-        if (res.isNullOrBlank()) {
-            return "println"
-        }
-        return res
-    }
-
-    private inline fun <reified V> insert(map: MutableMap<Token, V>, key: Token, value: V) {
-        map[key] = value
     }
 
     private inline fun <reified V> insert(map: MutableMap<Token, V>, key: String, value: V) {
@@ -156,9 +89,37 @@ class MapGrammar() {
 
     private fun insertPivot(pivots: List<String>, openingToken: Token) {
         pivots.forEach { pivot ->
-            val func = getLambdaFunction(pivot)
+            val func = dsl.getLambdaFunction(pivot)
             insert(pivotMap, pivot, PivotData(openingToken, func))
         }
+    }
+
+    private fun string2list(string: String): List<String> {
+        val woNewline = string.split(Grammar.newlineDelim).joinToString(Grammar.spaceDelim)
+        return woNewline.split(Grammar.spaceDelim)
+    }
+
+    private fun insert(context: String) {
+        val contextTokens = string2list(context)
+
+        if (contextTokens.size < Grammar.minElems) {
+            println("Warning: Insufficient number of elements provided.")
+            return
+        }
+
+        val token = toToken(contextTokens.first())
+        val res = findEquivalent(openingMap, token)
+        val openingToken = res.first
+        if (!res.second) {
+            insert(openingMap, openingToken, Grammar.noOccurrences)
+        }
+        insert(closingMap, contextTokens.last(), openingToken)
+        insertPivot(contextTokens.subList(1, contextTokens.size - 1), openingToken)
+    }
+
+    fun insertContext(context: String) {
+        val contexts = dsl.extractContext(context)
+        contexts.forEach { insert(it) }
     }
 
     private inline fun <reified V> findEquivalent(map: MutableMap<Token, V>, token: Token): Pair<Token, Boolean> {
@@ -170,22 +131,13 @@ class MapGrammar() {
         return Pair(token, false)
     }
 
-    private fun insertContext(context: String) {
-        val contextTokens = string2list(context)
-
-        if (contextTokens.size < minElems) {
-            println("Warning: Insufficient number of elements provided.")
-            return
+    private fun toToken(word: String): Token {
+        val isMergeable = dsl.isMergeable(word)
+        val woTags = dsl.removeAllTags(word)
+        if (isMergeable) {
+            return MergeableToken(woTags)
         }
-
-        val token = toToken(contextTokens.first())
-        val res = findEquivalent(openingMap, token)
-        val openingToken = res.first
-        if (!res.second) {
-            insert(openingMap, openingToken, noOccurrences)
-        }
-        insert(closingMap, contextTokens.last(), openingToken)
-        insertPivot(contextTokens.subList(1, contextTokens.size - 1), openingToken)
+        return NonMergeableToken(woTags)
     }
 
     companion object {
@@ -194,7 +146,6 @@ class MapGrammar() {
         val spaceDelim = " "
         val newlineDelim = "\n"
 
-        val contextRegex = Regex("""<c>(.*?)</c>""")
         val blankRegex = Regex("""\S+""")
     }
 }

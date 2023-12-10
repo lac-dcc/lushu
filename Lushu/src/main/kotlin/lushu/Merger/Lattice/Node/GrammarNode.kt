@@ -3,30 +3,30 @@ package lushu.Merger.Lattice.Node
 import lushu.Merger.Merger.Merger
 
 class GrammarNode(
-    var tokens: List<Node> = listOf(),
-    val sensitive: Boolean = false,
+    var token: Token? = null,
     val star: Boolean = false,
-    val nonmergeable: Boolean = false,
-    val terminal: Boolean = false,
+    val mergeable: Boolean = false,
+    val action: String = "",
+    val endOfContext: Boolean = false,
     val parent: GrammarNode? = null,
-    private val children: MutableList<GrammarNode> = mutableListOf()
+    private val children: MutableList<GrammarNode> = mutableListOf(),
 
 ) {
-
-    fun isSensitive(): Boolean {
-        return this.sensitive
-    }
 
     fun isStar(): Boolean {
         return this.star
     }
 
-    fun isNonMergeable(): Boolean {
-        return this.nonmergeable
+    fun isEndOfContext(): Boolean {
+        return this.endOfContext
     }
 
-    fun isTerminal(): Boolean {
-        return this.terminal
+    fun getAction(): String {
+        return this.action
+    }
+
+    fun isMergeable(): Boolean {
+        return this.mergeable
     }
 
     /**
@@ -39,30 +39,6 @@ class GrammarNode(
     }
 
     /**
-     * Determines if the given word matches the regular expression defined by the current instance.
-     *
-     * @param word to be matched against the regular expression.
-     * @return true if the word matches the regular expression, false otherwise.
-     */
-    fun match(word: String): Boolean {
-        val tokens = MergerS.merger().tokensFromString(word)
-        return match(tokens)
-    }
-
-    fun match(tokens: List<Node>): Boolean {
-        val res = MergerS.merger().merge(this.tokens, tokens)
-
-        if (this.isNonMergeable()) {
-            return this.tokens == tokens
-        }
-
-        if (res.success && !this.isNonMergeable()) {
-            this.tokens = res.tokens
-        }
-        return res.success
-    }
-
-    /**
      * Checks if two Node elements are equivalent.
      *
      * @param node1 The first Node element to compare.
@@ -71,27 +47,13 @@ class GrammarNode(
      */
     override fun equals(other: Any?): Boolean = when (other) {
         is GrammarNode -> (
-            this.match(other.tokens) &&
-                this.sensitive == other.sensitive &&
+            this.token.match(other.token) &&
                 this.star == other.star &&
-                this.nonmergeable == other.nonmergeable &&
-                this.terminal == other.terminal
+                this.mergeable == other.mergeable &&
+                this.endOfContext == other.endOfContext
             )
 
         else -> false
-    }
-
-    /* TODO */
-    /* While the updater only modifies tokens and children */
-    fun update(element: GrammarNode) {
-        if (element.tokens.isNotEmpty()) {
-            this.tokens = element.tokens
-        }
-        // add sensitive case
-        if (element.children.isNotEmpty()) {
-            this.children.clear()
-            this.children.addAll(element.children)
-        }
     }
 
     /**
@@ -101,7 +63,7 @@ class GrammarNode(
      * @return The equivalent Node if found in the children list; otherwise, returns the original node.
      */
     fun getEquivalentNode(node: GrammarNode): GrammarNode {
-        return getChildren().find { it.equals(node) } ?: node
+        return getChildren().find { it == node } ?: node
     }
 
     /**
@@ -112,7 +74,7 @@ class GrammarNode(
      * @return A new list containing the filtered nodes based on the 'nonMergeable' parameter.
      */
     fun filterMergeblesNodes(mergeable: Boolean): List<GrammarNode> {
-        return children.filter { it.isNonMergeable() == !mergeable }
+        return children.filter { it.isMergeable() == !mergeable }
     }
 
     /**
@@ -142,10 +104,10 @@ class GrammarNode(
         sensitive: Boolean,
         star: Boolean,
         nonmergeable: Boolean,
-        terminal: Boolean,
-        children: MutableList<GrammarNode>
+        endOfContext: Boolean,
+        children: MutableList<GrammarNode>,
     ) {
-        val newNode = GrammarNode(tokens, sensitive, star, nonmergeable, terminal, this, children)
+        val newNode = GrammarNode(tokens, sensitive, star, nonmergeable, endOfContext, this, children)
         addChild(newNode)
     }
 
@@ -154,11 +116,18 @@ class GrammarNode(
      * @param newNode The node to be added as a child.
      */
     private fun addChild(newNode: GrammarNode) {
-        if (newNode.isNonMergeable()) {
+        if (newNode.isMergeable()) {
             children.add(firstIndex, newNode)
         } else {
             mergeChildren(newNode)
         }
+    }
+
+    private fun toToken(word: String, mergeable: Boolean): Token {
+        if (mergeable) {
+            return MergeableToken(word)
+        }
+        return NonMergeableToken(word)
     }
 
     /**
@@ -174,15 +143,15 @@ class GrammarNode(
      */
     fun findOrAddChild(
         word: String,
-        sensitive: Boolean,
         star: Boolean,
-        nonmergeable: Boolean,
-        terminal: Boolean
+        mergeable: Boolean,
+        action: String,
+        endOfContext: Boolean,
     ): GrammarNode {
-        val token = MergerS.merger().tokensFromString(word)
-        val newNode = GrammarNode(token, sensitive, star, nonmergeable, terminal, this, mutableListOf())
+        val token = toToken(word, mergeable)
+        val newNode = GrammarNode(token, star, mergeable, action, endOfContext, this, mutableListOf())
 
-        val existingChild = children.find { it.equals(newNode) }
+        val existingChild = children.find { it == newNode }
         if (existingChild != null) {
             return existingChild
         }
@@ -194,24 +163,6 @@ class GrammarNode(
         }
 
         return resNode
-    }
-
-    fun treeToStringPreorder(current: GrammarNode, level: Int = 0): String {
-        val indentation = "-".repeat(level)
-        val result = StringBuilder()
-
-        result.append("$indentation${current.tokens}\n")
-
-        if (!current.children.isNullOrEmpty()) {
-            current.children.forEach { child ->
-                result.append(treeToStringPreorder(child, level + 1))
-            }
-        }
-        return result.toString()
-    }
-
-    override fun toString(): String {
-        return treeToStringPreorder(this)
     }
 
     companion object {

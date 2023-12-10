@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
     if (args.size < 4) {
         println(
             "Usage: <this-program> <merger-config-file>\n" +
-                "\t<input-file> <patterns-file> <output-file>"
+                "\t<input-file> <patterns-file> <output-file>",
         )
         return
     }
